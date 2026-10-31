@@ -11,6 +11,7 @@ let tables = null;
 let state = null;
 let view = 'city';
 let allianceTab = 'hall';
+let eventsTab = 'world';
 let selectedNodeId = null;
 let selectedBuildingId = null;
 let castle3dApi = null;
@@ -100,7 +101,7 @@ function enterGame() {
   const hash = (location.hash || '').replace('#', '');
   const qView = new URLSearchParams(location.search).get('view');
   view = qView || hash || 'city';
-  if (!['city', 'map', 'hero', 'alliance', 'reports', 'quests'].includes(view)) view = 'city';
+  if (!['city', 'map', 'hero', 'alliance', 'reports', 'quests', 'events'].includes(view)) view = 'city';
   selectedBuildingId = state.selectedBuildingId || 'palace';
   selectedNodeId = state.selectedWorldNodeId || 'castle_player';
   renderAll();
@@ -1088,6 +1089,33 @@ function renderQuests() {
   });
 }
 
+function renderEvents() {
+  const stage = $('#main-stage');
+  const events = tables.events?.events || [];
+  const war = tables.events?.kingdomWar;
+  const wins = state.reports.filter((report) => report.kind === 'combat' && report.outcome === 'win').length;
+  const scouts = state.reports.filter((report) => report.kind === 'scout').length;
+  const playerPoints = wins * 450 + scouts * 35 + (state.allianceId ? 280 : 0);
+  const playerRank = playerPoints > 900 ? 2 : playerPoints > 300 ? 3 : 4;
+  let html = `<div class="events-shell">
+    <section class="events-hero"><div class="events-crest">♛</div><div><span>الموسم الأول · رايات الممالك</span><h2>ساحة الفعاليات الكبرى</h2><p>كل أسبوع يكتب القادة فصلاً جديداً في سجل العروش. اغتنم الحدث قبل أن تغلق البوابة.</p></div><div class="events-week"><b>14</b><span>أسبوع الموسم</span></div></section>
+    <div class="events-tabs"><button class="${eventsTab === 'world' ? 'active' : ''}" data-events-tab="world">فعاليات العالم <b>${events.length}</b></button><button class="${eventsTab === 'war' ? 'active' : ''}" data-events-tab="war">حرب الممالك <b>W14</b></button></div>`;
+  if (eventsTab === 'world') {
+    html += `<div class="event-status-strip"><span class="event-live-dot"></span><strong>المجال مفتوح</strong><span>3 فعاليات كبرى · أول مكافأة بانتظار رايتك</span><b>${G.formatEta(18 * 60 * 60 * 1000)} متبقية</b></div><div class="grand-events-grid">`;
+    for (const event of events) {
+      html += `<article class="grand-event-card event-${event.accent}"><div class="event-card-top"><span class="event-icon">${event.icon}</span><div><span class="event-type">${event.typeAr}</span><h3>${event.nameAr}</h3></div><b class="event-status">${event.statusAr}</b></div><p>${event.descriptionAr}</p><div class="event-reward"><span>مكافآت الحدث</span><strong>${event.rewardAr}</strong></div><div class="event-card-footer"><span class="event-progress"><i style="width:${event.id === 'crown_rift' ? Math.min(92, 18 + wins * 11) : event.id === 'caravan_war' ? Math.min(54, 12 + scouts * 8) : 8}%"></i></span><button class="btn btn-primary btn-small" data-event-action="${event.targetKind}">${event.targetKind === 'monster' ? 'افتح الخريطة' : event.targetKind === 'resource' ? 'أرسل قافلة' : 'استكشف الأطلال'}</button></div></article>`;
+    }
+    html += `</div><section class="event-calendar"><div><span class="events-kicker">بوابة الأسبوع</span><h3>روزنامة العالم</h3></div><div class="calendar-rail">${war.days.map((day, index) => `<div class="calendar-day ${day.stateAr === 'نشط' ? 'active' : day.stateAr === 'مكتمل' ? 'done' : ''}"><b>${day.dayAr}</b><span>${day.labelAr}</span><em>${day.stateAr}</em></div>`).join('')}</div></section>`;
+  } else {
+    html += `<div class="war-banner"><div><span class="events-kicker">الدورة الحالية · ${war.phaseAr}</span><h3>${war.nameAr}</h3><p>${war.descriptionAr}</p></div><div class="war-timer"><b>18:42:16</b><span>حتى إغلاق المرحلة</span></div></div><div class="war-layout"><section class="kingdom-ranking"><div class="section-title"><div><span class="events-kicker">لوح الرايات</span><h3>ترتيب الممالك</h3></div><span class="ranking-live">تحديث حي</span></div>${war.kingdoms.map((kingdom) => `<div class="kingdom-row kingdom-${kingdom.color} ${kingdom.rank === playerRank ? 'is-player' : ''}><b class="kingdom-rank">${kingdom.rank}</b><span class="kingdom-emblem">${kingdom.tag}</span><div><strong>${kingdom.nameAr}</strong><span>${kingdom.statusAr}</span></div><div class="kingdom-points"><b>${(kingdom.rank === playerRank ? kingdom.points + playerPoints : kingdom.points).toLocaleString('ar')}</b><span>نقطة</span></div></div>`).join('')}</section><section class="war-side-card"><div class="your-kingdom"><span class="events-kicker">رايتك هذا الأسبوع</span><h3>${state.allianceId ? 'عرش الجزيرة' : 'قلعة القائد'}</h3><div class="your-score"><b>${playerPoints.toLocaleString('ar')}</b><span>نقاط المساهمة</span></div><div class="contribution-list"><span>انتصارات الغارات <b>${wins}</b></span><span>عمليات الاستطلاع <b>${scouts}</b></span><span>رتبة تقديرية <b>#${playerRank}</b></span></div></div><div class="war-rewards"><span class="events-kicker">جوائز إغلاق الحرب</span><ul>${war.rewardsAr.map((reward) => `<li>✦ ${reward}</li>`).join('')}</ul></div><button class="btn btn-primary" id="btn-war-map">دخول جبهة الحرب</button></section></div><section class="war-phases"><span class="events-kicker">مراحل الحرب</span><div>${war.days.map((day) => `<span class="phase-chip ${day.stateAr === 'نشط' ? 'active' : ''}"><b>${day.dayAr}</b>${day.labelAr}</span>`).join('')}</div></section>`;
+  }
+  html += `</div>`;
+  stage.innerHTML = html;
+  $$('[data-events-tab]').forEach((button) => { button.onclick = () => { eventsTab = button.dataset.eventsTab; renderEvents(); }; });
+  $$('[data-event-action]').forEach((button) => { button.onclick = () => { view = button.dataset.eventAction === 'ruin' ? 'map' : button.dataset.eventAction === 'monster' || button.dataset.eventAction === 'resource' ? 'map' : 'map'; selectedNodeId = button.dataset.eventAction === 'monster' ? (tables.world.nodes.find((node) => node.kind === 'monster')?.id || 'castle_player') : (tables.world.nodes.find((node) => node.kind === button.dataset.eventAction)?.id || 'castle_player'); renderAll(); }; });
+  $('#btn-war-map')?.addEventListener('click', () => { view = 'map'; renderAll(); });
+}
+
 function renderAll() {
   if (!state) return;
   // migrate older saves
@@ -1122,6 +1150,7 @@ function renderAll() {
   else if (view === 'alliance') renderAlliance();
   else if (view === 'reports') renderReports();
   else if (view === 'quests') renderQuests();
+  else if (view === 'events') renderEvents();
 }
 
 function gameLoop() {

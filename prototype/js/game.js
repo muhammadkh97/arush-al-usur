@@ -29,6 +29,7 @@ export async function loadTables() {
     'monsters.json',
     'resource_fields.json',
     'story_chapters.json',
+    'world_events.json',
   ];
   const out = {};
   await Promise.all(files.map(async (f) => {
@@ -53,6 +54,7 @@ export async function loadTables() {
     monsters: out.monsters,
     fields: out.resource_fields,
     story: out.story_chapters,
+    events: out.world_events,
   };
 }
 

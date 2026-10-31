@@ -1,0 +1,64 @@
+{
+  "season": "الموسم الأول · رايات الممالك",
+  "weekLabel": "الأسبوع 14 · دورة السلاطين",
+  "events": [
+    {
+      "id": "crown_rift",
+      "nameAr": "صدع التاج الذهبي",
+      "typeAr": "غزو عالمي",
+      "statusAr": "نشط الآن",
+      "descriptionAr": "شقّ قديم ظهر بين الجبال. اجمع الجيوش، اهزم حراس الصدع، وامنح مملكتك أول ختم في سجل الموسم.",
+      "accent": "gold",
+      "icon": "✦",
+      "startsInMinutes": 0,
+      "endsInHours": 18,
+      "rewardAr": "ختم التاج · 500 ذهب · راية موسمية",
+      "targetKind": "monster"
+    },
+    {
+      "id": "caravan_war",
+      "nameAr": "طريق القوافل السبعة",
+      "typeAr": "سباق تحالفات",
+      "statusAr": "يفتح غداً",
+      "descriptionAr": "تنافس التحالفات على طرق التجارة القديمة. كل قافلة تصل سالمة ترفع مخزون المملكة ونقاط المجلس.",
+      "accent": "teal",
+      "icon": "◆",
+      "startsInMinutes": 1440,
+      "endsInHours": 42,
+      "rewardAr": "صندوق القافلة · تسريع 60د · 200 خشب",
+      "targetKind": "resource"
+    },
+    {
+      "id": "ruins_of_ages",
+      "nameAr": "أطلال العصور",
+      "typeAr": "استكشاف أسطوري",
+      "statusAr": "ينتهي خلال 3 أيام",
+      "descriptionAr": "افتح أطلالاً لا تظهر إلا مرة واحدة في الأسبوع، واستعد قطعاً من ختم السلطان الأول.",
+      "accent": "violet",
+      "icon": "◈",
+      "startsInMinutes": 0,
+      "endsInHours": 72,
+      "rewardAr": "قطعة أثرية · خبرة البطل · 100 حجر",
+      "targetKind": "ruin"
+    }
+  ],
+  "kingdomWar": {
+    "nameAr": "حرب الممالك الأسبوعية",
+    "phaseAr": "مرحلة الحشد · 18 ساعة متبقية",
+    "descriptionAr": "تتنافس الممالك على تاج الصحراء عبر السيطرة على الحصون، حماية القوافل، وتحقيق الانتصارات الكبرى.",
+    "days": [
+      { "dayAr": "السبت", "labelAr": "الحشد", "stateAr": "مكتمل" },
+      { "dayAr": "الأحد", "labelAr": "حصون الحدود", "stateAr": "نشط" },
+      { "dayAr": "الإثنين", "labelAr": "طرق القوافل", "stateAr": "قادم" },
+      { "dayAr": "الثلاثاء", "labelAr": "ليلة العرش", "stateAr": "قادم" },
+      { "dayAr": "الأربعاء", "labelAr": "النهائي", "stateAr": "قادم" }
+    ],
+    "kingdoms": [
+      { "rank": 1, "nameAr": "مملكة السهوب", "tag": "س هـ", "points": 12840, "color": "gold", "statusAr": "متقدمة" },
+      { "rank": 2, "nameAr": "عرش الجزيرة", "tag": "ج ز", "points": 11920, "color": "teal", "statusAr": "تلاحق" },
+      { "rank": 3, "nameAr": "راية فارس", "tag": "ف ر", "points": 10480, "color": "violet", "statusAr": "منافسة" },
+      { "rank": 4, "nameAr": "حماة الشمال", "tag": "ش م", "points": 8620, "color": "red", "statusAr": "تحتاج دعماً" }
+    ],
+    "rewardsAr": ["تاج المملكة للأول", "زخرفة قلعة موسمية", "ذهب وختم حرب", "صندوق قائد" ]
+  }
+}
