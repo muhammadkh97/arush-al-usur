@@ -1,0 +1,15 @@
+{
+  "meta": {
+    "source": "economy-combat-tables.md §1"
+  },
+  "cap": 120,
+  "regenOnePointEveryMinutes": 3,
+  "costs": {
+    "raid_player": 10,
+    "gather": 5,
+    "raid_npc": 8,
+    "siege_control": 15,
+    "throne_rally": 20
+  },
+  "dailyQuestRestore": 30
+}

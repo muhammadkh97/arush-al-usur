@@ -1,0 +1,513 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "count": 24
+  },
+  "camps": [
+    {
+      "id": "npc_01",
+      "nameAr": "معسكر محايد 1",
+      "tier": 1,
+      "tile": {
+        "x": 10,
+        "y": 6
+      },
+      "garrison": {
+        "light_infantry": 43,
+        "archers": 22
+      },
+      "nominalPowerApprox": 152,
+      "loot": {
+        "food": 200,
+        "wood": 180,
+        "stone": 50,
+        "gold": 20
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_02",
+      "nameAr": "معسكر محايد 2",
+      "tier": 1,
+      "tile": {
+        "x": 16,
+        "y": 6
+      },
+      "garrison": {
+        "light_infantry": 46,
+        "archers": 24
+      },
+      "nominalPowerApprox": 164,
+      "loot": {
+        "food": 400,
+        "wood": 360,
+        "stone": 50,
+        "gold": 20
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_03",
+      "nameAr": "معسكر محايد 3",
+      "tier": 1,
+      "tile": {
+        "x": 22,
+        "y": 6
+      },
+      "garrison": {
+        "light_infantry": 49,
+        "archers": 26
+      },
+      "nominalPowerApprox": 176,
+      "loot": {
+        "food": 600,
+        "wood": 540,
+        "stone": 50,
+        "gold": 20
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_04",
+      "nameAr": "معسكر محايد 4",
+      "tier": 1,
+      "tile": {
+        "x": 28,
+        "y": 6
+      },
+      "garrison": {
+        "light_infantry": 52,
+        "archers": 28
+      },
+      "nominalPowerApprox": 188,
+      "loot": {
+        "food": 800,
+        "wood": 720,
+        "stone": 50,
+        "gold": 20
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_05",
+      "nameAr": "معسكر محايد 5",
+      "tier": 1,
+      "tile": {
+        "x": 34,
+        "y": 6
+      },
+      "garrison": {
+        "light_infantry": 55,
+        "archers": 30
+      },
+      "nominalPowerApprox": 200,
+      "loot": {
+        "food": 1000,
+        "wood": 900,
+        "stone": 50,
+        "gold": 20
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_06",
+      "nameAr": "معسكر محايد 6",
+      "tier": 1,
+      "tile": {
+        "x": 40,
+        "y": 6
+      },
+      "garrison": {
+        "light_infantry": 58,
+        "archers": 32
+      },
+      "nominalPowerApprox": 212,
+      "loot": {
+        "food": 1200,
+        "wood": 1080,
+        "stone": 50,
+        "gold": 20
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_07",
+      "nameAr": "معسكر محايد 7",
+      "tier": 1,
+      "tile": {
+        "x": 46,
+        "y": 6
+      },
+      "garrison": {
+        "light_infantry": 61,
+        "archers": 34
+      },
+      "nominalPowerApprox": 224,
+      "loot": {
+        "food": 1400,
+        "wood": 1260,
+        "stone": 50,
+        "gold": 20
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_08",
+      "nameAr": "معسكر محايد 8",
+      "tier": 1,
+      "tile": {
+        "x": 4,
+        "y": 14
+      },
+      "garrison": {
+        "light_infantry": 64,
+        "archers": 36
+      },
+      "nominalPowerApprox": 236,
+      "loot": {
+        "food": 1600,
+        "wood": 1440,
+        "stone": 50,
+        "gold": 20
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_09",
+      "nameAr": "معسكر محايد 9",
+      "tier": 2,
+      "tile": {
+        "x": 10,
+        "y": 14
+      },
+      "garrison": {
+        "light_infantry": 165,
+        "archers": 116
+      },
+      "nominalPowerApprox": 678,
+      "loot": {
+        "food": 3600,
+        "wood": 3240,
+        "stone": 100,
+        "gold": 40
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_10",
+      "nameAr": "معسكر محايد 10",
+      "tier": 2,
+      "tile": {
+        "x": 16,
+        "y": 14
+      },
+      "garrison": {
+        "light_infantry": 170,
+        "archers": 120
+      },
+      "nominalPowerApprox": 700,
+      "loot": {
+        "food": 4000,
+        "wood": 3600,
+        "stone": 100,
+        "gold": 40
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_11",
+      "nameAr": "معسكر محايد 11",
+      "tier": 2,
+      "tile": {
+        "x": 22,
+        "y": 14
+      },
+      "garrison": {
+        "light_infantry": 175,
+        "archers": 124
+      },
+      "nominalPowerApprox": 722,
+      "loot": {
+        "food": 4400,
+        "wood": 3960,
+        "stone": 100,
+        "gold": 40
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_12",
+      "nameAr": "معسكر محايد 12",
+      "tier": 2,
+      "tile": {
+        "x": 28,
+        "y": 14
+      },
+      "garrison": {
+        "light_infantry": 180,
+        "archers": 128
+      },
+      "nominalPowerApprox": 744,
+      "loot": {
+        "food": 4800,
+        "wood": 4320,
+        "stone": 100,
+        "gold": 40
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_13",
+      "nameAr": "معسكر محايد 13",
+      "tier": 2,
+      "tile": {
+        "x": 34,
+        "y": 14
+      },
+      "garrison": {
+        "light_infantry": 185,
+        "archers": 132
+      },
+      "nominalPowerApprox": 766,
+      "loot": {
+        "food": 5200,
+        "wood": 4680,
+        "stone": 100,
+        "gold": 40
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_14",
+      "nameAr": "معسكر محايد 14",
+      "tier": 2,
+      "tile": {
+        "x": 40,
+        "y": 14
+      },
+      "garrison": {
+        "light_infantry": 190,
+        "archers": 136
+      },
+      "nominalPowerApprox": 788,
+      "loot": {
+        "food": 5600,
+        "wood": 5040,
+        "stone": 100,
+        "gold": 40
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_15",
+      "nameAr": "معسكر محايد 15",
+      "tier": 2,
+      "tile": {
+        "x": 46,
+        "y": 14
+      },
+      "garrison": {
+        "light_infantry": 195,
+        "archers": 140
+      },
+      "nominalPowerApprox": 810,
+      "loot": {
+        "food": 6000,
+        "wood": 5400,
+        "stone": 100,
+        "gold": 40
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_16",
+      "nameAr": "معسكر محايد 16",
+      "tier": 2,
+      "tile": {
+        "x": 4,
+        "y": 22
+      },
+      "garrison": {
+        "light_infantry": 200,
+        "archers": 144
+      },
+      "nominalPowerApprox": 832,
+      "loot": {
+        "food": 6400,
+        "wood": 5760,
+        "stone": 100,
+        "gold": 40
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_17",
+      "nameAr": "معسكر محايد 17",
+      "tier": 3,
+      "tile": {
+        "x": 10,
+        "y": 22
+      },
+      "garrison": {
+        "light_infantry": 570,
+        "archers": 436
+      },
+      "nominalPowerApprox": 2448,
+      "loot": {
+        "food": 10200,
+        "wood": 9180,
+        "stone": 150,
+        "gold": 60
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_18",
+      "nameAr": "معسكر محايد 18",
+      "tier": 3,
+      "tile": {
+        "x": 16,
+        "y": 22
+      },
+      "garrison": {
+        "light_infantry": 580,
+        "archers": 444
+      },
+      "nominalPowerApprox": 2492,
+      "loot": {
+        "food": 10800,
+        "wood": 9720,
+        "stone": 150,
+        "gold": 60
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_19",
+      "nameAr": "معسكر محايد 19",
+      "tier": 3,
+      "tile": {
+        "x": 22,
+        "y": 22
+      },
+      "garrison": {
+        "light_infantry": 590,
+        "archers": 452
+      },
+      "nominalPowerApprox": 2536,
+      "loot": {
+        "food": 11400,
+        "wood": 10260,
+        "stone": 150,
+        "gold": 60
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_20",
+      "nameAr": "معسكر محايد 20",
+      "tier": 3,
+      "tile": {
+        "x": 28,
+        "y": 22
+      },
+      "garrison": {
+        "light_infantry": 600,
+        "archers": 460
+      },
+      "nominalPowerApprox": 2580,
+      "loot": {
+        "food": 12000,
+        "wood": 10800,
+        "stone": 150,
+        "gold": 60
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_21",
+      "nameAr": "معسكر محايد 21",
+      "tier": 3,
+      "tile": {
+        "x": 34,
+        "y": 22
+      },
+      "garrison": {
+        "light_infantry": 610,
+        "archers": 468
+      },
+      "nominalPowerApprox": 2624,
+      "loot": {
+        "food": 12600,
+        "wood": 11340,
+        "stone": 150,
+        "gold": 60
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_22",
+      "nameAr": "معسكر محايد 22",
+      "tier": 3,
+      "tile": {
+        "x": 40,
+        "y": 22
+      },
+      "garrison": {
+        "light_infantry": 620,
+        "archers": 476
+      },
+      "nominalPowerApprox": 2668,
+      "loot": {
+        "food": 13200,
+        "wood": 11880,
+        "stone": 150,
+        "gold": 60
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_23",
+      "nameAr": "معسكر محايد 23",
+      "tier": 3,
+      "tile": {
+        "x": 46,
+        "y": 22
+      },
+      "garrison": {
+        "light_infantry": 630,
+        "archers": 484
+      },
+      "nominalPowerApprox": 2712,
+      "loot": {
+        "food": 13800,
+        "wood": 12420,
+        "stone": 150,
+        "gold": 60
+      },
+      "respawnMinutes": 15
+    },
+    {
+      "id": "npc_24",
+      "nameAr": "معسكر محايد 24",
+      "tier": 3,
+      "tile": {
+        "x": 4,
+        "y": 30
+      },
+      "garrison": {
+        "light_infantry": 640,
+        "archers": 492
+      },
+      "nominalPowerApprox": 2756,
+      "loot": {
+        "food": 14400,
+        "wood": 12960,
+        "stone": 150,
+        "gold": 60
+      },
+      "respawnMinutes": 15
+    }
+  ]
+}

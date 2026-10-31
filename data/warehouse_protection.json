@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "source": "economy-combat-tables.md §2"
+  },
+  "protectionByLevel": {
+    "1": 2000,
+    "2": 3761,
+    "3": 7071,
+    "4": 13296,
+    "5": 25000
+  }
+}

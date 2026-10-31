@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "phase": 1
+  },
+  "daily": [
+    {
+      "id": "upgrade_any",
+      "nameAr": "رقِّ مبنىً واحداً",
+      "reward": {
+        "food": 500,
+        "wood": 500,
+        "speedMinutes": 2
+      }
+    },
+    {
+      "id": "train_50",
+      "nameAr": "درِّب 50 وحدة",
+      "reward": {
+        "food": 400,
+        "wood": 200,
+        "speedMinutes": 3
+      }
+    },
+    {
+      "id": "raid_npc",
+      "nameAr": "أغِر على معسكر محايد",
+      "reward": {
+        "gold": 50,
+        "stamina": 10,
+        "speedMinutes": 2
+      }
+    },
+    {
+      "id": "alliance_help",
+      "nameAr": "اطلب أو قدِّم مساعدة بناء",
+      "reward": {
+        "food": 300,
+        "wood": 300
+      }
+    },
+    {
+      "id": "hero_level",
+      "nameAr": "ارفع مستوى البطل مرة",
+      "reward": {
+        "gold": 40,
+        "speedMinutes": 5
+      }
+    }
+  ]
+}

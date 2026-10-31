@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "source": "economy-combat-tables.md §5–§7",
+    "simplifications": [
+      "لا فرسان عامة ولا حصار عام — المضاد يقتصر على مشاة/رماة (+خاصة تُصنَّف)",
+      "لا عامل تضاريس معقّد في الشريحة؛ تضاريس محايدة = 1.0",
+      "سور المدينة يُطبَّق فقط إذا كان الهدف مدينة لاعب؛ معسكرات NPC بلا سور",
+      "HeroContribution = min(HeroRawPower, 0.25 × ArmyPowerBeforeHero)"
+    ]
+  },
+  "counterMatrix": {
+    "infantry": {
+      "infantry": 1.0,
+      "archers": 1.15,
+      "cavalry": 0.85,
+      "siege": 1.2
+    },
+    "archers": {
+      "infantry": 1.2,
+      "archers": 1.0,
+      "cavalry": 0.8,
+      "siege": 1.1
+    },
+    "cavalry": {
+      "infantry": 1.15,
+      "archers": 1.25,
+      "cavalry": 1.0,
+      "siege": 1.3
+    },
+    "siege": {
+      "infantry": 0.35,
+      "archers": 0.35,
+      "cavalry": 0.3,
+      "siege": 0.5
+    }
+  },
+  "categoryAlias": {
+    "light_infantry": "infantry",
+    "archers": "archers",
+    "heavy_infantry": "infantry",
+    "mangonel_engineers": "siege",
+    "armored_legion": "infantry",
+    "mounted_archers": "archers"
+  },
+  "resolution": {
+    "winThreshold": 0.55,
+    "drawLow": 0.45,
+    "drawHigh": 0.55,
+    "loserKillRange": [
+      0.35,
+      0.55
+    ],
+    "loserWoundRange": [
+      0.15,
+      0.3
+    ],
+    "winnerKillRange": [
+      0.08,
+      0.22
+    ],
+    "winnerWoundRange": [
+      0.1,
+      0.2
+    ],
+    "drawKillRange": [
+      0.25,
+      0.4
+    ],
+    "wallFactorPerLevel": 0.02,
+    "wallFactorCap": 0.5,
+    "heroContributionCap": 0.25,
+    "lootUnprotectedMaxFraction": 0.35
+  },
+  "factionCombatMultipliers": {
+    "jazira": {
+      "notes": "دفاع مدينة عند سور≥10 خارج نطاق أثر عملي للشريحة (سور أقصى 3)"
+    },
+    "rome": {
+      "infantryAttackFirstRound": 0.05
+    },
+    "persia": {
+      "openMarchSpeed": 1.1
+    }
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "powerGrowthPerLevel": 1.12,
+    "maxUnitLevelSlice": 5,
+    "noCavalryGeneral": true,
+    "noSiegeGeneral": true,
+    "notes": "AU-16: مستويات L1–L5 للمشاة/الرماة؛ خاصة L1–L2؛ مشاة ثقيلة Soft عند قصر 5"
+  },
+  "units": [
+    {
+      "id": "light_infantry",
+      "nameAr": "مشاة خفيفة",
+      "category": "infantry",
+      "trainBuilding": "barracks",
+      "meshKey": "infantry",
+      "maxLevelSlice": 5,
+      "descriptionAr": "خطّ أمامي سريع التدريب — أساس الغارات المبكرة.",
+      "levels": {
+        "1": {
+          "nominalPower": 2,
+          "requiresPalace": 1,
+          "requiresBuildingLevel": 1,
+          "cost": { "food": 15, "wood": 5, "stone": 0, "gold": 0 },
+          "trainSeconds": 20,
+          "stats": { "attack": 10, "defense": 12, "hp": 48, "load": 8, "marchTilesPerMin": 4.0 }
+        },
+        "2": {
+          "nominalPower": 2.24,
+          "requiresPalace": 2,
+          "requiresBuildingLevel": 2,
+          "cost": { "food": 18, "wood": 7, "stone": 0, "gold": 0 },
+          "trainSeconds": 24,
+          "stats": { "attack": 12, "defense": 14, "hp": 55, "load": 8, "marchTilesPerMin": 4.0 }
+        },
+        "3": {
+          "nominalPower": 2.51,
+          "requiresPalace": 3,
+          "requiresBuildingLevel": 3,
+          "cost": { "food": 22, "wood": 9, "stone": 1, "gold": 0 },
+          "trainSeconds": 28,
+          "stats": { "attack": 14, "defense": 16, "hp": 62, "load": 9, "marchTilesPerMin": 3.9 }
+        },
+        "4": {
+          "nominalPower": 2.81,
+          "requiresPalace": 4,
+          "requiresBuildingLevel": 4,
+          "cost": { "food": 26, "wood": 11, "stone": 2, "gold": 1 },
+          "trainSeconds": 34,
+          "stats": { "attack": 16, "defense": 18, "hp": 70, "load": 9, "marchTilesPerMin": 3.9 }
+        },
+        "5": {
+          "nominalPower": 3.15,
+          "requiresPalace": 5,
+          "requiresBuildingLevel": 5,
+          "cost": { "food": 32, "wood": 14, "stone": 3, "gold": 2 },
+          "trainSeconds": 40,
+          "stats": { "attack": 18, "defense": 20, "hp": 78, "load": 10, "marchTilesPerMin": 3.8 }
+        }
+      }
+    },
+    {
+      "id": "archers",
+      "nameAr": "رماة",
+      "category": "archers",
+      "trainBuilding": "archery",
+      "meshKey": "archer",
+      "maxLevelSlice": 5,
+      "descriptionAr": "ضرر بعيد — يتفوّقون على المشاة في المضاد.",
+      "levels": {
+        "1": {
+          "nominalPower": 3,
+          "requiresPalace": 4,
+          "requiresBuildingLevel": 1,
+          "cost": { "food": 20, "wood": 25, "stone": 0, "gold": 1 },
+          "trainSeconds": 30,
+          "stats": { "attack": 22, "defense": 8, "hp": 38, "load": 5, "marchTilesPerMin": 3.8 }
+        },
+        "2": {
+          "nominalPower": 3.36,
+          "requiresPalace": 4,
+          "requiresBuildingLevel": 2,
+          "cost": { "food": 24, "wood": 30, "stone": 0, "gold": 2 },
+          "trainSeconds": 36,
+          "stats": { "attack": 25, "defense": 9, "hp": 42, "load": 5, "marchTilesPerMin": 3.8 }
+        },
+        "3": {
+          "nominalPower": 3.76,
+          "requiresPalace": 5,
+          "requiresBuildingLevel": 3,
+          "cost": { "food": 28, "wood": 36, "stone": 1, "gold": 3 },
+          "trainSeconds": 42,
+          "stats": { "attack": 28, "defense": 10, "hp": 46, "load": 6, "marchTilesPerMin": 3.7 }
+        },
+        "4": {
+          "nominalPower": 4.21,
+          "requiresPalace": 5,
+          "requiresBuildingLevel": 4,
+          "cost": { "food": 34, "wood": 42, "stone": 2, "gold": 4 },
+          "trainSeconds": 50,
+          "stats": { "attack": 32, "defense": 11, "hp": 50, "load": 6, "marchTilesPerMin": 3.7 }
+        },
+        "5": {
+          "nominalPower": 4.72,
+          "requiresPalace": 5,
+          "requiresBuildingLevel": 5,
+          "cost": { "food": 40, "wood": 50, "stone": 3, "gold": 5 },
+          "trainSeconds": 58,
+          "stats": { "attack": 36, "defense": 12, "hp": 55, "load": 6, "marchTilesPerMin": 3.6 }
+        }
+      }
+    },
+    {
+      "id": "heavy_infantry",
+      "nameAr": "مشاة ثقيلة",
+      "category": "infantry",
+      "trainBuilding": "barracks",
+      "meshKey": "heavy",
+      "maxLevelSlice": 2,
+      "softLaunch": true,
+      "descriptionAr": "Soft — درع أثقل؛ يتطلب قصر 5 وثكنة 5.",
+      "levels": {
+        "1": {
+          "nominalPower": 5,
+          "requiresPalace": 5,
+          "requiresBuildingLevel": 5,
+          "cost": { "food": 40, "wood": 20, "stone": 15, "gold": 5 },
+          "trainSeconds": 55,
+          "stats": { "attack": 18, "defense": 28, "hp": 90, "load": 6, "marchTilesPerMin": 3.0 }
+        },
+        "2": {
+          "nominalPower": 5.6,
+          "requiresPalace": 5,
+          "requiresBuildingLevel": 5,
+          "cost": { "food": 48, "wood": 24, "stone": 18, "gold": 7 },
+          "trainSeconds": 65,
+          "stats": { "attack": 21, "defense": 32, "hp": 100, "load": 6, "marchTilesPerMin": 2.9 }
+        }
+      }
+    },
+    {
+      "id": "mangonel_engineers",
+      "nameAr": "مهندسو المنجنيق",
+      "category": "faction_special",
+      "factionId": "jazira",
+      "trainBuilding": "barracks",
+      "meshKey": "special_siege",
+      "maxLevelSlice": 2,
+      "descriptionAr": "خاصة الجزيرة — ضغط حصار خفيف على الحاميات.",
+      "levels": {
+        "1": {
+          "nominalPower": 9,
+          "requiresPalace": 3,
+          "requiresBuildingLevel": 1,
+          "cost": { "food": 60, "wood": 90, "stone": 35, "gold": 12 },
+          "trainSeconds": 100,
+          "stats": { "attack": 28, "defense": 10, "hp": 55, "load": 4, "marchTilesPerMin": 2.5 }
+        },
+        "2": {
+          "nominalPower": 10.08,
+          "requiresPalace": 4,
+          "requiresBuildingLevel": 3,
+          "cost": { "food": 72, "wood": 108, "stone": 42, "gold": 15 },
+          "trainSeconds": 120,
+          "stats": { "attack": 32, "defense": 12, "hp": 62, "load": 4, "marchTilesPerMin": 2.4 }
+        }
+      }
+    },
+    {
+      "id": "armored_legion",
+      "nameAr": "فيلق مدرّع",
+      "category": "faction_special",
+      "factionId": "rome",
+      "trainBuilding": "barracks",
+      "meshKey": "special_legion",
+      "maxLevelSlice": 2,
+      "descriptionAr": "خاصة روما — درع كثيف لصدّ الغارات.",
+      "levels": {
+        "1": {
+          "nominalPower": 7,
+          "requiresPalace": 3,
+          "requiresBuildingLevel": 1,
+          "cost": { "food": 45, "wood": 20, "stone": 15, "gold": 8 },
+          "trainSeconds": 70,
+          "stats": { "attack": 16, "defense": 26, "hp": 100, "load": 6, "marchTilesPerMin": 3.2 }
+        },
+        "2": {
+          "nominalPower": 7.84,
+          "requiresPalace": 4,
+          "requiresBuildingLevel": 3,
+          "cost": { "food": 54, "wood": 24, "stone": 18, "gold": 10 },
+          "trainSeconds": 84,
+          "stats": { "attack": 18, "defense": 30, "hp": 112, "load": 6, "marchTilesPerMin": 3.1 }
+        }
+      }
+    },
+    {
+      "id": "mounted_archers",
+      "nameAr": "رماة مركّبة",
+      "category": "faction_special",
+      "factionId": "persia",
+      "trainBuilding": "archery",
+      "meshKey": "special_mounted",
+      "maxLevelSlice": 2,
+      "descriptionAr": "خاصة الفرس — سرعة مسير وحمولة أعلى؛ تُعامل كرماة في المضاد.",
+      "levels": {
+        "1": {
+          "nominalPower": 8,
+          "requiresPalace": 3,
+          "requiresBuildingLevel": 1,
+          "cost": { "food": 55, "wood": 35, "stone": 5, "gold": 15 },
+          "trainSeconds": 80,
+          "stats": { "attack": 24, "defense": 14, "hp": 60, "load": 9, "marchTilesPerMin": 5.5 }
+        },
+        "2": {
+          "nominalPower": 8.96,
+          "requiresPalace": 4,
+          "requiresBuildingLevel": 3,
+          "cost": { "food": 66, "wood": 42, "stone": 6, "gold": 18 },
+          "trainSeconds": 95,
+          "stats": { "attack": 27, "defense": 16, "hp": 68, "load": 10, "marchTilesPerMin": 5.6 }
+        }
+      }
+    }
+  ]
+}

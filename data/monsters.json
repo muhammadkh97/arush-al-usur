@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "notes": "AU-20: كتالوج وحوش الشريحة — قوة موصى بها + مكافأة مميزة + مفتاح شبكة 3D"
+  },
+  "monsters": [
+    {
+      "id": "monster_caravan_beast",
+      "nameAr": "وحش القوافل",
+      "tier": 1,
+      "meshKey": "beast_caravan",
+      "defensePowerApprox": 210,
+      "recommendedPower": 280,
+      "garrison": { "light_infantry": 60, "archers": 30 },
+      "loot": { "food": 400, "wood": 300, "stone": 0, "gold": 60 },
+      "specialReward": {
+        "id": "caravan_chest",
+        "nameAr": "صندوق قافلة",
+        "descAr": "ذهب إضافي وصندوق قافلة رمزي في التقرير."
+      },
+      "failWoundMult": 1.0,
+      "sizeHint": "small",
+      "loreAr": "وحش صغير يطارد القوافل على طرق الرمال."
+    },
+    {
+      "id": "monster_oasis_jinni",
+      "nameAr": "جنيّ الواحة",
+      "tier": 1,
+      "meshKey": "jinni",
+      "defensePowerApprox": 280,
+      "recommendedPower": 380,
+      "garrison": { "light_infantry": 80, "archers": 40 },
+      "loot": { "food": 800, "wood": 200, "stone": 50, "gold": 40 },
+      "specialReward": {
+        "id": "gather_buff_2h",
+        "nameAr": "باف جمع +20٪ لساعتين",
+        "descAr": "عند الفوز: باف جمع يُسجَّل في التقرير (محاكاة شريحة)."
+      },
+      "failWoundMult": 1.05,
+      "sizeHint": "medium",
+      "loreAr": "روح واحة أدبية — متوسط الحجم، وهج بارد خفيف."
+    },
+    {
+      "id": "monster_fort_ghost",
+      "nameAr": "شبح القلعة",
+      "tier": 2,
+      "meshKey": "ghost",
+      "defensePowerApprox": 850,
+      "recommendedPower": 1150,
+      "garrison": { "light_infantry": 200, "archers": 150 },
+      "loot": { "food": 600, "wood": 600, "stone": 300, "gold": 80 },
+      "specialReward": {
+        "id": "garrison_def_buff",
+        "nameAr": "+5٪ دفاع حامية ساعتان",
+        "descAr": "عند الفوز: باف دفاع حامية مؤقت في التقرير."
+      },
+      "failWoundMult": 1.15,
+      "sizeHint": "tall",
+      "loreAr": "شبح طويل شفاف يحرس أطلال الحصون."
+    },
+    {
+      "id": "monster_sand_drake",
+      "nameAr": "تنين الصحراء",
+      "tier": 3,
+      "meshKey": "drake",
+      "defensePowerApprox": 2200,
+      "recommendedPower": 3000,
+      "garrison": { "light_infantry": 500, "archers": 400 },
+      "loot": { "food": 2000, "wood": 1500, "stone": 400, "gold": 200 },
+      "specialReward": {
+        "id": "legend_token",
+        "nameAr": "رمز أسطوري + موارد كبرى",
+        "descAr": "عند الفوز: موارد كبرى ورمز أسطوري في التقرير."
+      },
+      "failWoundMult": 1.25,
+      "sizeHint": "large",
+      "loreAr": "أثر تنين صحراوي — الأكبر ظلًا على الخريطة."
+    }
+  ]
+}

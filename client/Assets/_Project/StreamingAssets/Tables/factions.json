@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "factionChangeAllowed": false
+  },
+  "factions": [
+    {
+      "id": "jazira",
+      "nameAr": "راية الجزيرة / الخلافة",
+      "nameEn": "Banner of the Peninsula / Caliphate",
+      "starterHeroId": "asad_al_rimal",
+      "specialUnitId": "mangonel_engineers",
+      "bonuses": {
+        "cityDefenseWhenWallGte10": 0.08,
+        "raidLossReductionOnWarehouse": 0.05
+      },
+      "theme": {
+        "accent": "#c4a35a",
+        "cityTint": "#8b6914"
+      }
+    },
+    {
+      "id": "rome",
+      "nameAr": "روما / بيزنطة",
+      "nameEn": "Rome / Byzantium",
+      "starterHeroId": "golden_legion_commander",
+      "specialUnitId": "armored_legion",
+      "bonuses": {
+        "infantryArcherTrainTimeReduction": 0.08,
+        "frontLineFormationBonus": 0.05
+      },
+      "theme": {
+        "accent": "#6b8cae",
+        "cityTint": "#3d5a80"
+      }
+    },
+    {
+      "id": "persia",
+      "nameAr": "الفرس / الساسانيون",
+      "nameEn": "Persia / Sassanids",
+      "starterHeroId": "fars_nowruz",
+      "specialUnitId": "mounted_archers",
+      "bonuses": {
+        "openTerrainMarchSpeed": 0.1,
+        "cavalryAttack": 0.06
+      },
+      "theme": {
+        "accent": "#b85c38",
+        "cityTint": "#7a3b2e"
+      }
+    }
+  ]
+}

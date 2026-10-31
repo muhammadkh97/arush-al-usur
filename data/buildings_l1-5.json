@@ -1,0 +1,647 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "notes": "Levels 1–5 (or building max). Costs use economy-combat-tables.md formulas. Palace cost ×1.35. | Pillar1: roleAr/functionAr/tasks + Three.js castle",
+    "productionTickSeconds": 60
+  },
+  "buildings": {
+    "palace": {
+      "id": "palace",
+      "nameAr": "القصر",
+      "maxLevelSlice": 5,
+      "levels": {
+        "1": {
+          "level": 1,
+          "upgradeToNext": {
+            "food": 810,
+            "wood": 945,
+            "stone": 270,
+            "gold": 135,
+            "minutes": 7
+          }
+        },
+        "2": {
+          "level": 2,
+          "upgradeToNext": {
+            "food": 1256,
+            "wood": 1465,
+            "stone": 418,
+            "gold": 209,
+            "minutes": 10
+          }
+        },
+        "3": {
+          "level": 3,
+          "upgradeToNext": {
+            "food": 1946,
+            "wood": 2270,
+            "stone": 649,
+            "gold": 324,
+            "minutes": 15
+          }
+        },
+        "4": {
+          "level": 4,
+          "upgradeToNext": {
+            "food": 3016,
+            "wood": 3519,
+            "stone": 1005,
+            "gold": 503,
+            "minutes": 23
+          }
+        },
+        "5": {
+          "level": 5
+        }
+      },
+      "roleAr": "بوابة مستوى المدينة",
+      "functionAr": "يرفع سقف المباني ويفتح أنظمة القلعة؛ مكافآت مستوى عند الترقية.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد القصر ليبدأ عهدك.",
+        "upgrade": "رقِّ القصر لفتح مباني أعلى.",
+        "use": "راجع مستوى القصر قبل أي توسعة كبرى."
+      }
+    },
+    "farm": {
+      "id": "farm",
+      "nameAr": "مزرعة",
+      "maxLevelSlice": 5,
+      "levels": {
+        "1": {
+          "level": 1,
+          "productionPerHour": {
+            "food": 120
+          },
+          "upgradeToNext": {
+            "food": 200,
+            "wood": 200,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 1
+          }
+        },
+        "2": {
+          "level": 2,
+          "productionPerHour": {
+            "food": 164
+          },
+          "upgradeToNext": {
+            "food": 310,
+            "wood": 310,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "3": {
+          "level": 3,
+          "productionPerHour": {
+            "food": 224
+          },
+          "upgradeToNext": {
+            "food": 481,
+            "wood": 481,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "4": {
+          "level": 4,
+          "productionPerHour": {
+            "food": 307
+          },
+          "upgradeToNext": {
+            "food": 745,
+            "wood": 745,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 3
+          }
+        },
+        "5": {
+          "level": 5,
+          "productionPerHour": {
+            "food": 420
+          }
+        }
+      },
+      "roleAr": "إنتاج طعام",
+      "functionAr": "يولّد طعاماً كل ساعة لدعم الجيش والتدريب.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد مزرعة لتأمين الإمداد.",
+        "upgrade": "رقِّ المزرعة لرفع الإنتاج/ساعة.",
+        "use": "افتح لوحة المزرعة وتأكد من تدفق الطعام قبل التدريب."
+      }
+    },
+    "lumber": {
+      "id": "lumber",
+      "nameAr": "معسكر حطب",
+      "maxLevelSlice": 5,
+      "levels": {
+        "1": {
+          "level": 1,
+          "productionPerHour": {
+            "wood": 100
+          },
+          "upgradeToNext": {
+            "food": 200,
+            "wood": 200,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 1
+          }
+        },
+        "2": {
+          "level": 2,
+          "productionPerHour": {
+            "wood": 138
+          },
+          "upgradeToNext": {
+            "food": 310,
+            "wood": 310,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "3": {
+          "level": 3,
+          "productionPerHour": {
+            "wood": 190
+          },
+          "upgradeToNext": {
+            "food": 481,
+            "wood": 481,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "4": {
+          "level": 4,
+          "productionPerHour": {
+            "wood": 261
+          },
+          "upgradeToNext": {
+            "food": 745,
+            "wood": 745,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 3
+          }
+        },
+        "5": {
+          "level": 5,
+          "productionPerHour": {
+            "wood": 360
+          }
+        }
+      },
+      "roleAr": "إنتاج خشب",
+      "functionAr": "يولّد خشباً للبناء والتدريب.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد معسكر الحطب.",
+        "upgrade": "رقِّ الحطب لرفع الإنتاج.",
+        "use": "راقب مخزون الخشب قبل طابور بناء طويل."
+      }
+    },
+    "quarry": {
+      "id": "quarry",
+      "nameAr": "محجر",
+      "maxLevelSlice": 3,
+      "levels": {
+        "1": {
+          "level": 1,
+          "productionPerHour": {
+            "stone": 80
+          },
+          "upgradeToNext": {
+            "food": 200,
+            "wood": 200,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 1
+          }
+        },
+        "2": {
+          "level": 2,
+          "productionPerHour": {
+            "stone": 109
+          },
+          "upgradeToNext": {
+            "food": 310,
+            "wood": 310,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "3": {
+          "level": 3,
+          "productionPerHour": {
+            "stone": 150
+          }
+        }
+      },
+      "roleAr": "إنتاج حجر",
+      "functionAr": "يولّد حجراً للأسوار والمباني الثقيلة.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد المحجر.",
+        "upgrade": "رقِّ المحجر لرفع الإنتاج.",
+        "use": "تحقق من الحجر قبل ترقية السور أو القصر."
+      }
+    },
+    "goldmine": {
+      "id": "goldmine",
+      "nameAr": "منجم ذهب",
+      "maxLevelSlice": 3,
+      "levels": {
+        "1": {
+          "level": 1,
+          "productionPerHour": {
+            "gold": 30
+          },
+          "upgradeToNext": {
+            "food": 200,
+            "wood": 200,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 1
+          }
+        },
+        "2": {
+          "level": 2,
+          "productionPerHour": {
+            "gold": 42
+          },
+          "upgradeToNext": {
+            "food": 310,
+            "wood": 310,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "3": {
+          "level": 3,
+          "productionPerHour": {
+            "gold": 57
+          }
+        }
+      },
+      "roleAr": "إنتاج ذهب",
+      "functionAr": "يولّد ذهباً للترقيات والبطل.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد منجم الذهب.",
+        "upgrade": "رقِّ المنجم لرفع الذهب/ساعة.",
+        "use": "ادّخر الذهب لترقية البطل أو القصر."
+      }
+    },
+    "warehouse": {
+      "id": "warehouse",
+      "nameAr": "مستودع",
+      "maxLevelSlice": 5,
+      "levels": {
+        "1": {
+          "level": 1,
+          "protectionPerResource": 2000,
+          "upgradeToNext": {
+            "food": 400,
+            "wood": 400,
+            "stone": 100,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "2": {
+          "level": 2,
+          "protectionPerResource": 3761,
+          "upgradeToNext": {
+            "food": 620,
+            "wood": 620,
+            "stone": 155,
+            "gold": 0,
+            "minutes": 3
+          }
+        },
+        "3": {
+          "level": 3,
+          "protectionPerResource": 7071,
+          "upgradeToNext": {
+            "food": 961,
+            "wood": 961,
+            "stone": 240,
+            "gold": 0,
+            "minutes": 4
+          }
+        },
+        "4": {
+          "level": 4,
+          "protectionPerResource": 13296,
+          "upgradeToNext": {
+            "food": 1490,
+            "wood": 1490,
+            "stone": 372,
+            "gold": 0,
+            "minutes": 7
+          }
+        },
+        "5": {
+          "level": 5,
+          "protectionPerResource": 25000
+        }
+      },
+      "roleAr": "حماية من النهب",
+      "functionAr": "يحمي قدراً من كل مورد عند الغارات.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد المستودع لحماية الاحتياطي.",
+        "upgrade": "رقِّ المستودع لرفع سقف الحماية.",
+        "use": "افتح المستودع واقرأ رقم الحماية الحالية."
+      }
+    },
+    "barracks": {
+      "id": "barracks",
+      "nameAr": "ثكنات",
+      "maxLevelSlice": 5,
+      "levels": {
+        "1": {
+          "level": 1,
+          "upgradeToNext": {
+            "food": 300,
+            "wood": 400,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "2": {
+          "level": 2,
+          "upgradeToNext": {
+            "food": 465,
+            "wood": 620,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 3
+          }
+        },
+        "3": {
+          "level": 3,
+          "upgradeToNext": {
+            "food": 721,
+            "wood": 961,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 4
+          }
+        },
+        "4": {
+          "level": 4,
+          "upgradeToNext": {
+            "food": 1117,
+            "wood": 1490,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 7
+          }
+        },
+        "5": {
+          "level": 5
+        }
+      },
+      "roleAr": "تدريب مشاة",
+      "functionAr": "يدرّب المشاة الخفيفة والوحدات الخاصة المرتبطة بالثكنة.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد الثكنات.",
+        "upgrade": "رقِّ الثكنات لتسريع/توسيع التدريب.",
+        "use": "درِّب دفعة مشاة من لوحة الثكنة."
+      }
+    },
+    "archery": {
+      "id": "archery",
+      "nameAr": "ميدان رماة",
+      "maxLevelSlice": 3,
+      "levels": {
+        "1": {
+          "level": 1,
+          "upgradeToNext": {
+            "food": 300,
+            "wood": 400,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "2": {
+          "level": 2,
+          "upgradeToNext": {
+            "food": 465,
+            "wood": 620,
+            "stone": 0,
+            "gold": 0,
+            "minutes": 3
+          }
+        },
+        "3": {
+          "level": 3
+        }
+      },
+      "roleAr": "تدريب رماة",
+      "functionAr": "يدرّب الرماة بعد فتح القصر بالمستوى المطلوب.",
+      "unlocksAtPalace": 4,
+      "tasks": {
+        "build": "شيّد ميدان الرماة عند قصر 4.",
+        "upgrade": "رقِّ الميدان لدعم صف الرماة.",
+        "use": "درِّب رماة من لوحة الميدان."
+      }
+    },
+    "wall": {
+      "id": "wall",
+      "nameAr": "سور",
+      "maxLevelSlice": 3,
+      "levels": {
+        "1": {
+          "level": 1,
+          "upgradeToNext": {
+            "food": 250,
+            "wood": 350,
+            "stone": 150,
+            "gold": 0,
+            "minutes": 3
+          }
+        },
+        "2": {
+          "level": 2,
+          "upgradeToNext": {
+            "food": 388,
+            "wood": 542,
+            "stone": 232,
+            "gold": 0,
+            "minutes": 4
+          }
+        },
+        "3": {
+          "level": 3
+        }
+      },
+      "roleAr": "دفاع المدينة",
+      "functionAr": "يعزّز دفاع الحامية ضد الغارات.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد السور.",
+        "upgrade": "رقِّ السور لرفع الدفاع.",
+        "use": "راجع مستوى السور قبل صد غارة."
+      }
+    },
+    "embassy": {
+      "id": "embassy",
+      "nameAr": "سفارة",
+      "maxLevelSlice": 3,
+      "levels": {
+        "1": {
+          "level": 1,
+          "upgradeToNext": {
+            "food": 350,
+            "wood": 400,
+            "stone": 100,
+            "gold": 50,
+            "minutes": 3
+          }
+        },
+        "2": {
+          "level": 2,
+          "upgradeToNext": {
+            "food": 542,
+            "wood": 620,
+            "stone": 155,
+            "gold": 78,
+            "minutes": 4
+          }
+        },
+        "3": {
+          "level": 3
+        }
+      },
+      "roleAr": "بوابة التحالف",
+      "functionAr": "يتيح إنشاء/انضمام التحالف وطلب المساعدة.",
+      "unlocksAtPalace": 3,
+      "tasks": {
+        "build": "شيّد السفارة عند قصر 3.",
+        "upgrade": "رقِّ السفارة لتوسيع أدوات التحالف.",
+        "use": "من السفارة انتقل للتحالف واطلب مساعدة بناء."
+      }
+    },
+    "hospital": {
+      "id": "hospital",
+      "nameAr": "مستشفى",
+      "maxLevelSlice": 3,
+      "levels": {
+        "1": {
+          "level": 1,
+          "upgradeToNext": {
+            "food": 400,
+            "wood": 400,
+            "stone": 100,
+            "gold": 0,
+            "minutes": 2
+          }
+        },
+        "2": {
+          "level": 2,
+          "upgradeToNext": {
+            "food": 620,
+            "wood": 620,
+            "stone": 155,
+            "gold": 0,
+            "minutes": 3
+          }
+        },
+        "3": {
+          "level": 3
+        }
+      },
+      "roleAr": "شفاء الجرحى",
+      "functionAr": "يشغّل طابور شفاء للوحدات المصابة من القتال.",
+      "unlocksAtPalace": 1,
+      "tasks": {
+        "build": "شيّد المستشفى.",
+        "upgrade": "رقِّ المستشفى لتقصير زمن الشفاء.",
+        "use": "ابدأ طابور شفاء عند وجود جرحى."
+      }
+    },
+    "academy": {
+      "id": "academy",
+      "nameAr": "أكاديمية",
+      "maxLevelSlice": 3,
+      "levels": {
+        "1": {
+          "level": 1,
+          "upgradeToNext": {
+            "food": 500,
+            "wood": 600,
+            "stone": 200,
+            "gold": 50,
+            "minutes": 5
+          }
+        },
+        "2": {
+          "level": 2,
+          "upgradeToNext": {
+            "food": 775,
+            "wood": 930,
+            "stone": 310,
+            "gold": 78,
+            "minutes": 8
+          }
+        },
+        "3": {
+          "level": 3
+        }
+      },
+      "roleAr": "بحث عسكري",
+      "functionAr": "يفتح مسار البحوث (شريحة: واجهة دور).",
+      "unlocksAtPalace": 2,
+      "tasks": {
+        "build": "شيّد الأكاديمية عند قصر 2.",
+        "upgrade": "رقِّ الأكاديمية لتوسيع البحوث.",
+        "use": "افتح الأكاديمية وراجع دور البحث الحالي."
+      }
+    },
+    "shrine": {
+      "id": "shrine",
+      "nameAr": "معبد/ضريح",
+      "maxLevelSlice": 2,
+      "levels": {
+        "1": {
+          "level": 1,
+          "upgradeToNext": {
+            "food": 450,
+            "wood": 500,
+            "stone": 250,
+            "gold": 100,
+            "minutes": 5
+          }
+        },
+        "2": {
+          "level": 2
+        }
+      },
+      "roleAr": "قاعة البطل",
+      "functionAr": "يربط شاشة البطل وترقية المهارات داخل المدينة.",
+      "unlocksAtPalace": 2,
+      "tasks": {
+        "build": "شيّد الضريح عند قصر 2.",
+        "upgrade": "رقِّ الضريح لدعم مسار البطل.",
+        "use": "من الضريح افتح شاشة البطل وارفع مستواه."
+      }
+    }
+  }
+}

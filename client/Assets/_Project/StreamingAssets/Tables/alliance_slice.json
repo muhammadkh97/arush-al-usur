@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "phase": 1,
+    "noFortress": true
+  },
+  "maxMembers": 30,
+  "ranks": [
+    "leader",
+    "member"
+  ],
+  "help": {
+    "maxHelpsPerTimer": 5,
+    "timeReductionPercentPerHelp": 0.01,
+    "minReductionSeconds": 30,
+    "notes": "كل مساعدة تخصم 1% من الزمن المتبقي أو 30 ثانية كحد أدنى"
+  }
+}

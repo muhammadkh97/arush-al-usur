@@ -1,0 +1,116 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "notes": "AU-19: مستويات الحقول، مخزون، عائد/ساعة، طاقة، إعادة ملء، قوة موصى (Soft)",
+    "resourceStockMult": { "food": 1.0, "wood": 1.0, "stone": 0.7, "gold": 0.25 }
+  },
+  "levelTable": [
+    {
+      "level": 1,
+      "stockBase": 2000,
+      "gatherPerHour": 300,
+      "stamina": 5,
+      "recommendedPower": null,
+      "refillMinutes": [20, 30]
+    },
+    {
+      "level": 2,
+      "stockBase": 6000,
+      "gatherPerHour": 600,
+      "stamina": 5,
+      "recommendedPower": 300,
+      "refillMinutes": [30, 45]
+    },
+    {
+      "level": 3,
+      "stockBase": 15000,
+      "gatherPerHour": 1200,
+      "stamina": 5,
+      "recommendedPower": 800,
+      "refillMinutes": [45, 60]
+    },
+    {
+      "level": 4,
+      "stockBase": 40000,
+      "gatherPerHour": 2200,
+      "stamina": 8,
+      "recommendedPower": 2000,
+      "refillMinutes": [60, 90]
+    },
+    {
+      "level": 5,
+      "stockBase": 100000,
+      "gatherPerHour": 4000,
+      "stamina": 10,
+      "recommendedPower": 5000,
+      "refillMinutes": [120, 180]
+    }
+  ],
+  "fields": [
+    {
+      "id": "field_food_1",
+      "nameAr": "حقول القمح",
+      "resource": "food",
+      "level": 1,
+      "meshKey": "field_food",
+      "occupyMinutesSlice": 1.5
+    },
+    {
+      "id": "field_food_2",
+      "nameAr": "واحة المراعي",
+      "resource": "food",
+      "level": 2,
+      "meshKey": "field_food",
+      "occupyMinutesSlice": 1.5
+    },
+    {
+      "id": "field_wood_1",
+      "nameAr": "غابة الأرز",
+      "resource": "wood",
+      "level": 2,
+      "meshKey": "field_wood",
+      "occupyMinutesSlice": 1.5
+    },
+    {
+      "id": "field_wood_2",
+      "nameAr": "أحراش الساحل",
+      "resource": "wood",
+      "level": 1,
+      "meshKey": "field_wood",
+      "occupyMinutesSlice": 1.5
+    },
+    {
+      "id": "field_stone_1",
+      "nameAr": "مقلع الجبل",
+      "resource": "stone",
+      "level": 3,
+      "meshKey": "field_stone",
+      "occupyMinutesSlice": 2
+    },
+    {
+      "id": "field_stone_2",
+      "nameAr": "صخور الهضبة",
+      "resource": "stone",
+      "level": 2,
+      "meshKey": "field_stone",
+      "occupyMinutesSlice": 1.5
+    },
+    {
+      "id": "field_gold_1",
+      "nameAr": "منجم القوافل",
+      "resource": "gold",
+      "level": 3,
+      "meshKey": "field_gold",
+      "occupyMinutesSlice": 2
+    },
+    {
+      "id": "field_gold_2",
+      "nameAr": "رمال الذهب",
+      "resource": "gold",
+      "level": 4,
+      "meshKey": "field_gold",
+      "occupyMinutesSlice": 2.5
+    }
+  ]
+}

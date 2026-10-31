@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "heroContributionCap": 0.25,
+    "maxLevelSlice": 20,
+    "equipSlots": 2,
+    "heroRawPowerAtLevel50Approx": 2800,
+    "notes": "AU-18: دور + سمات + أفضل استخدام؛ المساهمة ≤ 25٪ من قوة الجيش قبل البطل"
+  },
+  "heroes": [
+    {
+      "id": "asad_al_rimal",
+      "nameAr": "أسد الرمال",
+      "factionId": "jazira",
+      "roleAr": "دفاع مدينة",
+      "bestUseAr": "صد غارة / حامية المدينة",
+      "meshKey": "hero_sand",
+      "heroRawPowerAtLevel1": 120,
+      "heroRawPowerAtLevel20Approx": 900,
+      "heroRawPowerAtLevel50Approx": 2800,
+      "traits": [
+        { "id": "steadfast", "nameAr": "ثبات الواحة", "descAr": "+2٪ دفاع عند القتال داخل المدينة (شريحة)." },
+        { "id": "sand_veil", "nameAr": "ستار الرمال", "descAr": "يقلل خسائر الحامية الطفيفة في التقارير الدفاعية." }
+      ],
+      "active": {
+        "id": "fort_cry",
+        "nameAr": "صيحة الحصن",
+        "effect": "city_defense_all_units",
+        "valueAtLevel1": 0.08,
+        "valuePerSkillLevel": 0.01,
+        "notes": "دفاع مدينة فقط في الشريحة؛ يُطبَّق كباف دفاع عند تقييم قوة المدافع إن وُجد"
+      },
+      "passive": {
+        "id": "infantry_hp",
+        "nameAr": "صلابة المشاة",
+        "effect": "infantry_hp",
+        "value": 0.04
+      },
+      "statsPreview": {
+        "leadership": 14,
+        "might": 11,
+        "ward": 16,
+        "march": 8
+      }
+    },
+    {
+      "id": "golden_legion_commander",
+      "nameAr": "قائد الفيلق الذهبي",
+      "factionId": "rome",
+      "roleAr": "هجوم مشاة",
+      "bestUseAr": "غارات مشاة على معسكرات ضعيفة",
+      "meshKey": "hero_legion",
+      "heroRawPowerAtLevel1": 120,
+      "heroRawPowerAtLevel20Approx": 900,
+      "heroRawPowerAtLevel50Approx": 2800,
+      "traits": [
+        { "id": "iron_discipline", "nameAr": "انضباط حديدي", "descAr": "يحسّن تماسك خط المشاة في الجولة الأولى." },
+        { "id": "aquila", "nameAr": "راية النسر", "descAr": "مكافأة رمزية على تقارير الفوز بالمشاة." }
+      ],
+      "active": {
+        "id": "legion_line",
+        "nameAr": "خطّ الفيلق",
+        "effect": "infantry_attack_first_round",
+        "valueAtLevel1": 0.1,
+        "valuePerSkillLevel": 0.012,
+        "notes": "يُحسب كباف هجوم مشاة في القوة الاسمية للمهاجم"
+      },
+      "passive": {
+        "id": "infantry_train_speed",
+        "nameAr": "انضباط التدريب",
+        "effect": "infantry_train_time_reduction",
+        "value": 0.05
+      },
+      "statsPreview": {
+        "leadership": 15,
+        "might": 17,
+        "ward": 12,
+        "march": 9
+      }
+    },
+    {
+      "id": "fars_nowruz",
+      "nameAr": "فارس النوروز",
+      "factionId": "persia",
+      "roleAr": "حركة / فرسان",
+      "bestUseAr": "جمع بعيد / غارة خاطفة",
+      "meshKey": "hero_nowruz",
+      "heroRawPowerAtLevel1": 120,
+      "heroRawPowerAtLevel20Approx": 900,
+      "heroRawPowerAtLevel50Approx": 2800,
+      "traits": [
+        { "id": "swift_hoof", "nameAr": "حافر سريع", "descAr": "مسيرات أطول بمسافة أقل على الخريطة." },
+        { "id": "caravan_eye", "nameAr": "عين القافلة", "descAr": "حمولة أعلى قليلاً عند الجمع." }
+      ],
+      "active": {
+        "id": "nowruz_surge",
+        "nameAr": "اندفاع النوروز",
+        "choices": [
+          {
+            "id": "march_speed",
+            "nameAr": "تسريع المسير",
+            "value": 0.12
+          },
+          {
+            "id": "cavalry_attack_on_arrival",
+            "nameAr": "هجوم فرسان عند الوصول",
+            "value": 0.08,
+            "notes": "Phase1: بلا فرسان عامّة؛ يُطبَّق على الرماة المركّبة كوحدة خاصة"
+          }
+        ]
+      },
+      "passive": {
+        "id": "cavalry_load",
+        "nameAr": "حمولة الفرسان",
+        "effect": "cavalry_load",
+        "value": 0.05
+      },
+      "statsPreview": {
+        "leadership": 13,
+        "might": 14,
+        "ward": 10,
+        "march": 18
+      }
+    }
+  ],
+  "equipStarter": [
+    {
+      "id": "bronze_blade",
+      "nameAr": "نصل برونزي",
+      "slot": 0,
+      "heroRawPowerBonus": 15
+    },
+    {
+      "id": "leather_cloak",
+      "nameAr": "عباءة جلد",
+      "slot": 1,
+      "heroRawPowerBonus": 10
+    }
+  ]
+}

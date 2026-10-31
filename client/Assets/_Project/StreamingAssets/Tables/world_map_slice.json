@@ -1,0 +1,837 @@
+{
+  "meta": {
+    "game": "عروش العصور",
+    "phase": 1,
+    "sectorSize": 50,
+    "svgView": {
+      "width": 1000,
+      "height": 900
+    },
+    "notes": "خريطة خارجية استراتيجية — AU-17/19/20: قلاع/حقول/وحوش مع بيانات 3D",
+    "world3d": true
+  },
+  "legend": [
+    {
+      "kind": "castle",
+      "nameAr": "قلعة/حصن",
+      "color": "#e8c47a"
+    },
+    {
+      "kind": "monster",
+      "nameAr": "وحش/أسطورة",
+      "color": "#c45c4a"
+    },
+    {
+      "kind": "resource",
+      "nameAr": "حقل موارد",
+      "color": "#6a9b6e"
+    },
+    {
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد",
+      "color": "#b87333"
+    },
+    {
+      "kind": "fort",
+      "nameAr": "حصن خارجي",
+      "color": "#6b8cae"
+    },
+    {
+      "kind": "ruin",
+      "nameAr": "أطلال",
+      "color": "#8a7a6a"
+    },
+    {
+      "kind": "outpost",
+      "nameAr": "موقع أمامي",
+      "color": "#a67c52"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "castle_player",
+      "kind": "castle",
+      "owner": "player",
+      "nameAr": "قلعتك",
+      "x": 500,
+      "y": 520,
+      "actions": [
+        "enter_interior",
+        "scout"
+      ],
+      "notes": "عاصمة اللاعب — الدخول للخريطة الداخلية",
+      "palaceLevel": 5,
+      "factionStyle": "player",
+      "meshKey": "castle_player",
+      "approxPower": 400
+    },
+    {
+      "id": "castle_ally_stub",
+      "kind": "castle",
+      "owner": "alliance_placeholder",
+      "nameAr": "حصن التحالف (وهمي)",
+      "x": 620,
+      "y": 400,
+      "actions": [
+        "scout"
+      ],
+      "notes": "Placeholder Phase1",
+      "palaceLevel": 3,
+      "factionStyle": "ally",
+      "meshKey": "castle_ally",
+      "approxPower": 250,
+      "allianceTag": "وهمي"
+    },
+    {
+      "id": "castle_npc_rome",
+      "kind": "castle",
+      "owner": "npc",
+      "nameAr": "قلعة الفيالق المهجورة",
+      "x": 280,
+      "y": 300,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_18",
+      "tier": 2,
+      "palaceLevel": 4,
+      "factionStyle": "rome",
+      "meshKey": "castle_npc",
+      "approxPower": 2492,
+      "eraStyle": "rome"
+    },
+    {
+      "id": "castle_npc_sand",
+      "kind": "castle",
+      "owner": "npc",
+      "nameAr": "حصن الواحة",
+      "x": 720,
+      "y": 620,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_08",
+      "tier": 1,
+      "palaceLevel": 2,
+      "factionStyle": "jazira",
+      "meshKey": "castle_npc",
+      "approxPower": 236,
+      "eraStyle": "sand"
+    },
+    {
+      "id": "monster_oasis_jinni",
+      "kind": "monster",
+      "nameAr": "جنيّ الواحة",
+      "x": 180,
+      "y": 480,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "garrison": {
+        "light_infantry": 80,
+        "archers": 40
+      },
+      "loot": {
+        "food": 800,
+        "wood": 200,
+        "stone": 50,
+        "gold": 40
+      },
+      "notes": "عقدة أسطورية مبسّطة للشريحة",
+      "monsterId": "monster_oasis_jinni",
+      "meshKey": "jinni"
+    },
+    {
+      "id": "monster_sand_drake",
+      "kind": "monster",
+      "nameAr": "تنين الصحراء (أثر)",
+      "x": 820,
+      "y": 280,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "garrison": {
+        "light_infantry": 500,
+        "archers": 400
+      },
+      "loot": {
+        "food": 2000,
+        "wood": 1500,
+        "stone": 400,
+        "gold": 200
+      },
+      "notes": "عقدة أسطورية مبسّطة للشريحة",
+      "monsterId": "monster_sand_drake",
+      "meshKey": "drake"
+    },
+    {
+      "id": "monster_fort_ghost",
+      "kind": "monster",
+      "nameAr": "شبح القلعة",
+      "x": 400,
+      "y": 200,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "garrison": {
+        "light_infantry": 200,
+        "archers": 150
+      },
+      "loot": {
+        "food": 600,
+        "wood": 600,
+        "stone": 300,
+        "gold": 80
+      },
+      "notes": "عقدة أسطورية مبسّطة للشريحة",
+      "monsterId": "monster_fort_ghost",
+      "meshKey": "ghost"
+    },
+    {
+      "id": "monster_caravan_beast",
+      "kind": "monster",
+      "nameAr": "وحش القوافل",
+      "x": 650,
+      "y": 750,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "garrison": {
+        "light_infantry": 60,
+        "archers": 30
+      },
+      "loot": {
+        "food": 400,
+        "wood": 300,
+        "stone": 0,
+        "gold": 60
+      },
+      "notes": "عقدة أسطورية مبسّطة للشريحة",
+      "monsterId": "monster_caravan_beast",
+      "meshKey": "beast_caravan"
+    },
+    {
+      "id": "field_food_1",
+      "kind": "resource",
+      "resource": "food",
+      "nameAr": "حقول القمح",
+      "x": 360,
+      "y": 600,
+      "actions": [
+        "scout",
+        "gather"
+      ],
+      "yieldHint": 500,
+      "fieldId": "field_food_1",
+      "level": 1,
+      "meshKey": "field_food"
+    },
+    {
+      "id": "field_food_2",
+      "kind": "resource",
+      "resource": "food",
+      "nameAr": "واحة المراعي",
+      "x": 540,
+      "y": 780,
+      "actions": [
+        "scout",
+        "gather"
+      ],
+      "yieldHint": 500,
+      "fieldId": "field_food_2",
+      "level": 2,
+      "meshKey": "field_food"
+    },
+    {
+      "id": "field_wood_1",
+      "kind": "resource",
+      "resource": "wood",
+      "nameAr": "غابة الأرز",
+      "x": 200,
+      "y": 620,
+      "actions": [
+        "scout",
+        "gather"
+      ],
+      "yieldHint": 450,
+      "fieldId": "field_wood_1",
+      "level": 2,
+      "meshKey": "field_wood"
+    },
+    {
+      "id": "field_wood_2",
+      "kind": "resource",
+      "resource": "wood",
+      "nameAr": "أحراش الساحل",
+      "x": 100,
+      "y": 400,
+      "actions": [
+        "scout",
+        "gather"
+      ],
+      "yieldHint": 450,
+      "fieldId": "field_wood_2",
+      "level": 1,
+      "meshKey": "field_wood"
+    },
+    {
+      "id": "field_stone_1",
+      "kind": "resource",
+      "resource": "stone",
+      "nameAr": "مقلع الجبل",
+      "x": 780,
+      "y": 480,
+      "actions": [
+        "scout",
+        "gather"
+      ],
+      "yieldHint": 200,
+      "fieldId": "field_stone_1",
+      "level": 3,
+      "meshKey": "field_stone"
+    },
+    {
+      "id": "field_stone_2",
+      "kind": "resource",
+      "resource": "stone",
+      "nameAr": "صخور الهضبة",
+      "x": 860,
+      "y": 560,
+      "actions": [
+        "scout",
+        "gather"
+      ],
+      "yieldHint": 200,
+      "fieldId": "field_stone_2",
+      "level": 2,
+      "meshKey": "field_stone"
+    },
+    {
+      "id": "field_gold_1",
+      "kind": "resource",
+      "resource": "gold",
+      "nameAr": "منجم القوافل",
+      "x": 440,
+      "y": 360,
+      "actions": [
+        "scout",
+        "gather"
+      ],
+      "yieldHint": 80,
+      "fieldId": "field_gold_1",
+      "level": 3,
+      "meshKey": "field_gold"
+    },
+    {
+      "id": "field_gold_2",
+      "kind": "resource",
+      "resource": "gold",
+      "nameAr": "رمال الذهب",
+      "x": 320,
+      "y": 160,
+      "actions": [
+        "scout",
+        "gather"
+      ],
+      "yieldHint": 80,
+      "fieldId": "field_gold_2",
+      "level": 4,
+      "meshKey": "field_gold"
+    },
+    {
+      "id": "fort_watch",
+      "kind": "fort",
+      "nameAr": "برج المراقبة",
+      "x": 460,
+      "y": 640,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "notes": "معلم خارجي على الخريطة الاستراتيجية",
+      "npcCampId": "npc_12"
+    },
+    {
+      "id": "fort_gate",
+      "kind": "fort",
+      "nameAr": "بوابة القوافل",
+      "x": 580,
+      "y": 560,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "notes": "معلم خارجي على الخريطة الاستراتيجية",
+      "npcCampId": "npc_12"
+    },
+    {
+      "id": "ruin_temple",
+      "kind": "ruin",
+      "nameAr": "أطلال معبد قديم",
+      "x": 140,
+      "y": 240,
+      "actions": [
+        "scout"
+      ],
+      "notes": "معلم خارجي على الخريطة الاستراتيجية"
+    },
+    {
+      "id": "ruin_aqueduct",
+      "kind": "ruin",
+      "nameAr": "بقايا قناة رومانية",
+      "x": 880,
+      "y": 380,
+      "actions": [
+        "scout"
+      ],
+      "notes": "معلم خارجي على الخريطة الاستراتيجية"
+    },
+    {
+      "id": "outpost_trade",
+      "kind": "outpost",
+      "nameAr": "محطة تجارة",
+      "x": 700,
+      "y": 200,
+      "actions": [
+        "scout"
+      ],
+      "notes": "معلم خارجي على الخريطة الاستراتيجية"
+    },
+    {
+      "id": "outpost_camp",
+      "kind": "outpost",
+      "nameAr": "مخيم بدو",
+      "x": 240,
+      "y": 720,
+      "actions": [
+        "scout"
+      ],
+      "notes": "معلم خارجي على الخريطة الاستراتيجية"
+    },
+    {
+      "id": "camp_npc_01",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 1",
+      "x": 248,
+      "y": 181,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_01"
+    },
+    {
+      "id": "camp_npc_02",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 2",
+      "x": 349,
+      "y": 181,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_02"
+    },
+    {
+      "id": "camp_npc_03",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 3",
+      "x": 450,
+      "y": 181,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_03"
+    },
+    {
+      "id": "camp_npc_04",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 4",
+      "x": 550,
+      "y": 181,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_04"
+    },
+    {
+      "id": "camp_npc_05",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 5",
+      "x": 651,
+      "y": 181,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_05"
+    },
+    {
+      "id": "camp_npc_06",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 6",
+      "x": 752,
+      "y": 181,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_06"
+    },
+    {
+      "id": "camp_npc_07",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 7",
+      "x": 853,
+      "y": 181,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_07"
+    },
+    {
+      "id": "camp_npc_08",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 8",
+      "x": 147,
+      "y": 315,
+      "tier": 1,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_08"
+    },
+    {
+      "id": "camp_npc_09",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 9",
+      "x": 248,
+      "y": 315,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_09"
+    },
+    {
+      "id": "camp_npc_10",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 10",
+      "x": 349,
+      "y": 315,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_10"
+    },
+    {
+      "id": "camp_npc_11",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 11",
+      "x": 450,
+      "y": 315,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_11"
+    },
+    {
+      "id": "camp_npc_12",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 12",
+      "x": 550,
+      "y": 315,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_12"
+    },
+    {
+      "id": "camp_npc_13",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 13",
+      "x": 651,
+      "y": 315,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_13"
+    },
+    {
+      "id": "camp_npc_14",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 14",
+      "x": 752,
+      "y": 315,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_14"
+    },
+    {
+      "id": "camp_npc_15",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 15",
+      "x": 853,
+      "y": 315,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_15"
+    },
+    {
+      "id": "camp_npc_16",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 16",
+      "x": 147,
+      "y": 450,
+      "tier": 2,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_16"
+    },
+    {
+      "id": "camp_npc_17",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 17",
+      "x": 248,
+      "y": 450,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_17"
+    },
+    {
+      "id": "camp_npc_18",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 18",
+      "x": 349,
+      "y": 450,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_18"
+    },
+    {
+      "id": "camp_npc_19",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 19",
+      "x": 450,
+      "y": 450,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_19"
+    },
+    {
+      "id": "camp_npc_20",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 20",
+      "x": 550,
+      "y": 450,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_20"
+    },
+    {
+      "id": "camp_npc_21",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 21",
+      "x": 651,
+      "y": 450,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_21"
+    },
+    {
+      "id": "camp_npc_22",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 22",
+      "x": 752,
+      "y": 450,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_22"
+    },
+    {
+      "id": "camp_npc_23",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 23",
+      "x": 853,
+      "y": 450,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_23"
+    },
+    {
+      "id": "camp_npc_24",
+      "kind": "npc_camp",
+      "nameAr": "معسكر محايد 24",
+      "x": 147,
+      "y": 584,
+      "tier": 3,
+      "actions": [
+        "scout",
+        "attack"
+      ],
+      "npcCampId": "npc_24"
+    }
+  ],
+  "castleInteriorLayout": {
+    "meta": {
+      "style": "isometric-ish top-down",
+      "plane": "1000x700"
+    },
+    "grid": {
+      "cols": 11,
+      "rows": 8
+    },
+    "buildings": [
+      {
+        "id": "palace",
+        "col": 5,
+        "row": 3,
+        "w": 2,
+        "h": 2
+      },
+      {
+        "id": "shrine",
+        "col": 7,
+        "row": 2,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "academy",
+        "col": 3,
+        "row": 2,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "barracks",
+        "col": 2,
+        "row": 4,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "archery",
+        "col": 2,
+        "row": 5,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "hospital",
+        "col": 3,
+        "row": 5,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "embassy",
+        "col": 7,
+        "row": 4,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "warehouse",
+        "col": 6,
+        "row": 5,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "wall",
+        "col": 5,
+        "row": 6,
+        "w": 2,
+        "h": 1
+      },
+      {
+        "id": "farm",
+        "col": 8,
+        "row": 5,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "lumber",
+        "col": 9,
+        "row": 4,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "quarry",
+        "col": 9,
+        "row": 5,
+        "w": 1,
+        "h": 1
+      },
+      {
+        "id": "goldmine",
+        "col": 8,
+        "row": 3,
+        "w": 1,
+        "h": 1
+      }
+    ]
+  }
+}
