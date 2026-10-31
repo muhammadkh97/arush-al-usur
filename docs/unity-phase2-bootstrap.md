@@ -4,8 +4,10 @@
 |---|---|
 | الغرض | تهيئة مستودع Unity فارغ + هيكل مشروع Soft Launch (Phase 2) |
 | المحرك | **Unity 6** مفضّل؛ بديل مقبول **Unity 2022 LTS** + **URP** |
-| اسم المستودع المقترح | `arush-al-usur` |
-| الحالة | وثائق + أوامر — **لا دفع** إلى أي مستودع غير مرتبط |
+| اسم المستودع | `arush-al-usur` |
+| **رابط المستودع الحي** | https://github.com/muhammadkh97/arush-al-usur |
+| الفرع | `main` (`f431d70` — bootstrap Unity Soft Launch skeleton) |
+| الحالة | **مكتمل** — هيكل Unity + `data/` + StreamingAssets + docs دُفعت إلى `main` |
 | مراجع | `project-context.md`, `improvement-plan-six-pillars.md`, `season-one.md`, `phase1-implementation-plan.md`, `prototype/js/castle3d.js`, `data/*` |
 
 ---
@@ -21,15 +23,13 @@
 
 ## 1. إنشاء مستودع GitHub فارغ / Create empty private GitHub repo
 
-### 1.1 حالة المصادقة في هذه الجولة (حاجز)
+### 1.1 حالة المستودع (محدَّث)
 
 | الفحص | النتيجة |
 |---|---|
-| `gh auth status` | **غير مسجّل الدخول** — `You are not logged into any GitHub hosts` |
-| `GH_TOKEN` / `GITHUB_TOKEN` | **غير معيّنين** |
-| إنشاء `arush-al-usur` من الوكيل | **لم يُنفَّذ** — محظور بلا مصادقة |
-
-**الحاجز (Blocker):** يلزم المستخدم تشغيل `gh auth login` (أو تزويد الوكيل بـ `GH_TOKEN` بصلاحية `repo`) ثم إعادة طلب إنشاء المستودع. حتى ذلك الحين: نفّذ الأوامر أدناه محليًا.
+| المستودع الحي | https://github.com/muhammadkh97/arush-al-usur |
+| الفرع `main` | مدفوع — هيكل Soft Launch + جداول + وثائق |
+| ملاحظة | التهيئة نُفِّذت على الريبو الفارغ الموجود؛ لا تعديل على أي ريبو آخر |
 
 ### 1.2 أوامر المستخدم الدقيقة (مستودع خاص فارغ)
 
@@ -75,7 +75,7 @@ git branch -M main
 git push -u origin main
 ```
 
-> **رابط المستودع الحقيقي:** *لم يُنشأ في هذه الجولة.* بعد `gh auth login` يُستبدل هذا السطر بالـ URL الفعلي.
+> **رابط المستودع الحقيقي:** https://github.com/muhammadkh97/arush-al-usur
 
 ---
 
@@ -332,3 +332,4 @@ data/*.json  →  نسخ/مزامنة  →  client/Assets/_Project/StreamingAsse
 | التاريخ | التغيير |
 |---|---|
 | 2026-10-31 | إنشاء Bootstrap Phase 2؛ توثيق حاجز `gh auth`؛ هيكل URP؛ كاميرا/إضاءة من `castle3d.js`؛ معالم U1–U5 + Soft |
+| 2026-10-31 | دفع الهيكل إلى https://github.com/muhammadkh97/arush-al-usur (`main` / `f431d70`) — بدون أسرار |
