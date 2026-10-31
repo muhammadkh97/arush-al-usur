@@ -2160,3 +2160,62 @@ body::after {
   .war-banner { align-items: flex-start; flex-direction: column; }
   .war-timer { padding: .45rem 0 0; border-inline-start: 0; border-top: 1px solid rgba(196,92,74,.34); text-align: right; }
 }
+
+
+
+/* ========== Royal commanders council ========== */
+.hero-command-panel { background: linear-gradient(145deg, rgba(18,31,48,.96), rgba(8,15,26,.88)); border-color: rgba(215,169,95,.34); }
+.hero-command-banner { display: flex; align-items: center; gap: .7rem; margin: -.25rem -.25rem .85rem; padding: .7rem .75rem; background: linear-gradient(105deg, rgba(215,169,95,.12), rgba(10,18,30,.15)); border-bottom: 1px solid rgba(215,169,95,.22); }
+.hero-crown { display: grid; place-items: center; width: 48px; height: 48px; flex: 0 0 auto; color: #f0d29a; border: 1px solid rgba(215,169,95,.72); border-radius: 50%; font-size: 1.45rem; box-shadow: 0 0 24px rgba(215,169,95,.22), inset 0 0 14px rgba(215,169,95,.12); }
+.hero-command-banner > div:nth-child(2) { min-width: 0; }
+.hero-command-banner span, .hero-preview-caption span, .hero-overview span, .hero-section-title span, .hero-skill-card span, .hero-upgrade-card span, .hero-choice > span { display: block; color: #a9bac5; font-size: .62rem; letter-spacing: .03em; }
+.hero-command-banner h2 { margin: .08rem 0 .15rem; color: #f0d29a; font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
+.hero-command-banner p { margin: 0; color: #c4d0d6; font-size: .68rem; }
+.hero-command-power { margin-inline-start: auto; padding-inline-start: .75rem; border-inline-start: 1px solid rgba(215,169,95,.25); text-align: center; }
+.hero-command-power b { display: block; color: #e4bb75; font-size: 1.25rem; line-height: 1; }
+.hero-command-power span { white-space: nowrap; font-size: .56rem; }
+.hero-preview-wrap { position: relative; }
+.hero-preview-caption { display: flex; justify-content: space-between; gap: .4rem; margin-top: .35rem; padding: .3rem .4rem; background: rgba(8,15,26,.7); border: 1px solid rgba(215,169,95,.16); }
+.hero-preview-caption b { color: #f0d29a; font-size: .62rem; }
+.hero-progression { margin-top: .55rem; }
+.hero-progression > div { display: flex; justify-content: space-between; color: #9eb0b9; font-size: .59rem; }
+.hero-progression b { color: #d7a95f; }
+.hero-progression > i { display: block; height: 5px; margin-top: .25rem; overflow: hidden; background: rgba(255,255,255,.08); border-radius: 5px; }
+.hero-progression em { display: block; height: 100%; background: linear-gradient(90deg, #7f5b2d, #e4bb75); border-radius: 5px; box-shadow: 0 0 10px rgba(215,169,95,.35); }
+.hero-overview { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; margin-bottom: .5rem; }
+.hero-overview > div { padding: .45rem .55rem; background: rgba(255,255,255,.035); border: 1px solid rgba(215,169,95,.13); }
+.hero-overview strong, .hero-overview small { display: block; }
+.hero-overview strong { margin: .08rem 0; color: #f0d29a; font-size: 1.1rem; }
+.hero-overview small { color: #8ea3ae; font-size: .56rem; }
+.hero-section-title { display: flex; align-items: baseline; gap: .45rem; margin: .75rem 0 .35rem; padding-bottom: .3rem; border-bottom: 1px solid rgba(215,169,95,.15); }
+.hero-section-title h3 { margin: 0; color: #f0d29a; font-family: var(--font-display); font-size: 1.05rem; }
+.hero-skill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; }
+.hero-skill-card { display: flex; gap: .45rem; padding: .55rem; background: rgba(255,255,255,.035); border: 1px solid rgba(215,169,95,.15); border-right: 2px solid #d7a95f; }
+.hero-skill-card.skill-passive { border-right-color: #719da0; }
+.skill-glyph { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 auto; color: #f0d29a; border: 1px solid rgba(215,169,95,.5); border-radius: 50%; font-size: .75rem; }
+.skill-passive .skill-glyph { color: #9fd0cf; border-color: rgba(113,157,160,.5); }
+.hero-skill-card strong, .hero-skill-card p { display: block; }
+.hero-skill-card strong { margin-top: .1rem; color: #e8edf0; font-size: .72rem; }
+.hero-skill-card p { margin: .2rem 0 0; color: #a9bac5; font-size: .61rem; line-height: 1.5; }
+.hero-traits { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem .8rem; margin-bottom: .45rem; }
+.hero-traits li { margin: 0; color: #b8c7cd; font-size: .68rem; }
+.hero-traits strong { color: #e4bb75; }
+.hero-choice { padding: .5rem; background: rgba(215,169,95,.06); border: 1px dashed rgba(215,169,95,.25); }
+.hero-choice > div { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .35rem; }
+.hero-upgrade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; }
+.hero-upgrade-card { padding: .55rem; background: rgba(255,255,255,.035); border: 1px solid rgba(215,169,95,.16); }
+.hero-upgrade-card strong, .hero-upgrade-card small { display: block; }
+.hero-upgrade-card strong { margin: .08rem 0; color: #f0d29a; font-size: .82rem; }
+.hero-upgrade-card small { min-height: 18px; color: #91c998; font-size: .58rem; }
+.hero-upgrade-card .btn { width: 100%; margin-top: .45rem; }
+
+@media (max-width: 860px) {
+  .hero-skill-grid, .hero-upgrade-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .hero-command-banner { padding: .55rem; }
+  .hero-crown { width: 38px; height: 38px; font-size: 1.1rem; }
+  .hero-command-banner h2 { font-size: 1.25rem; }
+  .hero-command-power { display: none; }
+  .hero-traits { grid-template-columns: 1fr; }
+}

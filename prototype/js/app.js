@@ -881,40 +881,27 @@ function renderHero() {
   const traits = (h.traits || []).map((t) => `<li><strong>${t.nameAr}</strong> — ${t.descAr}</li>`).join('');
   const sp = h.statsPreview || {};
 
-  stage.innerHTML = `<div class="panel hero-panel">
+  const levelCost = { food: 200 * state.hero.level, gold: 20 * state.hero.level };
+  const skillCost = 30 * state.hero.skillLevel;
+  const levelPct = Math.min(100, Math.round((state.hero.level / 20) * 100));
+  const skillPct = Math.min(100, Math.round((state.hero.skillLevel / 5) * 100));
+  stage.innerHTML = `<div class="panel hero-panel hero-command-panel">
+    <div class="hero-command-banner"><div class="hero-crown">♛</div><div><span>مجلس القادة · ${factionName(state.factionId)}</span><h2>${h.nameAr}</h2><p>${h.roleAr || 'قائد ميداني'} · ${h.bestUseAr || 'يقود الجيوش إلى النصر'}</p></div><div class="hero-command-power"><b>${raw + equip}</b><span>القوة الملكية</span></div></div>
     <div class="hero-layout">
       <div class="hero-preview-wrap">
         <div class="unit-preview hero-preview" id="hero-preview-3d" aria-label="نموذج البطل"></div>
-        <p class="muted center">دوران تلقائي · فن أصلي منخفض البولي</p>
+        <div class="hero-preview-caption"><span>قائد ${factionName(state.factionId)}</span><b>المستوى ${state.hero.level}/20</b></div>
+        <div class="hero-progression"><div><span>مسار القائد</span><b>${levelPct}%</b></div><i><em style="width:${levelPct}%"></em></i></div>
       </div>
       <div class="hero-card-body">
-        <h2>${h.nameAr}</h2>
-        <p class="ok"><strong>الدور:</strong> ${h.roleAr || '—'} · <strong>أفضل استخدام:</strong> ${h.bestUseAr || '—'}</p>
-        <p class="muted">${factionName(state.factionId)} · مستوى ${state.hero.level}/20 · مهارة ${state.hero.skillLevel}/5</p>
-        <p>قوة خام≈ ${raw + equip} (تجهيز +${equip}) · مساهمة متوقعة ≈ ${Math.round(contrib)}
-          (${Math.round((contrib / Math.max(1, armyP)) * 100)}٪ من جيش ${armyP}) — <strong>سقف 25٪</strong>.</p>
-        <div class="hero-stat-row">
-          <span>قيادة ${sp.leadership ?? '—'}</span>
-          <span>بأس ${sp.might ?? '—'}</span>
-          <span>حماية ${sp.ward ?? '—'}</span>
-          <span>مسير ${sp.march ?? '—'}</span>
-        </div>
-        <h3>سمات</h3>
-        <ul class="trait-list">${traits || '<li class="muted">—</li>'}</ul>
-        <h3>مهارة نشطة</h3><p>${activeDesc}</p>
-        <h3>سلبية</h3><p>${h.passive.nameAr} (${Math.round((h.passive.value || 0) * 100)}٪)</p>
-        ${h.active.choices ? `
-          <h3>اختيار اندفاع النوروز</h3>
-          <div class="inline-actions">
-            ${h.active.choices.map((c) => `
-              <button class="btn btn-ghost btn-small ${state.hero.nowruzChoice === c.id ? 'btn-primary' : ''}" data-nowruz="${c.id}">${c.nameAr}</button>
-            `).join('')}
-          </div>` : ''}
-        <div class="inline-actions">
-          <button class="btn btn-primary" id="btn-hero-lvl">رفع المستوى</button>
-          <button class="btn btn-ghost" id="btn-hero-skill">رفع المهارة</button>
-          <button class="btn btn-ghost" id="btn-back-castle">داخل القلعة</button>
-        </div>
+        <div class="hero-overview"><div><span>مساهمة متوقعة</span><strong>${Math.round(contrib)}</strong><small>من قوة الجيش ${armyP} · سقف 25٪</small></div><div><span>المهارة</span><strong>${state.hero.skillLevel}/5</strong><small>${skillPct}% من الإتقان</small></div></div>
+        <div class="hero-stat-row"><span>قيادة ${sp.leadership ?? '—'}</span><span>بأس ${sp.might ?? '—'}</span><span>حماية ${sp.ward ?? '—'}</span><span>مسير ${sp.march ?? '—'}</span></div>
+        <div class="hero-section-title"><span>ختم القائد</span><h3>المهارات الخاصة</h3></div>
+        <div class="hero-skill-grid"><article class="hero-skill-card skill-active"><div class="skill-glyph">✦</div><div><span>نشطة · مستوى ${state.hero.skillLevel}/5</span><strong>${h.active.nameAr}</strong><p>${activeDesc}</p></div></article><article class="hero-skill-card skill-passive"><div class="skill-glyph">◈</div><div><span>سلبية · ثابتة</span><strong>${h.passive.nameAr}</strong><p>${h.passive.descAr || 'تمنح الجيش ميزة مستمرة في ساحة المعركة.'} (${Math.round((h.passive.value || 0) * 100)}٪)</p></div></article></div>
+        <div class="hero-section-title"><span>إرث المعركة</span><h3>سمات القائد</h3></div><ul class="trait-list hero-traits">${traits || '<li class="muted">—</li>'}</ul>
+        ${h.active.choices ? `<div class="hero-choice"><span>اختيار اندفاع النوروز</span><div>${h.active.choices.map((c) => `<button class="btn btn-ghost btn-small ${state.hero.nowruzChoice === c.id ? 'btn-primary' : ''}" data-nowruz="${c.id}">${c.nameAr}</button>`).join('')}</div></div>` : ''}
+        <div class="hero-section-title"><span>إدارة الرتبة</span><h3>ترقية القائد</h3></div><div class="hero-upgrade-grid"><div class="hero-upgrade-card"><div><span>المستوى التالي</span><strong>${state.hero.level >= 20 ? 'مكتمل' : `${state.hero.level} → ${state.hero.level + 1}`}</strong></div><small>🌾 ${levelCost.food} · ✦ ${levelCost.gold}</small><button class="btn btn-primary btn-small" id="btn-hero-lvl" ${state.hero.level >= 20 ? 'disabled' : ''}>رفع المستوى</button></div><div class="hero-upgrade-card"><div><span>تطوير المهارة</span><strong>${state.hero.skillLevel >= 5 ? 'مكتمل' : `${state.hero.skillLevel} → ${state.hero.skillLevel + 1}`}</strong></div><small>✦ ${skillCost} ذهب</small><button class="btn btn-ghost btn-small" id="btn-hero-skill" ${state.hero.skillLevel >= 5 ? 'disabled' : ''}>رفع المهارة</button></div></div>
+        <div class="inline-actions"><button class="btn btn-ghost" id="btn-back-castle">داخل القلعة</button></div>
       </div>
     </div>
   </div>`;
