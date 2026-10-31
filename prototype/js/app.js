@@ -224,6 +224,30 @@ function storyLedgerHtml() {
   </section>`;
 }
 
+function castleResourceLedgerHtml() {
+  const resourceMeta = [
+    ['food', 'القمح', 'food', '🌾'],
+    ['wood', 'الأخشاب', 'wood', '▥'],
+    ['stone', 'الحجر', 'stone', '◈'],
+    ['gold', 'الذهب', 'gold', '✦'],
+  ];
+  const production = { food: 0, wood: 0, stone: 0, gold: 0 };
+  for (const [id, level] of Object.entries(state.buildings || {})) {
+    const row = tables.buildings.buildings[id]?.levels?.[String(level)]?.productionPerHour;
+    if (!row) continue;
+    for (const key of Object.keys(production)) production[key] += row[key] || 0;
+  }
+  return `<section class="castle-resource-ledger">
+    <div class="ledger-heading"><span class="ledger-kicker">خزائن القلعة · تدفق حي</span><strong>مخزون المملكة</strong><span class="ledger-capacity">قصر ${state.buildings?.palace || 0} · ${Object.keys(state.buildings || {}).filter((id) => state.buildings[id] > 0).length} منشآت عاملة</span></div>
+    <div class="resource-ledger-grid">
+      ${resourceMeta.map(([id, label, cls, icon]) => `<div class="resource-ledger-card resource-${cls}">
+        <div class="resource-ledger-icon">${icon}</div>
+        <div><span>${label}</span><strong>${Math.floor(state.resources?.[id] || 0).toLocaleString('ar')}</strong><em>+${production[id] || 0}/س</em></div>
+      </div>`).join('')}
+    </div>
+  </section>`;
+}
+
 function bindQueueButtons() {
   $('#btn-help-build')?.addEventListener('click', () => {
     const r = G.requestBuildHelp(state, tables);
@@ -489,8 +513,14 @@ function renderCity() {
       <div class="map-compose castle-compose">
         <div class="map-main-col">
           <div class="castle-stage castle-3d-mode theme-${state.factionId}">
+            <div class="castle-command-hud">
+              <div class="castle-seal">✦</div>
+              <div class="castle-command-copy"><span>مقر السيادة · ${factionName(state.factionId)}</span><strong>قلعة ${state.playerName}</strong><em>القصر مستوى ${state.buildings?.palace || 0} · الدرع الملكي فعّال</em></div>
+              <div class="castle-command-rank"><b>${Object.values(state.buildings || {}).reduce((sum, level) => sum + (level || 0), 0)}</b><span>رتبة البناء</span></div>
+            </div>
             <div id="castle-webgl-host" class="castle-webgl-host castle-3d-host" role="img" aria-label="مشهد القلعة ثلاثي الأبعاد"></div>
           </div>
+          <div id="castle-resource-ledger-host">${castleResourceLedgerHtml()}</div>
           <div id="story-ledger-host">${storyLedgerHtml()}</div>
           <div id="city-queue-host">${queueBannerHtml()}</div>
         </div>
@@ -499,6 +529,8 @@ function renderCity() {
   } else {
     const q = $('#city-queue-host');
     if (q) q.innerHTML = queueBannerHtml();
+    const resourceLedgerHost = $('#castle-resource-ledger-host');
+    if (resourceLedgerHost) resourceLedgerHost.innerHTML = castleResourceLedgerHtml();
     const storyHost = $('#story-ledger-host');
     if (storyHost) storyHost.innerHTML = storyLedgerHtml();
     const dockHost = $('#city-dock-host');

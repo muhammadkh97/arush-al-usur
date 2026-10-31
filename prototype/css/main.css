@@ -1800,3 +1800,91 @@ body::after {
   .atlas-stat { padding-inline-start: .38rem; }
   .world-compass { left: .6rem; bottom: .6rem; transform: scale(.88); transform-origin: bottom left; }
 }
+
+
+
+/* ========== Royal citadel command center ========== */
+.castle-stage {
+  border-color: rgba(215,169,95,.48);
+  box-shadow: 0 24px 58px rgba(3,8,16,.44), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.castle-command-hud {
+  position: absolute;
+  inset: .7rem .8rem auto;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  max-width: calc(100% - 1.6rem);
+  padding: .44rem .58rem;
+  background: linear-gradient(105deg, rgba(8,16,28,.88), rgba(20,32,47,.7));
+  border: 1px solid rgba(215,169,95,.38);
+  border-right: 2px solid #d7a95f;
+  box-shadow: 0 9px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+.castle-seal {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  color: #f0d29a;
+  border: 1px solid rgba(215,169,95,.68);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(215,169,95,.2), inset 0 0 12px rgba(215,169,95,.12);
+  font-size: 1rem;
+}
+.castle-command-copy { min-width: 0; }
+.castle-command-copy span { display: block; color: #a9bac5; font-size: .59rem; letter-spacing: .03em; }
+.castle-command-copy strong { display: block; overflow: hidden; color: #f0d29a; font-family: var(--font-display); font-size: 1.05rem; line-height: 1.12; text-overflow: ellipsis; white-space: nowrap; }
+.castle-command-copy em { display: block; margin-top: .12rem; color: #c7d1d5; font-size: .57rem; font-style: normal; }
+.castle-command-rank { margin-inline-start: auto; padding-inline-start: .62rem; border-inline-start: 1px solid rgba(215,169,95,.25); text-align: center; }
+.castle-command-rank b { display: block; color: #e4bb75; font-size: .9rem; line-height: 1; }
+.castle-command-rank span { color: #9eb0b9; font-size: .55rem; white-space: nowrap; }
+
+.castle-resource-ledger {
+  position: relative;
+  padding: .72rem .8rem .78rem;
+  margin: .7rem 0 .85rem;
+  background: linear-gradient(115deg, rgba(14,26,41,.95), rgba(8,16,28,.82));
+  border: 1px solid rgba(215,169,95,.3);
+  border-top: 2px solid rgba(215,169,95,.58);
+  box-shadow: 0 14px 30px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.castle-resource-ledger::after {
+  content: '';
+  position: absolute;
+  inset: auto 8% 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(215,169,95,.5), transparent);
+}
+.ledger-heading { display: flex; align-items: baseline; gap: .55rem; flex-wrap: wrap; margin-bottom: .55rem; }
+.ledger-heading strong { color: #f0d29a; font-family: var(--font-display); font-size: 1.12rem; }
+.ledger-kicker { color: #a9bac5; font-size: .62rem; letter-spacing: .03em; }
+.ledger-capacity { margin-inline-start: auto; color: #8ea3ae; font-size: .6rem; }
+.resource-ledger-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .45rem; }
+.resource-ledger-card { display: flex; align-items: center; gap: .42rem; min-width: 0; padding: .46rem .5rem; background: rgba(255,255,255,.035); border: 1px solid rgba(215,169,95,.12); border-radius: 3px; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+.resource-ledger-card:hover { transform: translateY(-2px); background: rgba(215,169,95,.08); border-color: rgba(215,169,95,.38); }
+.resource-ledger-icon { display: grid; place-items: center; width: 25px; height: 25px; flex: 0 0 auto; color: #efd095; border: 1px solid currentColor; border-radius: 50%; font-size: .74rem; box-shadow: 0 0 12px currentColor; }
+.resource-ledger-card span { display: block; color: #9eb0b9; font-size: .58rem; }
+.resource-ledger-card strong { display: block; color: #f4e5c5; font-size: .83rem; line-height: 1.1; }
+.resource-ledger-card em { display: block; color: #76ad83; font-size: .55rem; font-style: normal; }
+.resource-food .resource-ledger-icon { color: #d5ae62; }
+.resource-wood .resource-ledger-icon { color: #76a875; }
+.resource-stone .resource-ledger-icon { color: #aab8c4; }
+.resource-gold .resource-ledger-icon { color: #f0cf77; }
+
+@media (max-width: 600px) {
+  .castle-command-hud { inset: .55rem .55rem auto; padding: .36rem .42rem; }
+  .castle-seal { width: 29px; height: 29px; font-size: .85rem; }
+  .castle-command-copy strong { font-size: .9rem; }
+  .castle-command-copy em { display: none; }
+  .castle-command-rank { display: none; }
+  .castle-resource-ledger { padding-inline: .58rem; }
+  .ledger-heading { gap: .3rem; }
+  .ledger-heading strong { font-size: 1rem; }
+  .ledger-capacity { width: 100%; margin-inline-start: 0; }
+  .resource-ledger-grid { grid-template-columns: repeat(2, 1fr); }
+}
