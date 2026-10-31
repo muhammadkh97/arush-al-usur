@@ -143,7 +143,8 @@
       },
       "notes": "عقدة أسطورية مبسّطة للشريحة",
       "monsterId": "monster_oasis_jinni",
-      "meshKey": "jinni"
+      "meshKey": "jinni",
+      "level": 8
     },
     {
       "id": "monster_sand_drake",
@@ -168,7 +169,8 @@
       },
       "notes": "عقدة أسطورية مبسّطة للشريحة",
       "monsterId": "monster_sand_drake",
-      "meshKey": "drake"
+      "meshKey": "drake",
+      "level": 36
     },
     {
       "id": "monster_fort_ghost",
@@ -193,7 +195,8 @@
       },
       "notes": "عقدة أسطورية مبسّطة للشريحة",
       "monsterId": "monster_fort_ghost",
-      "meshKey": "ghost"
+      "meshKey": "ghost",
+      "level": 18
     },
     {
       "id": "monster_caravan_beast",
@@ -218,7 +221,8 @@
       },
       "notes": "عقدة أسطورية مبسّطة للشريحة",
       "monsterId": "monster_caravan_beast",
-      "meshKey": "beast_caravan"
+      "meshKey": "beast_caravan",
+      "level": 3
     },
     {
       "id": "field_food_1",

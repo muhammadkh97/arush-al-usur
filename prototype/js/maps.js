@@ -25,8 +25,36 @@ function escapeXml(s) {
 
 function lerp(a, b, t) { return a + (b - a) * t; }
 
+function monsterLevel(n, monster) {
+  return Math.max(1, Math.min(40, Number(n.level || monster?.level || (monster?.tier || n.tier || 1) * 5 - 2)));
+}
+
+function monsterArchetype(level) {
+  if (level <= 5) return 'bull';
+  if (level <= 10) return 'werewolf';
+  if (level <= 15) return 'scorpion';
+  if (level <= 20) return 'ogre';
+  if (level <= 25) return 'serpent';
+  if (level <= 30) return 'griffin';
+  if (level <= 35) return 'cyclops';
+  return 'dragon';
+}
+
+function monster2dShape(level, color, ink) {
+  const archetype = monsterArchetype(level);
+  const label = `<rect x="-19" y="25" width="38" height="13" rx="4" fill="#171c24" stroke="#e8c47a" stroke-width="1"/><text x="0" y="35" text-anchor="middle" font-size="10" fill="#f3e6d0" font-family="Cairo,sans-serif" font-weight="700">م${level}</text>`;
+  if (archetype === 'bull') return `<g class="monster-bull"><path d="M-18 5 Q-20 -14 0 -21 Q20 -14 18 5 L12 19 H-12 Z" fill="#8a4e31" stroke="${ink}" stroke-width="1.6"/><path d="M-12 -13 Q-26 -27 -18 -32 M12 -13 Q26 -27 18 -32" fill="none" stroke="#f0d29a" stroke-width="4" stroke-linecap="round"/><circle cx="-7" cy="-7" r="2.5" fill="#ffd36b"/><circle cx="7" cy="-7" r="2.5" fill="#ffd36b"/><path d="M-7 8 Q0 13 7 8" fill="none" stroke="#271610" stroke-width="2"/>${label}</g>`;
+  if (archetype === 'werewolf') return `<g class="monster-werewolf"><path d="M-17 18 L-20 -8 L-11 -25 L-3 -12 L7 -28 L18 -7 L16 18 Z" fill="#6b7083" stroke="${ink}" stroke-width="1.6"/><path d="M-12 8 L-22 18 M12 8 L22 18" stroke="#c2a4dc" stroke-width="3" stroke-linecap="round"/><circle cx="-7" cy="-5" r="2.8" fill="#e8c47a"/><circle cx="7" cy="-5" r="2.8" fill="#e8c47a"/><path d="M-8 8 Q0 16 8 8" fill="none" stroke="#271610" stroke-width="2"/>${label}</g>`;
+  if (archetype === 'scorpion') return `<g class="monster-scorpion"><path d="M-17 9 Q-12 -14 0 -17 Q12 -14 17 9 Q9 20 0 18 Q-9 20 -17 9 Z" fill="#8e6742" stroke="${ink}" stroke-width="1.6"/><path d="M-14 6 L-27 -2 M14 6 L27 -2 M-12 14 L-22 20 M12 14 L22 20" stroke="#d4a84b" stroke-width="3"/><path d="M0 -15 Q24 -28 27 -13 Q30 -2 22 4" fill="none" stroke="#c45c4a" stroke-width="4"/><circle cx="-6" cy="-4" r="2.5" fill="#ffd36b"/><circle cx="6" cy="-4" r="2.5" fill="#ffd36b"/>${label}</g>`;
+  if (archetype === 'ogre') return `<g class="monster-ogre"><path d="M-21 17 Q-23 -12 -13 -24 Q0 -32 13 -24 Q23 -12 21 17 Z" fill="#587056" stroke="${ink}" stroke-width="1.7"/><circle cx="-9" cy="-8" r="4" fill="#e8c47a"/><circle cx="9" cy="-8" r="4" fill="#e8c47a"/><path d="M-11 9 Q0 18 11 9" fill="none" stroke="#271610" stroke-width="3"/><path d="M-17 -18 L-29 -9 M17 -18 L29 -9" stroke="#9fd0cf" stroke-width="4"/>${label}</g>`;
+  if (archetype === 'serpent') return `<g class="monster-serpent"><path d="M0 25 C-24 9 -18 -10 0 -2 C18 6 24 -13 0 -26 C-16 -34 -24 -22 -17 -16" fill="none" stroke="#4d8c6b" stroke-width="12" stroke-linecap="round"/><path d="M-12 -19 Q0 -34 14 -22 L8 -5 L-8 -5 Z" fill="#a9d080" stroke="${ink}" stroke-width="1.5"/><circle cx="-5" cy="-17" r="2" fill="#271610"/><circle cx="6" cy="-17" r="2" fill="#271610"/>${label}</g>`;
+  if (archetype === 'griffin') return `<g class="monster-griffin"><path d="M-14 17 Q-20 -5 -8 -18 Q0 -28 10 -16 Q21 -4 14 17 Z" fill="#a77d43" stroke="${ink}" stroke-width="1.7"/><path d="M-12 -5 L-32 -18 L-23 5 M12 -5 L32 -18 L23 5" fill="#d8b56d" stroke="${ink}" stroke-width="1.2"/><path d="M-8 2 L0 10 L8 2" fill="none" stroke="#f0d29a" stroke-width="2"/><circle cx="-6" cy="-9" r="2.5" fill="#79d0c8"/><circle cx="6" cy="-9" r="2.5" fill="#79d0c8"/>${label}</g>`;
+  if (archetype === 'cyclops') return `<g class="monster-cyclops"><path d="M-20 18 Q-28 -18 0 -28 Q28 -18 20 18 Z" fill="#7d6e62" stroke="${ink}" stroke-width="1.8"/><circle cx="0" cy="-8" r="8" fill="#f3e6d0" stroke="${ink}"/><circle cx="0" cy="-8" r="3.5" fill="#c45c4a"/><path d="M-10 10 Q0 19 10 10" fill="none" stroke="#271610" stroke-width="3"/><path d="M-19 -20 L-30 -29 M19 -20 L30 -29" stroke="#d4a84b" stroke-width="4"/>${label}</g>`;
+  return `<g class="monster-dragon"><path d="M-18 18 Q-25 -8 -8 -20 L0 -36 L8 -20 Q25 -8 18 18 Z" fill="#9d493b" stroke="${ink}" stroke-width="1.8"/><path d="M-10 -10 L-35 -22 L-20 4 M10 -10 L35 -22 L20 4" fill="#d16c4e" stroke="${ink}" stroke-width="1.4"/><circle cx="-6" cy="-12" r="2.5" fill="#ffd36b"/><circle cx="6" cy="-12" r="2.5" fill="#ffd36b"/><path d="M-5 3 L0 10 L5 3" fill="none" stroke="#ffd39b" stroke-width="2"/>${label}</g>`;
+}
+
 /** Detailed illustrated markers — larger, distinct silhouettes */
-function markerShape(n, color) {
+function markerShape(n, color, monster) {
   const { x, y, kind, resource, owner } = n;
   const c = color;
   const player = owner === 'player';
@@ -53,20 +81,8 @@ function markerShape(n, color) {
   }
 
   if (kind === 'monster') {
-    return `<g transform="translate(${x},${y}) scale(${s + 0.08})" class="mk-monster">
-      <ellipse cx="0" cy="18" rx="22" ry="8" fill="rgba(0,0,0,0.5)"/>
-      <path d="M0 -22 C14 -14 20 2 12 14 C7 20 0 22 0 22 C0 22 -7 20 -12 14 C-20 2 -14 -14 0 -22 Z"
-        fill="url(#monsterSkin)" stroke="${ink}" stroke-width="1.7"/>
-      <path d="M-10 -8 Q-18 -22 -12 -28 M10 -8 Q18 -22 12 -28" fill="none" stroke="#5a2018" stroke-width="3.2" stroke-linecap="round">
-        <animate attributeName="d" dur="2.4s" repeatCount="indefinite"
-          values="M-10 -8 Q-18 -22 -12 -28 M10 -8 Q18 -22 12 -28;M-10 -8 Q-20 -24 -14 -30 M10 -8 Q20 -24 14 -30;M-10 -8 Q-18 -22 -12 -28 M10 -8 Q18 -22 12 -28"/>
-      </path>
-      <circle cx="-6" cy="-2" r="3.6" fill="#f3e6d0"/><circle cx="-6" cy="-2" r="1.5" fill="#1a1010"/>
-      <circle cx="6" cy="-2" r="3.6" fill="#f3e6d0"/><circle cx="6" cy="-2" r="1.5" fill="#1a1010"/>
-      <path d="M-8 8 Q0 16 8 8" fill="none" stroke="${ink}" stroke-width="1.8"/>
-      <path d="M-4 10 L-2 14 M4 10 L2 14" stroke="#f3e6d0" stroke-width="1.2"/>
-      <circle cx="0" cy="4" r="18" fill="none" stroke="${c}" stroke-opacity="0.35" stroke-width="5"/>
-    </g>`;
+    const level = monsterLevel(n, monster);
+    return `<g transform="translate(${x},${y}) scale(${s + 0.08})" class="mk-monster level-${level}"><ellipse cx="0" cy="22" rx="28" ry="8" fill="rgba(0,0,0,0.5)"/><circle cx="0" cy="0" r="30" fill="none" stroke="${c}" stroke-opacity="0.34" stroke-width="4"/>${monster2dShape(level, c, ink)}</g>`;
   }
 
   if (kind === 'resource') {
@@ -366,6 +382,7 @@ export function buildWorldSvg(tables, state, selectedId) {
     <rect width="${w}" height="${h}" fill="url(#vignette)" pointer-events="none"/>
   `;
 
+  const monstersById = Object.fromEntries((tables.monsters?.monsters || []).map((m) => [m.id, m]));
   const nodes = (tables.world.nodes || []).map((n) => {
     const selected = n.id === selectedId;
     const color = kindColor(n.kind, n.resource);
@@ -380,7 +397,7 @@ export function buildWorldSvg(tables, state, selectedId) {
           <animate attributeName="stroke-opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
         </circle>` : ''}
         <circle cx="${n.x}" cy="${n.y}" r="${hitR}" fill="transparent"/>
-        ${markerShape(n, color)}
+        ${markerShape(n, color, monstersById[n.monsterId || n.id])}
         ${label ? `<text x="${n.x}" y="${n.y + hitR + 4}" text-anchor="middle" font-size="15" fill="#fff8ea" font-family="Cairo,sans-serif" font-weight="700" stroke="#0a1018" stroke-width="4" paint-order="stroke">${escapeXml(label)}</text>` : ''}
       </g>`;
   }).join('');
@@ -498,6 +515,56 @@ export function attachWorldPan(svgEl, state, onChange) {
     const nh = vb.h * factor;
     const sx = vb.x + vb.w * fx;
     const sy = vb.y + vb.h * fy;
+    setVb({ x: sx - nw * fx, y: sy - nh * fy, w: nw, h: nh });
+    onChange?.();
+  }, { passive: false });
+}
+
+export function attachSvgPan(svgEl, state, stateKey = 'castleViewBox', onChange) {
+  const pointers = new Map();
+  let last = null;
+  const base = { x: 0, y: 0, w: 720, h: 780 };
+  const getVb = () => {
+    const p = (svgEl.getAttribute('viewBox') || `${base.x} ${base.y} ${base.w} ${base.h}`).split(/\s+/).map(Number);
+    return { x: p[0], y: p[1], w: p[2], h: p[3] };
+  };
+  const setVb = (vb) => {
+    vb.w = Math.min(720, Math.max(300, vb.w));
+    vb.h = Math.min(780, Math.max(320, vb.h));
+    vb.x = Math.max(0, Math.min(720 - vb.w, vb.x));
+    vb.y = Math.max(0, Math.min(780 - vb.h, vb.y));
+    state[stateKey] = vb;
+    svgEl.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  };
+  svgEl.addEventListener('pointerdown', (e) => {
+    if (e.target.closest?.('.castle-plot')) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    svgEl.setPointerCapture?.(e.pointerId);
+    last = { x: e.clientX, y: e.clientY };
+  });
+  svgEl.addEventListener('pointermove', (e) => {
+    if (!pointers.has(e.pointerId) || !last) return;
+    const vb = getVb();
+    const rect = svgEl.getBoundingClientRect();
+    vb.x -= ((e.clientX - last.x) / rect.width) * vb.w;
+    vb.y -= ((e.clientY - last.y) / rect.height) * vb.h;
+    last = { x: e.clientX, y: e.clientY };
+    setVb(vb);
+  });
+  const end = (e) => { pointers.delete(e.pointerId); if (!pointers.size) { last = null; onChange?.(); } };
+  svgEl.addEventListener('pointerup', end);
+  svgEl.addEventListener('pointercancel', end);
+  svgEl.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const vb = getVb();
+    const factor = e.deltaY > 0 ? 1.08 : 0.92;
+    const rect = svgEl.getBoundingClientRect();
+    const fx = (e.clientX - rect.left) / rect.width;
+    const fy = (e.clientY - rect.top) / rect.height;
+    const sx = vb.x + vb.w * fx;
+    const sy = vb.y + vb.h * fy;
+    const nw = vb.w * factor;
+    const nh = vb.h * factor;
     setVb({ x: sx - nw * fx, y: sy - nh * fy, w: nw, h: nh });
     onChange?.();
   }, { passive: false });

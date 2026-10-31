@@ -1,8 +1,5 @@
 import * as G from './game.js';
 import * as Maps from './maps.js';
-import * as Castle3D from './castle3d.js';
-import * as World3D from './world3d.js';
-import * as Preview3D from './preview3d.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -14,11 +11,6 @@ let allianceTab = 'hall';
 let eventsTab = 'world';
 let selectedNodeId = null;
 let selectedBuildingId = null;
-let castle3dApi = null;
-let castle3dBuildSig = '';
-let world3dApi = null;
-let world3dSig = '';
-let previewIds = [];
 
 const ONBOARD = [
   'مرحباً بك في عروش العصور. اضغط مبنىً على خريطة القلعة الداخلية ورقِّه.',
@@ -273,7 +265,7 @@ function bindQueueButtons() {
   });
 }
 
-/* ——— Castle interior map (Three.js / WebGL) ——— */
+/* ——— Castle interior map (historical SVG 2D) ——— */
 function buildingTaskPanel(def, lvl) {
   const role = def.roleAr ? `<p class="bldg-role"><strong>الدور:</strong> ${def.roleAr}</p>` : '';
   const fn = def.functionAr ? `<p class="bldg-fn">${def.functionAr}</p>` : '';
@@ -325,7 +317,7 @@ function buildingDockHtml(bid) {
     return u.trainBuilding === bid;
   });
   if (trainUnits.length) {
-    dock += `<h3>تدريب · معاينة 3D</h3><div class="unit-train-grid">`;
+    dock += `<h3>تدريب · شارات الوحدات 2D</h3><div class="unit-train-grid">`;
     for (const u of trainUnits) {
       const maxLv = G.maxUnlockableUnitLevel(state, tables, u.id);
       const curLv = Math.max(1, Math.min(maxLv || 1, state.unitLevels?.[u.id] || 1));
@@ -446,19 +438,14 @@ function bindCityDock(bid) {
       }
     };
   });
-  // Mount unit 3D previews
+  // Mount 2D unit emblems
   for (const u of tables.units.units) {
     const host = $(`#unit-preview-${u.id}`);
     if (!host) continue;
     if (u.factionId && u.factionId !== state.factionId) continue;
     if (u.trainBuilding !== bid) continue;
-    const pv = Preview3D.mountPreview3D(host, {
-      kind: 'unit',
-      meshKey: u.meshKey || 'infantry',
-      factionId: state.factionId,
-      id: `unit_${u.id}`,
-    });
-    if (pv?.id) previewIds.push(pv.id);
+    host.classList.add('unit-preview-2d');
+    host.innerHTML = `<div class="unit-2d-emblem">${u.category === 'ranged' ? '⌁' : u.category === 'mounted' ? '♞' : '✥'}</div><span>${u.nameAr}</span>`;
   }
   $('#btn-heal')?.addEventListener('click', () => {
     const r = G.startHeal(state, tables);
@@ -469,35 +456,26 @@ function bindCityDock(bid) {
   bindQueueButtons();
 }
 
-function ensureCastle3D() {
-  const host = $('#castle-webgl-host');
+function ensureCastle2D() {
+  const host = $('#castle-2d-host');
   if (!host) return;
-  const sig = buildingsSig();
-  const needsRemount = !castle3dApi?.ok || castle3dBuildSig !== sig || !host.querySelector('canvas, .webgl-fallback');
-  if (needsRemount) {
-    castle3dApi = Castle3D.mountCastle3D(host, {
-      tables,
-      state,
-      selectedId: selectedBuildingId,
-      factionLabel: factionName(state.factionId),
-      onSelect: (id) => {
-        if (!id || id === selectedBuildingId) return;
-        selectedBuildingId = id;
-        state.selectedBuildingId = id;
-        persist();
-        const dockHost = $('#city-dock-host');
-        if (dockHost) {
-          dockHost.innerHTML = buildingDockHtml(id);
-          bindCityDock(id);
-        }
-        castle3dApi?.setSelected?.(id);
-      },
-    });
-    castle3dBuildSig = sig;
-    if (!castle3dApi?.ok) toast('تعذّر تشغيل WebGL — مشهد القلعة ثلاثي الأبعاد غير متاح');
-  } else {
-    castle3dApi?.setSelected?.(selectedBuildingId);
+  host.innerHTML = Maps.buildCastleInteriorHtml(tables, state, selectedBuildingId, factionName(state.factionId));
+  const svg = host.querySelector('.castle-iso-svg');
+  if (svg) {
+    if (state.castleViewBox) svg.setAttribute('viewBox', `${state.castleViewBox.x} ${state.castleViewBox.y} ${state.castleViewBox.w} ${state.castleViewBox.h}`);
+    Maps.attachSvgPan(svg, state, 'castleViewBox', () => persist());
   }
+  host.querySelectorAll('[data-building]').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const id = button.getAttribute('data-building');
+      if (!id) return;
+      selectedBuildingId = id;
+      state.selectedBuildingId = id;
+      persist();
+      renderCity();
+    });
+  });
 }
 
 function renderCity() {
@@ -506,21 +484,18 @@ function renderCity() {
   state.selectedBuildingId = selectedBuildingId;
   const bid = selectedBuildingId;
 
-  const keepHost = stage.querySelector('#castle-webgl-host');
+  const keepHost = stage.querySelector('#castle-2d-host');
   if (!keepHost) {
-    Castle3D.disposeCastle3D();
-    castle3dApi = null;
-    castle3dBuildSig = '';
     stage.innerHTML = `
       <div class="map-compose castle-compose">
         <div class="map-main-col">
-          <div class="castle-stage castle-3d-mode theme-${state.factionId}">
+          <div class="castle-stage castle-2d-mode theme-${state.factionId}">
             <div class="castle-command-hud">
               <div class="castle-seal">✦</div>
               <div class="castle-command-copy"><span>مقر السيادة · ${factionName(state.factionId)}</span><strong>قلعة ${state.playerName}</strong><em>القصر مستوى ${state.buildings?.palace || 0} · الدرع الملكي فعّال</em></div>
               <div class="castle-command-rank"><b>${Object.values(state.buildings || {}).reduce((sum, level) => sum + (level || 0), 0)}</b><span>رتبة البناء</span></div>
             </div>
-            <div id="castle-webgl-host" class="castle-webgl-host castle-3d-host" role="img" aria-label="مشهد القلعة ثلاثي الأبعاد"></div>
+            <div id="castle-2d-host" class="castle-2d-host" role="img" aria-label="مشهد القلعة التاريخي ثنائي الأبعاد"></div>
           </div>
           <div id="castle-resource-ledger-host">${castleResourceLedgerHtml()}</div>
           <div id="story-ledger-host">${storyLedgerHtml()}</div>
@@ -539,7 +514,7 @@ function renderCity() {
     if (dockHost) dockHost.innerHTML = buildingDockHtml(bid);
   }
 
-  ensureCastle3D();
+  ensureCastle2D();
   bindCityDock(bid);
 }
 
@@ -571,13 +546,8 @@ function mountMarchPreview() {
   const first = tables.units.units.find((u) => (!u.factionId || u.factionId === state.factionId) && (state.army[u.id] || 0) > 0)
     || tables.units.units.find((u) => !u.factionId || u.factionId === state.factionId);
   if (!first) return;
-  const pv = Preview3D.mountPreview3D(host, {
-    kind: 'unit',
-    meshKey: first.meshKey || 'infantry',
-    factionId: state.factionId,
-    id: 'march_preview',
-  });
-  if (pv?.id) previewIds.push(pv.id);
+  host.classList.add('unit-preview-2d');
+  host.innerHTML = `<div class="unit-2d-emblem">⚔</div><span>${first.nameAr}</span>`;
 }
 
 function readArmy() {
@@ -656,17 +626,19 @@ function mountNodePreview(node) {
   if (!opts) return;
   // Prefer dedicated mesh for monster; for castle/field show via world scene (preview is optional)
   if (node.kind === 'monster') {
-    const pv = Preview3D.mountPreview3D(host, opts);
-    if (pv?.id) previewIds.push(pv.id);
+    const monster = G.monsterById(tables, node.monsterId || node.id);
+    const level = node.level || monster?.level || ((monster?.tier || 1) * 5 - 2);
+    host.classList.add('monster-preview-2d');
+    host.innerHTML = `<div class="monster-2d-emblem monster-level-${Math.min(40, level)}">☠</div><span>${monster?.visualArchetype || 'وحش ميداني'} · مستوى ${level}</span>`;
   } else {
-    host.innerHTML = `<p class="muted">انظر النموذج ثلاثي الأبعاد على الخريطة</p>`;
+    host.innerHTML = `<p class="muted">يظهر الرمز التاريخي على خريطة العالم 2D</p>`;
   }
 }
 
-function mountSvgWorldFallback(host) {
+function mountWorld2D(host) {
   const svg = Maps.buildWorldSvg(tables, state, selectedNodeId);
-  host.innerHTML = `<div class="world-title"><span class="brand-inline">عروش العصور</span> — وضع مبسّط (SVG)</div>
-    <svg id="world-svg" class="world-svg" viewBox="${svg.viewBox}" role="img" aria-label="خريطة العالم">${svg.inner}</svg>`;
+  host.innerHTML = `<div class="world-title"><span class="brand-inline">عروش العصور</span> — الأطلس التاريخي · 2D</div>
+    <svg id="world-svg" class="world-svg world-2d-svg" viewBox="${svg.viewBox}" role="img" aria-label="خريطة العالم التاريخية">${svg.inner}</svg>`;
   const svgEl = $('#world-svg');
   Maps.attachWorldPan(svgEl, state, () => persist());
   svgEl.querySelectorAll('.world-node').forEach((g) => {
@@ -679,31 +651,10 @@ function mountSvgWorldFallback(host) {
   });
 }
 
-function ensureWorld3D() {
+function ensureWorld2D() {
   const host = $('#world-webgl-host');
   if (!host) return;
-  const needs = !world3dApi?.ok || !host.querySelector('canvas, .webgl-fallback, #world-svg');
-  if (needs) {
-    world3dApi = World3D.mountWorld3D(host, {
-      tables,
-      state,
-      selectedId: selectedNodeId,
-      onSelect: (id) => {
-        if (!id || id === selectedNodeId) return;
-        selectedNodeId = id;
-        state.selectedWorldNodeId = id;
-        persist();
-        renderMap(true);
-      },
-    });
-    if (!world3dApi?.ok) {
-      toast('وضع مبسّط — SVG بدل عالم 3D');
-      mountSvgWorldFallback(host);
-    }
-  } else if (world3dApi?.ok) {
-    world3dApi.setSelected?.(selectedNodeId);
-    world3dApi.redrawMarches?.();
-  }
+  mountWorld2D(host);
 }
 
 function renderMap(dockOnly = false) {
@@ -756,17 +707,15 @@ function renderMap(dockOnly = false) {
     dock += `<span><i style="background:${L.color}"></i>${L.nameAr}</span>`;
   }
   dock += `</div>
-    <p class="muted">عالم 3D · اسحب/قرص · شارات القوة فوق الوحوش · طاقة ${state.stamina}</p>
+    <p class="muted">أطلس 2D تاريخي · اسحب/قرص للتنقل · شارات المستوى فوق الوحوش · طاقة ${state.stamina}</p>
   </div>`;
 
   const keepWorld = stage.querySelector('#world-webgl-host');
   if (!keepWorld) {
-    World3D.disposeWorld3D();
-    world3dApi = null;
     stage.innerHTML = `
       <div class="map-compose world-compose">
         <div class="map-main-col">
-          <div class="world-frame world-3d-frame">
+          <div class="world-frame world-2d-frame">
             <div class="world-atlas-hud">
               <div class="atlas-crest">✦</div>
               <div><strong>أطلس العصور</strong><span>المجال المعروف · الموسم الأول</span></div>
@@ -779,13 +728,11 @@ function renderMap(dockOnly = false) {
         </div>
         <div id="world-dock-host">${dock}</div>
       </div>`;
-    ensureWorld3D();
+    ensureWorld2D();
   } else {
     const dockHost = $('#world-dock-host');
     if (dockHost) dockHost.innerHTML = dock;
-    ensureWorld3D();
-    world3dApi?.setSelected?.(selectedNodeId);
-    world3dApi?.redrawMarches?.();
+    ensureWorld2D();
   }
 
   mountNodePreview(node);
@@ -863,8 +810,6 @@ function renderMap(dockOnly = false) {
 
 function renderHero() {
   const stage = $('#main-stage');
-  Preview3D.disposePreview();
-  previewIds = [];
   const h = tables.heroes.heroes.find((x) => x.id === state.hero.id);
   const raw = G.heroRawPower(state.hero.level, h.heroRawPowerAtLevel1, h.heroRawPowerAtLevel20Approx);
   const equip = (state.hero.equip || []).reduce((s, e) => s + e.bonus, 0);
@@ -889,7 +834,7 @@ function renderHero() {
     <div class="hero-command-banner"><div class="hero-crown">♛</div><div><span>مجلس القادة · ${factionName(state.factionId)}</span><h2>${h.nameAr}</h2><p>${h.roleAr || 'قائد ميداني'} · ${h.bestUseAr || 'يقود الجيوش إلى النصر'}</p></div><div class="hero-command-power"><b>${raw + equip}</b><span>القوة الملكية</span></div></div>
     <div class="hero-layout">
       <div class="hero-preview-wrap">
-        <div class="unit-preview hero-preview" id="hero-preview-3d" aria-label="نموذج البطل"></div>
+        <div class="unit-preview hero-preview" id="hero-preview-2d" aria-label="بورتريه القائد ثنائي الأبعاد"></div>
         <div class="hero-preview-caption"><span>قائد ${factionName(state.factionId)}</span><b>المستوى ${state.hero.level}/20</b></div>
         <div class="hero-progression"><div><span>مسار القائد</span><b>${levelPct}%</b></div><i><em style="width:${levelPct}%"></em></i></div>
       </div>
@@ -906,13 +851,11 @@ function renderHero() {
     </div>
   </div>`;
 
-  const pv = Preview3D.mountPreview3D($('#hero-preview-3d'), {
-    kind: 'hero',
-    meshKey: h.meshKey || 'hero_sand',
-    factionId: state.factionId,
-    id: 'hero_main',
-  });
-  if (pv?.id) previewIds.push(pv.id);
+  const heroHost = $('#hero-preview-2d');
+  if (heroHost) {
+    heroHost.classList.add('hero-portrait-2d');
+    heroHost.innerHTML = `<div class="hero-portrait-sigil">♛</div><strong>${h.nameAr}</strong><span>${h.roleAr || 'قائد ميداني'}</span>`;
+  }
 
   $$('[data-nowruz]').forEach((b) => {
     b.onclick = () => { state.hero.nowruzChoice = b.dataset.nowruz; persist(); renderHero(); };
@@ -1116,21 +1059,9 @@ function renderAll() {
   for (const q of tables.quests.daily) {
     if (!state.quests[q.id]) state.quests[q.id] = { progress: 0, done: false, claimed: false };
   }
-  Preview3D.disposePreview();
-  previewIds = [];
   renderTop();
   setNav(view);
   advanceOnboarding();
-  if (view !== 'city') {
-    Castle3D.disposeCastle3D();
-    castle3dApi = null;
-    castle3dBuildSig = '';
-  }
-  if (view !== 'map') {
-    World3D.disposeWorld3D();
-    world3dApi = null;
-    world3dSig = '';
-  }
   if (view === 'city') renderCity();
   else if (view === 'map') renderMap();
   else if (view === 'hero') renderHero();
