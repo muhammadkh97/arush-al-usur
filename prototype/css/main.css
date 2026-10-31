@@ -1958,3 +1958,88 @@ body::after {
   .war-room-footer { flex-direction: column; gap: .2rem; }
   .report-open { display: none; }
 }
+
+
+
+/* ========== Royal alliance council: chat & mutual support ========== */
+.alliance-shell { animation: fadeRise .35s ease-out both; }
+.alliance-hero { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; padding: 1rem; background: linear-gradient(115deg, rgba(21,38,59,.96), rgba(9,17,29,.86)); border: 1px solid rgba(215,169,95,.38); border-right: 3px solid #d7a95f; box-shadow: 0 18px 38px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.08); }
+.alliance-crown { display: grid; place-items: center; width: 48px; height: 48px; flex: 0 0 auto; color: #f0d29a; border: 1px solid rgba(215,169,95,.65); border-radius: 50%; font-size: 1.4rem; box-shadow: 0 0 24px rgba(215,169,95,.22), inset 0 0 14px rgba(215,169,95,.12); }
+.alliance-hero > div:nth-child(2) { min-width: 0; }
+.alliance-hero span, .alliance-kicker { display: block; color: #a9bac5; font-size: .62rem; letter-spacing: .04em; }
+.alliance-hero h2 { margin: .12rem 0 .2rem; color: #f0d29a; font-family: var(--font-display); font-size: clamp(1.35rem, 5vw, 1.8rem); line-height: 1.05; }
+.alliance-hero p { margin: 0; color: #c4d0d6; font-size: .76rem; line-height: 1.55; }
+.alliance-power { margin-inline-start: auto; padding-inline-start: .8rem; border-inline-start: 1px solid rgba(215,169,95,.25); text-align: center; }
+.alliance-power b { display: block; color: #e4bb75; font-size: 1.3rem; line-height: 1; }
+.alliance-power span { white-space: nowrap; font-size: .58rem; }
+.alliance-tabs { display: flex; gap: .25rem; overflow-x: auto; margin-bottom: .65rem; padding: .3rem; background: rgba(8,16,28,.76); border: 1px solid rgba(215,169,95,.2); border-radius: 4px; scrollbar-width: none; }
+.alliance-tabs::-webkit-scrollbar { display: none; }
+.alliance-tabs button { flex: 1 0 auto; min-height: 40px; padding: .42rem .8rem; color: #9eb0b9; background: transparent; border: 0; border-bottom: 2px solid transparent; font-family: var(--font-ui); font-size: .78rem; cursor: pointer; }
+.alliance-tabs button.active, .alliance-tabs button:hover { color: #f0d29a; background: rgba(215,169,95,.1); border-bottom-color: #d7a95f; }
+.alliance-tabs button b { display: inline-grid; place-items: center; min-width: 18px; min-height: 18px; margin-inline-start: .2rem; color: #0b1421; background: #d7a95f; border-radius: 50%; font-size: .58rem; }
+.alliance-grid, .alliance-onboarding { display: grid; grid-template-columns: 1.25fr .75fr; gap: .7rem; }
+.alliance-card, .alliance-create-card, .alliance-join-card { padding: .9rem; background: linear-gradient(145deg, rgba(18,31,48,.94), rgba(8,15,26,.84)); border: 1px solid rgba(215,169,95,.25); box-shadow: 0 14px 30px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.05); }
+.alliance-create-card, .alliance-join-card { min-height: 250px; }
+.alliance-card h3, .alliance-create-card h3, .alliance-join-card h3 { margin: .12rem 0 .5rem; color: #f0d29a; font-family: var(--font-display); font-size: 1.28rem; }
+.card-title { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; margin-bottom: .55rem; padding-bottom: .5rem; border-bottom: 1px solid rgba(215,169,95,.16); }
+.card-title h3 { margin-bottom: 0; }
+.card-title > b, .support-cap { color: #d7a95f; font-size: .68rem; }
+.member-row { display: flex; align-items: center; gap: .5rem; padding: .55rem .15rem; border-bottom: 1px solid rgba(255,255,255,.06); }
+.member-row:last-child { border-bottom: 0; }
+.member-sigil, .support-icon { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 auto; color: #e4bb75; border: 1px solid rgba(215,169,95,.4); border-radius: 50%; font-size: .85rem; }
+.member-row div { min-width: 0; flex: 1; }
+.member-row strong, .member-row span { display: block; }
+.member-row strong { color: #e8edf0; font-size: .78rem; }
+.member-row span { color: #8ea3ae; font-size: .6rem; }
+.member-row > b { color: #d7a95f; font-size: .72rem; }
+.council-card p { color: #b8c7cd; font-size: .78rem; line-height: 1.75; }
+.council-stat { display: inline-flex; flex-direction: column; min-width: 90px; margin: .4rem .3rem .65rem 0; padding: .45rem .55rem; background: rgba(255,255,255,.04); border: 1px solid rgba(215,169,95,.14); }
+.council-stat span { color: #8ea3ae; font-size: .6rem; }
+.council-stat b { color: #f0d29a; font-size: 1rem; }
+.alliance-list-row { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .62rem 0; border-bottom: 1px solid rgba(255,255,255,.07); }
+.alliance-list-row strong, .alliance-list-row span { display: block; }
+.alliance-list-row strong { color: #f0d29a; font-size: .78rem; }
+.alliance-list-row span { max-width: 180px; overflow: hidden; color: #8ea3ae; font-size: .59rem; text-overflow: ellipsis; white-space: nowrap; }
+.alliance-create-card .btn { width: 100%; margin-top: .35rem; }
+
+.alliance-chat-card { padding-bottom: .7rem; }
+.live-dot { color: #91c998; font-size: .65rem; }
+.live-dot::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-inline-end: .25rem; background: #91c998; border-radius: 50%; box-shadow: 0 0 8px #91c998; }
+.alliance-chat-log { display: flex; flex-direction: column; gap: .55rem; max-height: 420px; min-height: 230px; overflow: auto; padding: .3rem .1rem; scrollbar-color: rgba(215,169,95,.35) transparent; }
+.chat-message { display: flex; align-items: flex-start; gap: .45rem; max-width: 92%; }
+.chat-message.mine { align-self: flex-start; flex-direction: row-reverse; text-align: right; }
+.chat-avatar { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 auto; color: #f0d29a; background: rgba(215,169,95,.13); border: 1px solid rgba(215,169,95,.42); border-radius: 50%; font-family: var(--font-display); }
+.chat-message > div:nth-child(2) { padding: .4rem .55rem; background: rgba(255,255,255,.045); border: 1px solid rgba(215,169,95,.13); border-radius: 4px; }
+.chat-message strong { color: #d7a95f; font-size: .64rem; }
+.chat-message p { margin: .18rem 0; color: #d8e0e3; font-size: .75rem; line-height: 1.5; }
+.chat-message time { color: #80949f; font-size: .54rem; }
+.chat-compose { display: flex; gap: .4rem; align-items: center; margin-top: .55rem; padding-top: .55rem; border-top: 1px solid rgba(215,169,95,.15); }
+.chat-compose .field-input { flex: 1; margin: 0; }
+.chat-compose .btn { min-width: 74px; }
+
+.support-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .75rem; }
+.support-request { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .55rem; padding: .62rem .15rem; border-top: 1px solid rgba(255,255,255,.07); }
+.support-request > div:nth-child(2) { min-width: 0; }
+.support-request strong, .support-request span, .support-request small { display: block; }
+.support-request strong { color: #f0d29a; font-size: .75rem; }
+.support-request span { overflow: hidden; margin-top: .1rem; color: #b8c7cd; font-size: .65rem; text-overflow: ellipsis; white-space: nowrap; }
+.support-request small { margin-top: .18rem; color: #8ea3ae; font-size: .56rem; }
+.support-bar { height: 4px; margin-top: .35rem; overflow: hidden; background: rgba(255,255,255,.08); border-radius: 4px; }
+.support-bar i { display: block; height: 100%; background: linear-gradient(90deg, #658f72, #d7a95f); border-radius: 4px; }
+.empty-support { padding: 1.3rem .5rem; color: #8ea3ae; text-align: center; }
+.empty-support span { display: block; color: #d7a95f; font-size: 1.4rem; }
+.empty-support p { margin: .3rem 0 0; font-size: .75rem; line-height: 1.6; }
+.alliance-footer { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: .7rem; padding-top: .65rem; border-top: 1px solid rgba(215,169,95,.16); color: #8ea3ae; font-size: .62rem; }
+
+@media (max-width: 700px) {
+  .alliance-grid, .alliance-onboarding { grid-template-columns: 1fr; }
+  .alliance-create-card, .alliance-join-card { min-height: auto; }
+  .alliance-power { display: none; }
+}
+@media (max-width: 430px) {
+  .alliance-hero { padding: .75rem; }
+  .alliance-crown { width: 38px; height: 38px; }
+  .alliance-hero h2 { font-size: 1.3rem; }
+  .support-request { grid-template-columns: auto 1fr; }
+  .support-request .btn { grid-column: 2; justify-self: start; }
+}

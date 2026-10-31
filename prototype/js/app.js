@@ -10,6 +10,7 @@ const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 let tables = null;
 let state = null;
 let view = 'city';
+let allianceTab = 'hall';
 let selectedNodeId = null;
 let selectedBuildingId = null;
 let castle3dApi = null;
@@ -948,57 +949,40 @@ function renderHero() {
 function renderAlliance() {
   const stage = $('#main-stage');
   const a = G.getAlliance(state);
-  let html = `<div class="panel"><h2>التحالف</h2>
-    <p class="muted">أساسي فقط — بلا قلعة تحالف (Phase 2). ابنِ السفارة من خريطة القلعة.</p>`;
+  const db = G.loadAlliances();
+  const active = a?.supportRequests?.filter((request) => request.status === 'open') || [];
+  const totalPower = a?.members?.reduce((sum, member) => sum + (member.power || 0), 0) || 0;
+  let html = `<div class="alliance-shell">
+    <div class="alliance-hero"><div class="alliance-crown">✦</div><div><span>مجلس العرش · دعم الرايات</span><h2>${a ? `[${a.tag}] ${a.name}` : 'مجلس التحالفات'}</h2><p>${a ? (a.desc || 'تتحد الرايات في مجلس واحد، وتُسمع كل رسالة قبل بدء الزحف.') : 'ابنِ سفارتك، ثم اجمع القادة تحت راية واحدة.'}</p></div>${a ? `<div class="alliance-power"><b>${totalPower}</b><span>قوة المجلس</span></div>` : ''}</div>`;
 
   if (!a) {
-    html += `<div class="split-2">
-      <div>
-        <h3>إنشاء</h3>
-        <input type="text" id="al-name" placeholder="سيوف العصر" class="field-input" />
-        <input type="text" id="al-tag" maxlength="4" placeholder="عروش" class="field-input" />
-        <button class="btn btn-primary" id="btn-al-create" style="margin-top:0.5rem;width:100%">إنشاء تحالف</button>
-      </div>
-      <div><h3>انضمام</h3><div id="al-list"></div></div>
-    </div>`;
-  } else {
-    html += `<p><strong>[${a.tag}] ${a.name}</strong> — ${state.allianceRole === 'leader' ? 'زعيم' : 'عضو'}</p>
-      <ul>${a.members.map((m) => `<li>${m.name} · ${m.role === 'leader' ? 'زعيم' : 'عضو'} · قوة≈${m.power}</li>`).join('')}</ul>
-      <button class="btn btn-ghost" id="btn-al-leave">مغادرة</button>`;
-  }
-  html += `</div>`;
-  stage.innerHTML = html;
-
-  if (!a) {
+    html += `<div class="alliance-onboarding"><div class="alliance-create-card"><span class="alliance-kicker">راية جديدة</span><h3>أسّس مجلسك</h3><p class="muted">اجمع القادة وابدأ أول سجل للدردشة والدعم المتبادل.</p><input type="text" id="al-name" placeholder="سيوف العصر" class="field-input" /><input type="text" id="al-tag" maxlength="4" placeholder="عرش" class="field-input" /><button class="btn btn-primary" id="btn-al-create">رفع الراية</button></div><div class="alliance-join-card"><span class="alliance-kicker">مجالس قائمة</span><h3>انضم إلى تحالف</h3><div id="al-list"></div></div></div></div>`;
+    stage.innerHTML = html;
     const list = $('#al-list');
-    const db = G.loadAlliances();
-    if (!db.list.length) list.innerHTML = '<p class="muted">لا تحالفات بعد.</p>';
-    else {
-      list.innerHTML = db.list.map((x) => `
-        <div class="building-row">
-          <div><strong>[${x.tag}] ${x.name}</strong><div class="meta">${x.members.length} أعضاء</div></div>
-          <button class="btn btn-ghost btn-small" data-join="${x.id}">انضم</button>
-        </div>`).join('');
-      $$('[data-join]').forEach((b) => {
-        b.onclick = () => {
-          const r = G.joinAlliance(state, b.dataset.join);
-          toast(r.ok ? 'انضممت للتحالف' : r.reason);
-          if (r.ok && state.onboardingStep === 3) state.onboardingStep = 4;
-          persist();
-          renderAll();
-        };
-      });
-    }
-    $('#btn-al-create').onclick = () => {
-      const r = G.createAlliance(state, $('#al-name').value || 'تحالف', $('#al-tag').value || 'عرش');
-      toast(r.ok ? 'أُنشئ التحالف' : r.reason);
-      if (r.ok && state.onboardingStep === 3) state.onboardingStep = 4;
-      persist();
-      renderAll();
-    };
-  } else {
-    $('#btn-al-leave').onclick = () => { G.leaveAlliance(state); persist(); renderAll(); };
+    if (!db.list.length) list.innerHTML = '<p class="muted">لا توجد رايات قائمة بعد.</p>';
+    else list.innerHTML = db.list.map((x) => `<div class="alliance-list-row"><div><strong>[${x.tag}] ${x.name}</strong><span>${x.members.length}/30 قائد · ${x.desc || 'مجلس ناشئ'}</span></div><button class="btn btn-ghost btn-small" data-join="${x.id}">انضمام</button></div>`).join('');
+    $$('[data-join]').forEach((button) => { button.onclick = () => { const r = G.joinAlliance(state, button.dataset.join); toast(r.ok ? 'انضممت إلى المجلس' : r.reason); if (r.ok && state.onboardingStep === 3) state.onboardingStep = 4; persist(); renderAll(); }; });
+    $('#btn-al-create').onclick = () => { const r = G.createAlliance(state, $('#al-name').value || 'تحالف', $('#al-tag').value || 'عرش'); toast(r.ok ? 'رُفعت راية التحالف' : r.reason); if (r.ok && state.onboardingStep === 3) state.onboardingStep = 4; persist(); renderAll(); };
+    return;
   }
+
+  html += `<div class="alliance-tabs"><button class="${allianceTab === 'hall' ? 'active' : ''}" data-alliance-tab="hall">المجلس</button><button class="${allianceTab === 'chat' ? 'active' : ''}" data-alliance-tab="chat">الدردشة <b>${a.chat?.length || 0}</b></button><button class="${allianceTab === 'support' ? 'active' : ''}" data-alliance-tab="support">الدعم <b>${active.length}</b></button></div>`;
+  if (allianceTab === 'hall') {
+    html += `<div class="alliance-grid"><section class="alliance-card members-card"><div class="card-title"><div><span class="alliance-kicker">حرس الراية</span><h3>أعضاء المجلس</h3></div><b>${a.members.length}/30</b></div>${a.members.map((member) => `<div class="member-row"><span class="member-sigil">${member.role === 'leader' ? '♛' : '✦'}</span><div><strong>${member.name}</strong><span>${member.role === 'leader' ? 'حامل الراية' : 'قائد ميداني'}</span></div><b>${member.power || 0}</b></div>`).join('')}</section><section class="alliance-card council-card"><span class="alliance-kicker">نبض المجلس</span><h3>المعاهدة الملكية</h3><p>كل قائد يساهم في تسريع البناء والشفاء. افتح قناة الدردشة لطلب دعم مباشر، أو أعلن عن إنجازك أمام الحلفاء.</p><div class="council-stat"><span>طلبات مفتوحة</span><b>${active.length}</b></div><div class="council-stat"><span>رسائل المجلس</span><b>${a.chat?.length || 0}</b></div><button class="btn btn-primary btn-small" data-alliance-tab="support">افتح مركز الدعم</button></section></div>`;
+  } else if (allianceTab === 'chat') {
+    html += `<section class="alliance-card alliance-chat-card"><div class="card-title"><div><span class="alliance-kicker">قناة مشفرة</span><h3>دردشة المجلس</h3></div><span class="live-dot">مباشر</span></div><div class="alliance-chat-log">${(a.chat || []).slice(-12).map((message) => `<div class="chat-message ${message.author === state.playerName ? 'mine' : ''}"><div class="chat-avatar">${message.author.slice(0, 1)}</div><div><strong>${message.author}</strong><p>${message.text}</p><time>${new Date(message.at).toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' })}</time></div></div>`).join('')}</div><div class="chat-compose"><input id="alliance-chat-input" class="field-input" maxlength="240" placeholder="اكتب نداءً إلى القادة..." /><button class="btn btn-primary" id="btn-alliance-chat">إرسال</button></div></section>`;
+  } else {
+    html += `<section class="alliance-card support-center"><div class="card-title"><div><span class="alliance-kicker">مساندة متبادلة</span><h3>مركز الدعم</h3></div><span class="support-cap">حتى 5 مساهمات</span></div><div class="support-actions"><button class="btn btn-ghost btn-small" id="btn-request-build" ${state.buildQueue ? '' : 'disabled'}>اطلب دعم البناء</button><button class="btn btn-ghost btn-small" id="btn-request-heal" ${state.healQueue ? '' : 'disabled'}>اطلب دعم الشفاء</button></div>${active.length ? active.map((request) => `<div class="support-request"><div class="support-icon">${request.type === 'heal' ? '✚' : '⌛'}</div><div><strong>${request.requester}</strong><span>${request.target}</span><div class="support-bar"><i style="width:${Math.min(100, (request.supporters / 5) * 100)}%"></i></div><small>${request.supporters}/5 مساهمات</small></div><button class="btn btn-primary btn-small" data-support="${request.id}" ${request.requester === state.playerName ? 'disabled' : ''}>مساندة</button></div>`).join('') : '<div class="empty-support"><span>✦</span><p>لا توجد طلبات دعم مفتوحة.<br>كن أول من يطلب المساندة من المجلس.</p></div>')}</section>`;
+  }
+  html += `<div class="alliance-footer"><span>${state.allianceRole === 'leader' ? 'أنت حامل الراية' : 'أنت قائد ميداني'} · ${active.length} طلبات دعم نشطة</span><button class="btn btn-ghost btn-small" id="btn-al-leave">مغادرة المجلس</button></div></div>`;
+  stage.innerHTML = html;
+  $$('[data-alliance-tab]').forEach((button) => { button.onclick = () => { allianceTab = button.dataset.allianceTab; renderAlliance(); }; });
+  $('#btn-al-leave')?.addEventListener('click', () => { G.leaveAlliance(state); allianceTab = 'hall'; persist(); renderAll(); });
+  $('#btn-alliance-chat')?.addEventListener('click', () => { const r = G.postAllianceMessage(state, $('#alliance-chat-input').value); toast(r.ok ? 'أُرسلت الرسالة إلى المجلس' : r.reason); if (r.ok) { persist(); renderAlliance(); } });
+  $('#alliance-chat-input')?.addEventListener('keydown', (event) => { if (event.key === 'Enter') $('#btn-alliance-chat')?.click(); });
+  $('#btn-request-build')?.addEventListener('click', () => { const r = G.createSupportRequest(state, 'build'); toast(r.ok ? 'رُفع طلب دعم البناء' : r.reason); if (r.ok) renderAlliance(); });
+  $('#btn-request-heal')?.addEventListener('click', () => { const r = G.createSupportRequest(state, 'heal'); toast(r.ok ? 'رُفع طلب دعم الشفاء' : r.reason); if (r.ok) renderAlliance(); });
+  $$('[data-support]').forEach((button) => { button.onclick = () => { const r = G.answerSupportRequest(state, tables, button.dataset.support); toast(r.ok ? r.message : r.reason); if (r.ok) { persist(); renderAlliance(); } }; });
 }
 
 function renderReports() {

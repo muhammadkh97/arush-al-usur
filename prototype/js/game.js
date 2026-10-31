@@ -269,7 +269,13 @@ export function clearState() {
 
 export function loadAlliances() {
   try {
-    return JSON.parse(localStorage.getItem(ALLIANCE_KEY) || '{"list":[]}');
+    const db = JSON.parse(localStorage.getItem(ALLIANCE_KEY) || '{"list":[]}');
+    db.list = (db.list || []).map((a) => ({
+      ...a,
+      chat: Array.isArray(a.chat) ? a.chat : [{ id: `msg_${a.id}`, author: 'راوي المجلس', text: 'مرحباً بكم في مجلس العرش. لتتحد الرايات قبل أن يبدأ الزحف.', at: Date.now() }],
+      supportRequests: Array.isArray(a.supportRequests) ? a.supportRequests : [],
+    }));
+    return db;
   } catch {
     return { list: [] };
   }
@@ -1034,6 +1040,59 @@ export function leaveAlliance(state) {
 export function getAlliance(state) {
   if (!state.allianceId) return null;
   return loadAlliances().list.find((x) => x.id === state.allianceId) || null;
+}
+
+export function postAllianceMessage(state, text) {
+  const value = String(text || '').trim().slice(0, 240);
+  if (!state.allianceId || !value) return { ok: false, reason: 'اكتب رسالة أولاً' };
+  const db = loadAlliances();
+  const alliance = db.list.find((x) => x.id === state.allianceId);
+  if (!alliance) return { ok: false, reason: 'التحالف غير موجود' };
+  alliance.chat.push({ id: `msg_${Date.now()}`, author: state.playerName, text: value, at: Date.now() });
+  alliance.chat = alliance.chat.slice(-60);
+  saveAlliances(db);
+  return { ok: true };
+}
+
+export function createSupportRequest(state, type = 'build') {
+  if (!state.allianceId) return { ok: false, reason: 'انضم إلى تحالف أولاً' };
+  const queue = type === 'heal' ? state.healQueue : state.buildQueue;
+  if (!queue) return { ok: false, reason: type === 'heal' ? 'لا يوجد طابور شفاء' : 'لا يوجد بناء قيد التنفيذ' };
+  const db = loadAlliances();
+  const alliance = db.list.find((x) => x.id === state.allianceId);
+  if (!alliance) return { ok: false, reason: 'التحالف غير موجود' };
+  const existing = alliance.supportRequests.find((r) => r.requester === state.playerName && r.type === type && r.status === 'open');
+  if (existing) return { ok: false, reason: 'طلب الدعم موجود في المجلس' };
+  alliance.supportRequests.unshift({
+    id: `support_${Date.now()}`,
+    requester: state.playerName,
+    type,
+    target: type === 'heal' ? `شفاء ${queue.total} جريح` : `تطوير ${buildingNameFromState(state, queue.buildingId)}`,
+    status: 'open',
+    supporters: 0,
+    at: Date.now(),
+  });
+  alliance.supportRequests = alliance.supportRequests.slice(0, 20);
+  saveAlliances(db);
+  return { ok: true };
+}
+
+function buildingNameFromState(state, id) {
+  return id === 'palace' ? 'القصر' : id === 'barracks' ? 'الثكنات' : id === 'embassy' ? 'السفارة' : id;
+}
+
+export function answerSupportRequest(state, tables, requestId) {
+  if (!state.allianceId) return { ok: false, reason: 'لا يوجد تحالف' };
+  const db = loadAlliances();
+  const alliance = db.list.find((x) => x.id === state.allianceId);
+  const request = alliance?.supportRequests?.find((r) => r.id === requestId);
+  if (!request || request.status !== 'open') return { ok: false, reason: 'طلب الدعم مغلق' };
+  const result = request.type === 'heal' ? requestHealHelp(state, tables) : requestBuildHelp(state, tables);
+  if (!result.ok) return result;
+  request.supporters += 1;
+  if (request.supporters >= 5) request.status = 'fulfilled';
+  saveAlliances(db);
+  return { ok: true, message: request.type === 'heal' ? 'ساهمت في شفاء جرحى التحالف' : 'ساهمت في تسريع بناء التحالف' };
 }
 
 export function approxPower(state, tables = null) {
