@@ -1888,3 +1888,73 @@ body::after {
   .ledger-capacity { width: 100%; margin-inline-start: 0; }
   .resource-ledger-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+
+
+/* ========== Royal war room: armies & battle reports ========== */
+.war-room-card {
+  margin: .6rem 0 .75rem;
+  padding: .75rem;
+  background: linear-gradient(145deg, rgba(18,31,48,.96), rgba(8,15,26,.88));
+  border: 1px solid rgba(215,169,95,.38);
+  border-top: 2px solid #d7a95f;
+  box-shadow: 0 16px 34px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.07);
+}
+.war-room-banner { display: flex; align-items: center; gap: .55rem; padding-bottom: .62rem; border-bottom: 1px solid rgba(215,169,95,.16); }
+.war-room-seal { display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 auto; color: #f0d29a; border: 1px solid rgba(215,169,95,.65); border-radius: 50%; font-size: 1rem; box-shadow: 0 0 18px rgba(215,169,95,.2); }
+.war-room-banner > div:nth-child(2) { min-width: 0; }
+.war-room-banner span { display: block; color: #a9bac5; font-size: .6rem; letter-spacing: .04em; }
+.war-room-banner strong { display: block; color: #f0d29a; font-family: var(--font-display); font-size: 1.15rem; line-height: 1.1; }
+.war-room-banner em { display: block; margin-top: .1rem; color: #9eb0b9; font-size: .6rem; font-style: normal; }
+.war-room-power { margin-inline-start: auto; padding-inline-start: .62rem; border-inline-start: 1px solid rgba(215,169,95,.24); text-align: center; }
+.war-room-power b { display: block; color: #e4bb75; font-size: 1rem; line-height: 1; }
+.war-room-power span { color: #9eb0b9; font-size: .55rem; }
+.war-room-metrics { display: flex; flex-wrap: wrap; gap: .45rem; padding: .52rem 0 .2rem; color: #9eb0b9; font-size: .62rem; }
+.war-room-metrics span { padding: .22rem .42rem; background: rgba(255,255,255,.035); border: 1px solid rgba(215,169,95,.12); border-radius: 3px; }
+.war-room-metrics b { color: #f0d29a; }
+.army-controls { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; margin-top: .35rem; }
+.march-preview-row { grid-column: 1 / -1; display: flex; align-items: center; gap: .55rem; margin-bottom: .15rem; padding: .35rem; background: rgba(215,169,95,.06); border: 1px solid rgba(215,169,95,.15); }
+.unit-preview.compact { width: 82px; height: 64px; max-width: 82px; }
+.march-preview-copy span, .march-preview-copy strong, .march-preview-copy small { display: block; }
+.march-preview-copy span { color: #9eb0b9; font-size: .58rem; }
+.march-preview-copy strong { color: #f0d29a; font-family: var(--font-display); font-size: .98rem; }
+.march-preview-copy small { color: #76ad83; font-size: .57rem; }
+.army-unit-slot { display: flex; align-items: center; justify-content: space-between; gap: .3rem; min-width: 0; padding: .42rem .45rem; background: rgba(255,255,255,.035); border: 1px solid rgba(215,169,95,.13); border-radius: 3px; transition: border-color .18s ease, transform .18s ease, background .18s ease; }
+.army-unit-slot:focus-within, .army-unit-slot:hover { transform: translateY(-1px); background: rgba(215,169,95,.08); border-color: rgba(215,169,95,.38); }
+.army-unit-heading { display: flex; align-items: center; gap: .32rem; min-width: 0; }
+.army-unit-heading label { overflow: hidden; color: #e8edf0; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
+.army-unit-heading label small { display: block; margin-top: .08rem; color: #9eb0b9; font-size: .55rem; }
+.army-unit-glyph { display: grid; place-items: center; width: 24px; height: 24px; flex: 0 0 auto; color: #e4bb75; border: 1px solid rgba(215,169,95,.4); border-radius: 50%; font-size: .75rem; }
+.army-unit-slot input { width: 54px; min-height: 34px; padding: .25rem; color: #f4e5c5; background: #0c1624; border: 1px solid rgba(215,169,95,.35); border-radius: 3px; font-family: var(--font-ui); font-size: .82rem; text-align: center; }
+.war-room-footer { display: flex; justify-content: space-between; gap: .5rem; margin-top: .58rem; padding-top: .48rem; border-top: 1px solid rgba(215,169,95,.13); color: #8ea3ae; font-size: .58rem; }
+.war-room-footer b { color: #76ad83; font-weight: 600; }
+
+.war-reports-panel { background: linear-gradient(145deg, rgba(18,31,48,.95), rgba(8,15,26,.86)); border-color: rgba(215,169,95,.32); }
+.war-reports-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .65rem; padding-bottom: .55rem; border-bottom: 1px solid rgba(215,169,95,.16); }
+.war-reports-head h2 { margin: .12rem 0 0; }
+.war-record { padding-inline-start: .75rem; border-inline-start: 1px solid rgba(215,169,95,.25); text-align: center; }
+.war-record b { display: block; color: #76ad83; font-size: 1.15rem; line-height: 1; }
+.war-record span { color: #9eb0b9; font-size: .58rem; }
+.report-row { position: relative; margin: .42rem 0; padding: .65rem .7rem; background: rgba(255,255,255,.035); border: 1px solid rgba(215,169,95,.12); border-radius: 4px; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+.report-row:hover { transform: translateX(-3px); background: rgba(215,169,95,.08); border-color: rgba(215,169,95,.38); }
+.report-row strong { display: flex; align-items: center; gap: .38rem; color: #f0d29a; }
+.report-emblem { display: inline-grid; place-items: center; width: 25px; height: 25px; color: #d7a95f; border: 1px solid currentColor; border-radius: 50%; font-style: normal; font-size: .72rem; }
+.report-row.report-win .report-emblem { color: #78b985; }
+.report-row.report-loss .report-emblem { color: #cf7765; }
+.report-open { color: #9eb0b9; font-size: .62rem; white-space: nowrap; }
+.battle-modal-head { margin: -.15rem -.15rem .85rem; padding: .75rem; background: linear-gradient(110deg, rgba(215,169,95,.12), transparent); border-right: 3px solid #d7a95f; }
+.battle-modal-head.report-win { border-right-color: #78b985; }
+.battle-modal-head.report-loss { border-right-color: #cf7765; }
+.battle-modal-head span { display: block; color: #9eb0b9; font-size: .62rem; }
+.battle-modal-head h2 { margin: .18rem 0 .15rem; }
+.battle-modal-head b { color: #f0d29a; font-size: .78rem; }
+.battle-modal-head.report-win b { color: #9ed3a2; }
+.battle-modal-head.report-loss b { color: #e5a195; }
+
+@media (max-width: 520px) {
+  .army-controls { grid-template-columns: 1fr; }
+  .war-room-power { display: none; }
+  .war-room-banner strong { font-size: 1rem; }
+  .war-room-footer { flex-direction: column; gap: .2rem; }
+  .report-open { display: none; }
+}

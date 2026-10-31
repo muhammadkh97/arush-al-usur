@@ -544,17 +544,23 @@ function renderCity() {
 /* ——— External world map ——— */
 function marchFormHtml() {
   const power = G.playerArmyPower(state, tables);
-  let html = `<p class="ok">قوة جيشك الحالية ≈ <strong>${power}</strong></p>
+  const totalUnits = Object.values(state.army || {}).reduce((sum, count) => sum + (count || 0), 0);
+  let html = `<div class="war-room-card">
+    <div class="war-room-banner"><div class="war-room-seal">⚔</div><div><span>قاعة الحرب الملكية</span><strong>تشكيل راية المسير</strong><em>اختر الوحدات التي ستحمل أمر القائد</em></div><div class="war-room-power"><b>${power}</b><span>القوة</span></div></div>
+    <div class="war-room-metrics"><span><b>${totalUnits.toLocaleString('ar')}</b> وحدة متاحة</span><span><b>${state.hero?.level || 1}</b> رتبة البطل</span><span><b>${state.stamina}</b> طاقة</span></div>
     <div class="army-controls" id="march-form">
-    <div class="march-preview-row"><div class="unit-preview compact" id="march-unit-preview" aria-label="معاينة مسير"></div></div>`;
+    <div class="march-preview-row"><div class="unit-preview compact" id="march-unit-preview" aria-label="معاينة راية المسير"></div><div class="march-preview-copy"><span>راية المسير</span><strong>قوة موحّدة</strong><small>تتغير حسب التشكيل</small></div></div>`;
   for (const u of tables.units.units) {
     if (u.factionId && u.factionId !== state.factionId) continue;
     const have = state.army[u.id] || 0;
     const lv = state.unitLevels?.[u.id] || 1;
-    html += `<div><label>${u.nameAr} م${lv} (${have})</label>
-      <input type="number" min="0" max="${have}" value="${Math.min(have, u.id === 'light_infantry' ? 100 : 40)}" data-march="${u.id}" /></div>`;
+    const preset = Math.min(have, u.id === 'light_infantry' ? 100 : 40);
+    html += `<div class="army-unit-slot">
+      <div class="army-unit-heading"><span class="army-unit-glyph">${u.category === 'ranged' ? '⌁' : u.category === 'mounted' ? '♞' : '✥'}</span><label>${u.nameAr}<small>م${lv} · ${have.toLocaleString('ar')} متاح</small></label></div>
+      <input type="number" min="0" max="${have}" value="${preset}" data-march="${u.id}" aria-label="عدد ${u.nameAr}" />
+    </div>`;
   }
-  return `${html}</div>`;
+  return `${html}</div><div class="war-room-footer"><span>الحد الأقصى يتغير حسب الحامية والطاقة</span><b>جاهز لإصدار الأمر</b></div></div>`;
 }
 
 function mountMarchPreview() {
@@ -997,15 +1003,17 @@ function renderAlliance() {
 
 function renderReports() {
   const stage = $('#main-stage');
-  let html = `<div class="panel"><h2>التقارير</h2>`;
+  const battles = state.reports.filter((report) => report.kind === 'combat').length;
+  const victories = state.reports.filter((report) => report.kind === 'combat' && report.outcome === 'win').length;
+  let html = `<div class="panel war-reports-panel"><div class="war-reports-head"><div><span class="dock-eyebrow">أرشيف الرايات · ${battles} معارك</span><h2>قاعة النصر والتقارير</h2></div><div class="war-record"><b>${victories}</b><span>انتصار</span></div></div>`;
   if (!state.reports.length) html += `<p class="muted">لا تقارير بعد.</p>`;
   for (const r of state.reports) {
     const title = r.kind === 'combat' ? r.outcomeAr : r.kind === 'scout' ? 'استطلاع' : 'جمع';
-    html += `<div class="building-row" style="cursor:pointer" data-report="${r.id}">
-      <div><strong>${title}</strong>
+    html += `<div class="building-row report-row report-${r.kind} ${r.outcome === 'win' ? 'report-win' : r.outcome === 'loss' ? 'report-loss' : ''}" style="cursor:pointer" data-report="${r.id}">
+      <div><strong><i class="report-emblem">${r.kind === 'combat' ? '⚔' : r.kind === 'scout' ? '◉' : '✦'}</i>${title}</strong>
         <div class="meta">${r.text || ''} · ${new Date(r.at).toLocaleTimeString('ar')}</div>
       </div>
-      <span class="muted">عرض</span>
+      <span class="report-open">عرض السجل</span>
     </div>`;
   }
   html += `</div>`;
@@ -1018,11 +1026,11 @@ function openReport(id) {
   if (!r) return;
   const body = $('#modal-body');
   if (r.kind === 'gather') {
-    body.innerHTML = `<h2>تقرير جمع</h2><p>${r.text}</p>
+    body.innerHTML = `<div class="battle-modal-head report-gather"><span>سجل الإمداد</span><h2>تقرير جمع</h2></div><p>${r.text}</p>
       <p>طعام ${r.loot.food} · خشب ${r.loot.wood} · حجر ${r.loot.stone} · ذهب ${r.loot.gold}</p>
       ${r.fieldLevel ? `<p class="muted">مستوى الحقل ${r.fieldLevel}</p>` : ''}`;
   } else if (r.kind === 'scout') {
-    body.innerHTML = `<h2>تقرير استطلاع</h2><p>${r.text}</p>`;
+    body.innerHTML = `<div class="battle-modal-head report-scout"><span>عيون القصر</span><h2>تقرير استطلاع</h2></div><p>${r.text}</p>`;
   } else {
     const rows = Object.keys(r.attacker.before || {}).map((uid) => {
       const b = r.attacker.before[uid] || 0;
@@ -1032,7 +1040,7 @@ function openReport(id) {
       const lv = r.unitLevelsUsed?.[uid] || state.unitLevels?.[uid] || 1;
       return `<tr><td>${unitName(uid)} م${lv}</td><td>${b}</td><td>${a}</td><td>${k}</td><td>${w}</td></tr>`;
     }).join('');
-    body.innerHTML = `<h2>تقرير قتال — ${r.targetName}</h2>
+    body.innerHTML = `<div class="battle-modal-head ${r.outcome === 'win' ? 'report-win' : 'report-loss'}"><span>سجل الراية · ${new Date(r.at).toLocaleString('ar')}</span><h2>تقرير قتال — ${r.targetName}</h2><b>${r.outcomeAr}</b></div>
       <p class="${r.outcome === 'win' ? 'ok' : r.outcome === 'loss' ? 'danger' : ''}">النتيجة: <strong>${r.outcomeAr}</strong> (R=${r.R})
         · قوة ${r.attPower || '—'} ضد ${r.defPower || '—'}</p>
       ${r.recommendedPower ? `<p class="muted">القوة الموصى بها كانت ≥ ${r.recommendedPower}</p>` : ''}
