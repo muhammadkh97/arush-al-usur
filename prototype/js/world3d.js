@@ -30,6 +30,7 @@ function svgToWorld(x, y) {
 function makeTerrain(scene) {
   const sand = new THREE.MeshStandardMaterial({ color: 0xd4a86a, roughness: 0.95 });
   const grass = new THREE.MeshStandardMaterial({ color: 0x5a8f4a, roughness: 0.9 });
+  const water = new THREE.MeshStandardMaterial({ color: 0x246278, roughness: 0.28, metalness: 0.08, transparent: true, opacity: 0.9 });
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(48, 42, 24, 20), sand);
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
@@ -51,6 +52,60 @@ function makeTerrain(scene) {
     patch.receiveShadow = true;
     scene.add(patch);
   });
+
+  // A river and oasis accents make the strategic surface read as a living world.
+  const river = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 38, 1, 12), water);
+  river.rotation.x = -Math.PI / 2;
+  river.rotation.z = -0.22;
+  river.position.set(-7.8, 0.08, 2.5);
+  scene.add(river);
+  [[-12, -7, 2.2], [4, 8, 1.8], [13, -10, 1.5]].forEach(([x, z, r]) => {
+    const oasis = new THREE.Mesh(new THREE.CircleGeometry(r, 32), water);
+    oasis.rotation.x = -Math.PI / 2;
+    oasis.position.set(x, 0.1, z);
+    scene.add(oasis);
+    const rim = new THREE.Mesh(
+      new THREE.RingGeometry(r * 1.06, r * 1.15, 32),
+      new THREE.MeshBasicMaterial({ color: 0x8bc5b1, transparent: true, opacity: 0.28, side: THREE.DoubleSide }),
+    );
+    rim.rotation.x = -Math.PI / 2;
+    rim.position.set(x, 0.12, z);
+    scene.add(rim);
+  });
+
+  const motePositions = [];
+  for (let i = 0; i < 80; i++) {
+    motePositions.push((i * 17 % 420 - 210) / 10, 0.35 + (i % 5) * 0.08, (i * 31 % 360 - 180) / 10);
+  }
+  const moteGeo = new THREE.BufferGeometry();
+  moteGeo.setAttribute('position', new THREE.Float32BufferAttribute(motePositions, 3));
+  const motes = new THREE.Points(moteGeo, new THREE.PointsMaterial({ color: 0xf1d79a, size: 0.045, transparent: true, opacity: 0.55 }));
+  motes.userData.motes = true;
+  scene.add(motes);
+}
+
+function makeWorldRoutes(scene, nodes) {
+  const player = nodes.find((node) => node.owner === 'player') || nodes[0];
+  if (!player) return;
+  const origin = svgToWorld(player.x, player.y);
+  const routeGroup = new THREE.Group();
+  routeGroup.userData.routes = true;
+  for (const node of nodes) {
+    if (node === player || !['castle', 'fort', 'resource', 'monster'].includes(node.kind)) continue;
+    const target = svgToWorld(node.x, node.y);
+    const mid = new THREE.Vector3((origin.x + target.x) / 2, 0.12, (origin.z + target.z) / 2);
+    mid.y += 0.45 + Math.min(1.2, Math.hypot(target.x - origin.x, target.z - origin.z) * 0.02);
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(origin.x, 0.12, origin.z), mid, new THREE.Vector3(target.x, 0.12, target.z),
+    );
+    const line = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(curve.getPoints(18)),
+      new THREE.LineDashedMaterial({ color: 0xd7a95f, dashSize: 0.28, gapSize: 0.22, transparent: true, opacity: 0.23 }),
+    );
+    line.computeLineDistances();
+    routeGroup.add(line);
+  }
+  scene.add(routeGroup);
 }
 
 function badgeTexture(text, color = '#e8c47a') {
@@ -168,6 +223,7 @@ export function mountWorld3D(mount, opts) {
   lights.sun.shadow.mapSize.set(1024, 1024);
 
   makeTerrain(scene);
+  makeWorldRoutes(scene, tables.world.nodes || []);
 
   const monstersById = {};
   for (const m of tables.monsters?.monsters || []) monstersById[m.id] = m;
@@ -325,7 +381,13 @@ export function mountWorld3D(mount, opts) {
     controls.update();
     scene.traverse((o) => {
       if (o.userData.billboard) o.quaternion.copy(camera.quaternion);
+      if (o.userData.motes) {
+        o.rotation.y += 0.0008;
+        o.material.opacity = 0.38 + Math.sin(performance.now() * 0.0012) * 0.12;
+      }
     });
+    selRing.material.opacity = 0.58 + Math.sin(performance.now() * 0.003) * 0.3;
+    selRing.rotation.z += 0.004;
     lights.sun.intensity = 1.45 + Math.sin(performance.now() * 0.0008) * 0.08;
     renderer.render(scene, camera);
   }

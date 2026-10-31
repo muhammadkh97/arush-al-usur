@@ -674,9 +674,11 @@ function renderMap(dockOnly = false) {
   const node = G.worldNodeById(tables, selectedNodeId);
   const active = state.marches.filter((m) => m.status !== 'done');
 
+  const worldNodes = tables.world.nodes || [];
+  const discovered = worldNodes.filter((item) => state.scoutedNodes?.[item.id] || item.owner === 'player').length;
   let dock = `<div class="map-dock world-dock">
     <div class="dock-head">
-      <h2>${node ? node.nameAr : 'اختر موقعاً'}</h2>
+      <div><span class="dock-eyebrow">أطلس العصور · ${discovered}/${worldNodes.length} مكتشف</span><h2>${node ? node.nameAr : 'اختر موقعاً'}</h2></div>
       <button type="button" class="btn btn-ghost btn-small" id="btn-goto-castle">→ داخل القلعة</button>
     </div>
     ${nodeDetailHtml(node)}`;
@@ -725,6 +727,13 @@ function renderMap(dockOnly = false) {
       <div class="map-compose world-compose">
         <div class="map-main-col">
           <div class="world-frame world-3d-frame">
+            <div class="world-atlas-hud">
+              <div class="atlas-crest">✦</div>
+              <div><strong>أطلس العصور</strong><span>المجال المعروف · الموسم الأول</span></div>
+              <div class="atlas-stat"><b>${worldNodes.length}</b><span>موقع</span></div>
+              <div class="atlas-stat"><b>${active.length}</b><span>مسيرة</span></div>
+            </div>
+            <div class="world-compass" aria-hidden="true"><b>ش</b><i></i><span>أ</span></div>
             <div id="world-webgl-host" class="castle-webgl-host world-webgl-host" role="img" aria-label="خريطة العالم ثلاثية الأبعاد"></div>
           </div>
         </div>
