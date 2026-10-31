@@ -192,6 +192,38 @@ function queueBannerHtml() {
   return html;
 }
 
+function currentStoryChapter() {
+  const chapters = tables.story?.chapters || [];
+  if (!chapters.length) return null;
+  const hasArmy = Object.values(state.army || {}).some((count) => count > 0)
+    || (state.reports || []).some((report) => ['combat', 'scout'].includes(report.kind));
+  const hasAlliance = !!state.allianceId;
+  const hasLegacy = (state.buildings?.palace || 0) >= 3
+    || (state.reports || []).some((report) => report.kind === 'combat' && report.outcome === 'win');
+  if (hasLegacy) return chapters.find((chapter) => chapter.id === 'horizon') || chapters.at(-1);
+  if (hasAlliance) return chapters.find((chapter) => chapter.id === 'oath') || chapters[2] || chapters.at(-1);
+  if (hasArmy) return chapters.find((chapter) => chapter.id === 'first-blood') || chapters[1] || chapters.at(-1);
+  return chapters.find((chapter) => chapter.id === 'awakening') || chapters[0];
+}
+
+function storyLedgerHtml() {
+  const chapter = currentStoryChapter();
+  if (!chapter) return '';
+  const chapters = tables.story?.chapters || [];
+  const index = Math.max(0, chapters.findIndex((item) => item.id === chapter.id));
+  const progress = Math.round(((index + 1) / chapters.length) * 100);
+  return `<section class="story-ledger" style="--story-accent:${chapter.accent || '#d7a95f'}">
+    <div class="story-ledger-mark" aria-hidden="true"><span>✦</span></div>
+    <div class="story-ledger-copy">
+      <div class="story-kicker"><span>${tables.story?.season || 'سجل العرش'}</span><b>${chapter.eyebrowAr || ''}</b></div>
+      <h2>${chapter.titleAr}</h2>
+      <p>${chapter.textAr}</p>
+      <div class="story-objective"><i></i><span>${chapter.objectiveAr}</span></div>
+      <div class="story-progress"><span>مسار الموسم</span><b>${index + 1}/${chapters.length}</b><em><i style="width:${progress}%"></i></em></div>
+    </div>
+  </section>`;
+}
+
 function bindQueueButtons() {
   $('#btn-help-build')?.addEventListener('click', () => {
     const r = G.requestBuildHelp(state, tables);
@@ -459,6 +491,7 @@ function renderCity() {
           <div class="castle-stage castle-3d-mode theme-${state.factionId}">
             <div id="castle-webgl-host" class="castle-webgl-host castle-3d-host" role="img" aria-label="مشهد القلعة ثلاثي الأبعاد"></div>
           </div>
+          <div id="story-ledger-host">${storyLedgerHtml()}</div>
           <div id="city-queue-host">${queueBannerHtml()}</div>
         </div>
         <div id="city-dock-host">${buildingDockHtml(bid)}</div>
@@ -466,6 +499,8 @@ function renderCity() {
   } else {
     const q = $('#city-queue-host');
     if (q) q.innerHTML = queueBannerHtml();
+    const storyHost = $('#story-ledger-host');
+    if (storyHost) storyHost.innerHTML = storyLedgerHtml();
     const dockHost = $('#city-dock-host');
     if (dockHost) dockHost.innerHTML = buildingDockHtml(bid);
   }
