@@ -200,6 +200,10 @@ export function resolveAttackTarget(tables, targetId) {
       failWoundMult: m.failWoundMult || 1,
       defensePowerApprox: m.defensePowerApprox,
       monsterId: m.id || node.id,
+      monsterLevel: Math.max(1, Math.min(40, Number(node.level || m.level || m.levelMin || ((m.tier || 1) * 5 - 2)))),
+      monsterArchetype: m.visualArchetype || 'وحش ميداني',
+      monsterLevelMin: m.levelMin || null,
+      monsterLevelMax: m.levelMax || null,
     };
   }
 
@@ -887,6 +891,12 @@ function finishCombatMarch(state, tables, march) {
     attPower: report.attPower,
     defPower: report.defPower,
     recommendedPower: target.recommendedPower || null,
+    monsterId: target.monsterId || null,
+    monsterLevel: target.monsterLevel || null,
+    monsterArchetype: target.monsterArchetype || null,
+    monsterLevelMin: target.monsterLevelMin || null,
+    monsterLevelMax: target.monsterLevelMax || null,
+    lootGrade: target.monsterLevel ? (target.monsterLevel >= 36 ? 'أسطورية' : target.monsterLevel >= 26 ? 'ملحمية' : target.monsterLevel >= 16 ? 'نادرة' : target.monsterLevel >= 6 ? 'محسّنة' : 'أساسية') : null,
     specialReward: target.specialReward || null,
     unitLevelsUsed: report.unitLevelsUsed,
     text: `غارة على ${target.nameAr}: ${outcomeAr}. مساهمة البطل ${Math.round(report.hero.contributionRatio * 100)}٪ (سقف 25٪).${recLine}${lvlLine}${specialLine}`,

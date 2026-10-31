@@ -924,9 +924,11 @@ function renderReports() {
   if (!state.reports.length) html += `<p class="muted">لا تقارير بعد.</p>`;
   for (const r of state.reports) {
     const title = r.kind === 'combat' ? r.outcomeAr : r.kind === 'scout' ? 'استطلاع' : 'جمع';
+    const targetBadge = r.kind === 'combat' && r.monsterLevel ? ` · ${r.monsterArchetype || 'وحش'} م${r.monsterLevel}` : '';
+    const lootBadge = r.kind === 'combat' && r.loot ? ` · غنائم ${r.lootGrade || 'ميدانية'}` : '';
     html += `<div class="building-row report-row report-${r.kind} ${r.outcome === 'win' ? 'report-win' : r.outcome === 'loss' ? 'report-loss' : ''}" style="cursor:pointer" data-report="${r.id}">
       <div><strong><i class="report-emblem">${r.kind === 'combat' ? '⚔' : r.kind === 'scout' ? '◉' : '✦'}</i>${title}</strong>
-        <div class="meta">${r.text || ''} · ${new Date(r.at).toLocaleTimeString('ar')}</div>
+        <div class="meta">${r.text || ''}${targetBadge}${lootBadge} · ${new Date(r.at).toLocaleTimeString('ar')}</div>
       </div>
       <span class="report-open">عرض السجل</span>
     </div>`;
@@ -955,18 +957,21 @@ function openReport(id) {
       const lv = r.unitLevelsUsed?.[uid] || state.unitLevels?.[uid] || 1;
       return `<tr><td>${unitName(uid)} م${lv}</td><td>${b}</td><td>${a}</td><td>${k}</td><td>${w}</td></tr>`;
     }).join('');
-    body.innerHTML = `<div class="battle-modal-head ${r.outcome === 'win' ? 'report-win' : 'report-loss'}"><span>سجل الراية · ${new Date(r.at).toLocaleString('ar')}</span><h2>تقرير قتال — ${r.targetName}</h2><b>${r.outcomeAr}</b></div>
-      <p class="${r.outcome === 'win' ? 'ok' : r.outcome === 'loss' ? 'danger' : ''}">النتيجة: <strong>${r.outcomeAr}</strong> (R=${r.R})
-        · قوة ${r.attPower || '—'} ضد ${r.defPower || '—'}</p>
-      ${r.recommendedPower ? `<p class="muted">القوة الموصى بها كانت ≥ ${r.recommendedPower}</p>` : ''}
-      <p>مساهمة البطل: ${r.hero.contribution} / خام ${r.hero.raw}
-        (${Math.round(r.hero.contributionRatio * 100)}٪${r.hero.capped ? ' — سقف 25٪' : ''})</p>
-      ${r.specialReward ? `<p class="ok">مكافأة مميزة: ${r.specialReward.nameAr}</p>` : ''}
-      <table class="report-table">
-        <thead><tr><th>وحدة</th><th>قبل</th><th>بعد</th><th>قتلى</th><th>جرحى</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-      <p>نهب: طعام ${r.loot.food} · خشب ${r.loot.wood} · حجر ${r.loot.stone} · ذهب ${r.loot.gold}</p>`;
+    const lootLabels = { food: 'طعام', wood: 'خشب', stone: 'حجر', gold: 'ذهب' };
+    const lootIcons = { food: '🌾', wood: '⌁', stone: '◆', gold: '✦' };
+    const lootCards = ['food', 'wood', 'stone', 'gold'].map((key) => `<div class="loot-card loot-${key}"><span>${lootIcons[key]}</span><div><small>${lootLabels[key]}</small><strong>${(r.loot?.[key] || 0).toLocaleString('ar')}</strong></div></div>`).join('');
+    const totalKilled = Object.values(r.attacker.killed || {}).reduce((sum, n) => sum + (n || 0), 0);
+    const totalWounded = Object.values(r.attacker.wounded || {}).reduce((sum, n) => sum + (n || 0), 0);
+    const level = r.monsterLevel || 0;
+    const range = r.monsterLevelMin && r.monsterLevelMax ? `م${r.monsterLevelMin}–م${r.monsterLevelMax}` : `م${level || '—'}`;
+    const archetype = r.monsterArchetype || 'حامية ميدانية';
+    body.innerHTML = `<div class="battle-modal-head battle-head-${r.outcome === 'win' ? 'win' : r.outcome === 'loss' ? 'loss' : 'draw'}"><span>سجل الراية · ${new Date(r.at).toLocaleString('ar')}</span><h2>تقرير معركة — ${r.targetName}</h2><b>${r.outcomeAr}</b></div>
+      <section class="battle-target-card"><div class="report-monster-emblem level-${level || 1}">☠<b>${level ? `م${level}` : 'NPC'}</b></div><div><span class="report-kicker">هدف الغارة · ${r.lootGrade || 'ميداني'}</span><h3>${r.targetName}</h3><p>${archetype} · نطاق الغنائم ${range}</p></div><div class="target-power"><small>الدفاع</small><strong>${(r.defPower || 0).toLocaleString('ar')}</strong></div></section>
+      <div class="battle-metric-grid"><div><span>قوة جيشك</span><b>${(r.attPower || 0).toLocaleString('ar')}</b></div><div><span>قوة الخصم</span><b>${(r.defPower || 0).toLocaleString('ar')}</b></div><div><span>قتلى</span><b class="danger">${totalKilled}</b></div><div><span>جرحى</span><b class="warning">${totalWounded}</b></div></div>
+      <div class="battle-result-line ${r.outcome === 'win' ? 'is-win' : r.outcome === 'loss' ? 'is-loss' : ''}"><span>النتيجة النهائية</span><strong>${r.outcomeAr}</strong><small>معامل الحسم R=${r.R}</small></div>
+      ${r.recommendedPower ? `<p class="muted report-recommendation">القوة الموصى بها للوحش: ≥ ${r.recommendedPower} · ${r.attPower >= r.recommendedPower ? 'تشكيل مناسب' : 'مواجهة عالية المخاطر'}</p>` : ''}
+      <section class="report-loot-section"><div class="report-section-head"><div><span class="report-kicker">حصيلة الغارة</span><h3>الغنائم المكتسبة</h3></div><b class="loot-grade-${r.lootGrade || 'ميدانية'}">${r.lootGrade || 'غنائم ميدانية'}</b></div><div class="loot-grid">${lootCards}</div>${r.specialReward ? `<div class="rare-reward"><span>✦</span><div><small>مكافأة الوحش الخاصة</small><strong>${r.specialReward.nameAr}</strong><p>${r.specialReward.descAr || ''}</p></div></div>` : ''}</section>
+      <section class="report-army-section"><div class="report-section-head"><div><span class="report-kicker">سجل التشكيل</span><h3>أداء الوحدات</h3></div><span class="hero-contribution">مساهمة البطل ${Math.round((r.hero?.contributionRatio || 0) * 100)}٪</span></div><table class="report-table"><thead><tr><th>الوحدة</th><th>قبل</th><th>بعد</th><th>قتلى</th><th>جرحى</th></tr></thead><tbody>${rows}</tbody></table></section>`;
   }
   $('#modal').classList.add('open');
 }
