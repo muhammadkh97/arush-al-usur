@@ -1,0 +1,13 @@
+{
+  "meta": { "season": "سجل العرش · الموسم الأول" },
+  "items": [
+    { "id": "first_blood", "nameAr": "الضربة الأولى", "descAr": "حقق أول انتصار في معركة على الخريطة.", "metric": "combat_wins", "target": 1, "icon": "⚔", "reward": { "gold": 80, "speedMinutes": 5 } },
+    { "id": "beast_hunter", "nameAr": "صياد الوحوش", "descAr": "اهزم خمسة وحوش من خريطة العالم.", "metric": "monster_wins", "target": 5, "icon": "☠", "reward": { "gold": 180, "food": 500 } },
+    { "id": "crown_breaker", "nameAr": "كاسر التاج", "descAr": "انتصر على وحش من المستوى 36 أو أعلى.", "metric": "max_monster_level", "target": 36, "icon": "♛", "reward": { "gold": 500, "stamina": 10 } },
+    { "id": "royal_commander", "nameAr": "القائد الملكي", "descAr": "ارفع مستوى القائد إلى المستوى 10.", "metric": "hero_level", "target": 10, "icon": "✦", "reward": { "gold": 220, "speedMinutes": 10 } },
+    { "id": "stone_citadel", "nameAr": "حصن العصور", "descAr": "ارفع القصر إلى المستوى 5.", "metric": "palace_level", "target": 5, "icon": "⌂", "reward": { "stone": 800, "gold": 120 } },
+    { "id": "united_banner", "nameAr": "راية موحدة", "descAr": "انضم إلى تحالف أو أسس مجلساً ملكياً.", "metric": "alliance", "target": 1, "icon": "⚑", "reward": { "food": 600, "wood": 600 } },
+    { "id": "great_levy", "nameAr": "التعبئة الكبرى", "descAr": "امتلك ألف وحدة في جيشك.", "metric": "army_count", "target": 1000, "icon": "♞", "reward": { "gold": 300, "stamina": 5 } },
+    { "id": "royal_treasury", "nameAr": "خزينة العرش", "descAr": "راكم 5000 من إجمالي الموارد.", "metric": "resources_total", "target": 5000, "icon": "✧", "reward": { "gold": 350, "speedMinutes": 15 } }
+  ]
+}

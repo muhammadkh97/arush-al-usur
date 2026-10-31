@@ -30,6 +30,7 @@ export async function loadTables() {
     'resource_fields.json',
     'story_chapters.json',
     'world_events.json',
+    'achievements_royal.json',
   ];
   const out = {};
   await Promise.all(files.map(async (f) => {
@@ -55,6 +56,7 @@ export async function loadTables() {
     fields: out.resource_fields,
     story: out.story_chapters,
     events: out.world_events,
+    achievements: out.achievements_royal,
   };
 }
 
@@ -117,6 +119,7 @@ export function createNewState(name, factionId, tables) {
     allianceRole: null,
     helpOnQueue: 0,
     quests: Object.fromEntries((tables.quests.daily || []).map((q) => [q.id, { progress: 0, done: false, claimed: false }])),
+    achievements: {},
     beginnerShieldUntil: now + 48 * 3600 * 1000,
     onboardingStep: 0,
     analytics: [],
@@ -622,6 +625,24 @@ export function claimQuest(state, tables, id) {
   if (rw.speedMinutes) state.speedMinutes += rw.speedMinutes;
   if (rw.stamina) state.stamina = Math.min(tables.stamina.cap, state.stamina + rw.stamina);
   return { ok: true };
+}
+
+export function claimAchievement(state, tables, id, progress = 0) {
+  const def = (tables.achievements?.items || []).find((item) => item.id === id);
+  if (!def) return { ok: false, reason: 'إنجاز غير معروف' };
+  state.achievements = state.achievements || {};
+  const current = state.achievements[id] || {};
+  if (current.claimed) return { ok: false, reason: 'تم تحصيل الإنجاز' };
+  if (progress < def.target) return { ok: false, reason: 'الإنجاز لم يكتمل بعد' };
+  current.claimed = true;
+  current.claimedAt = Date.now();
+  state.achievements[id] = current;
+  const rw = def.reward || {};
+  for (const r of ['food', 'wood', 'stone', 'gold']) if (rw[r]) state.resources[r] += rw[r];
+  if (rw.speedMinutes) state.speedMinutes += rw.speedMinutes;
+  if (rw.stamina) state.stamina = Math.min(tables.stamina.cap, state.stamina + rw.stamina);
+  track(state, 'achievement_claim', { id });
+  return { ok: true, reward: rw };
 }
 
 export function playerArmyPower(state, tables) {

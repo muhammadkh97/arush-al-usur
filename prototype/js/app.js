@@ -985,43 +985,47 @@ function rewardText(rw) {
   return bits.join(' · ');
 }
 
+function achievementProgress(def) {
+  const reports = state.reports || [];
+  if (def.metric === 'combat_wins') return reports.filter((r) => r.kind === 'combat' && r.outcome === 'win').length;
+  if (def.metric === 'monster_wins') return reports.filter((r) => r.kind === 'combat' && r.outcome === 'win' && r.monsterLevel).length;
+  if (def.metric === 'max_monster_level') return Math.max(0, ...reports.filter((r) => r.kind === 'combat' && r.outcome === 'win').map((r) => r.monsterLevel || 0));
+  if (def.metric === 'hero_level') return state.hero?.level || 1;
+  if (def.metric === 'palace_level') return state.buildings?.palace || 0;
+  if (def.metric === 'alliance') return state.allianceId ? 1 : 0;
+  if (def.metric === 'army_count') return Object.values(state.army || {}).reduce((sum, count) => sum + (count || 0), 0);
+  if (def.metric === 'resources_total') return Object.values(state.resources || {}).reduce((sum, count) => sum + (count || 0), 0);
+  return 0;
+}
+
 function renderQuests() {
   const stage = $('#main-stage');
-  let doneCount = 0;
-  let claimedCount = 0;
-  for (const q of tables.quests.daily) {
-    const st = state.quests[q.id] || {};
-    if (st.done) doneCount += 1;
-    if (st.claimed) claimedCount += 1;
-  }
-  let html = `<div class="panel quests-panel">
-    <h2>مهام يومية</h2>
-    <p class="muted">من جدول الشريحة · مكتمل ${doneCount}/${tables.quests.daily.length} · مُحصَّل ${claimedCount}</p>`;
-  for (const q of tables.quests.daily) {
+  const daily = tables.quests.daily || [];
+  const achievements = tables.achievements?.items || [];
+  const dailyDone = daily.filter((q) => state.quests[q.id]?.done).length;
+  const dailyClaimed = daily.filter((q) => state.quests[q.id]?.claimed).length;
+  const achievementDone = achievements.filter((a) => (state.achievements?.[a.id]?.claimed)).length;
+  let html = `<div class="royal-record-shell"><section class="royal-record-hero"><div class="record-seal">✦</div><div><span>سجل العرش · تقدم القائد</span><h2>المهام والإنجازات الملكية</h2><p>كل غارة وترقية وتحالف يترك أثراً في سجل مملكتك. أكمل الأهداف وحوّل التقدم إلى جوائز.</p></div><div class="record-summary"><b>${dailyClaimed + achievementDone}</b><span>جوائز محصّلة</span></div></section><div class="record-stats"><span><b>${dailyDone}/${daily.length}</b> مهام يومية</span><span><b>${achievementDone}/${achievements.length}</b> إنجازات ملكية</span><span><b>${(state.reports || []).filter((r) => r.kind === 'combat' && r.outcome === 'win').length}</b> انتصارات</span></div><section class="record-section"><div class="record-section-head"><div><span class="record-kicker">دورة اليوم</span><h3>أوامر القصر اليومية</h3></div><span class="record-reset">تتجدد مع بداية اليوم</span></div><div class="daily-quest-grid">`;
+  for (const q of daily) {
     const st = state.quests[q.id] || { progress: 0, done: false, claimed: false };
     const need = q.id === 'train_50' ? 50 : 1;
-    const pct = st.done ? 100 : Math.min(100, Math.round(((st.progress || 0) / need) * 100));
-    const status = st.claimed ? 'مطالَبة' : st.done ? 'جاهزة للتحصيل' : 'جارٍ';
-    html += `<div class="quest-card ${st.done && !st.claimed ? 'is-ready' : ''} ${st.claimed ? 'is-claimed' : ''}">
-      <div class="quest-top">
-        <strong>${q.nameAr}</strong>
-        <span class="quest-status">${status}</span>
-      </div>
-      <div class="eta-bar"><i style="width:${pct}%"></i></div>
-      <p class="meta">التقدم ${Math.min(st.progress || 0, need)}/${need} · مكافأة: ${rewardText(q.reward)}</p>
-      <button class="btn ${st.done && !st.claimed ? 'btn-primary' : 'btn-ghost'} btn-small" data-claim="${q.id}" ${st.done && !st.claimed ? '' : 'disabled'}>تحصيل المكافأة</button>
-    </div>`;
+    const progress = Math.min(st.progress || 0, need);
+    const pct = st.done ? 100 : Math.min(100, Math.round((progress / need) * 100));
+    const status = st.claimed ? 'مُحصّلة' : st.done ? 'جاهزة للتحصيل' : 'قيد التنفيذ';
+    html += `<article class="royal-quest-card ${st.done && !st.claimed ? 'is-ready' : ''} ${st.claimed ? 'is-claimed' : ''}"><div class="quest-medal">${q.id === 'raid_npc' ? '⚔' : q.id === 'hero_level' ? '♛' : q.id === 'train_50' ? '♞' : '✦'}</div><div class="quest-card-main"><div class="quest-top"><strong>${q.nameAr}</strong><span class="quest-status">${status}</span></div><div class="eta-bar"><i style="width:${pct}%"></i></div><p class="meta">${progress}/${need} · ${rewardText(q.reward)}</p><button class="btn ${st.done && !st.claimed ? 'btn-primary' : 'btn-ghost'} btn-small" data-claim="${q.id}" ${st.done && !st.claimed ? '' : 'disabled'}>${st.claimed ? 'تم التحصيل' : st.done ? 'تحصيل الجائزة' : 'متابعة المهمة'}</button></div></article>`;
   }
-  html += `</div>`;
+  html += `</div></section><section class="record-section achievements-section"><div class="record-section-head"><div><span class="record-kicker">إرث طويل الأمد</span><h3>الإنجازات الملكية</h3></div><span class="record-reset">${achievementDone}/${achievements.length} أوسمة</span></div><div class="achievement-grid">`;
+  for (const achievement of achievements) {
+    const current = achievementProgress(achievement);
+    const claimed = state.achievements?.[achievement.id]?.claimed;
+    const complete = current >= achievement.target;
+    const pct = Math.min(100, Math.round((current / achievement.target) * 100));
+    html += `<article class="achievement-card ${complete && !claimed ? 'is-unlocked' : ''} ${claimed ? 'is-claimed' : ''}"><div class="achievement-icon">${achievement.icon}</div><div class="achievement-body"><div class="quest-top"><strong>${achievement.nameAr}</strong><span class="achievement-state">${claimed ? 'مُنجز' : complete ? 'جاهز' : 'يُبنى'}</span></div><p>${achievement.descAr}</p><div class="achievement-progress"><i style="width:${pct}%"></i></div><div class="achievement-foot"><span>${Math.min(current, achievement.target).toLocaleString('ar')}/${achievement.target.toLocaleString('ar')}</span><small>${rewardText(achievement.reward)}</small></div>${complete && !claimed ? `<button class="btn btn-primary btn-small" data-achievement="${achievement.id}">تحصيل الوسام</button>` : ''}</div></article>`;
+  }
+  html += `</div></section></div>`;
   stage.innerHTML = html;
-  $$('[data-claim]').forEach((b) => {
-    b.onclick = () => {
-      const r = G.claimQuest(state, tables, b.dataset.claim);
-      toast(r.ok ? 'تم تحصيل مكافأة المهمة' : 'غير متاح');
-      persist();
-      renderAll();
-    };
-  });
+  $$('[data-claim]').forEach((button) => { button.onclick = () => { const r = G.claimQuest(state, tables, button.dataset.claim); toast(r.ok ? 'تم تحصيل مكافأة المهمة' : r.reason || 'غير متاح'); persist(); renderAll(); }; });
+  $$('[data-achievement]').forEach((button) => { button.onclick = () => { const achievement = achievements.find((item) => item.id === button.dataset.achievement); const r = G.claimAchievement(state, tables, button.dataset.achievement, achievementProgress(achievement)); toast(r.ok ? 'رُفع وسام جديد إلى سجل العرش' : r.reason || 'غير متاح'); persist(); renderAll(); }; });
 }
 
 function renderEvents() {
@@ -1058,6 +1062,7 @@ function renderAll() {
   if (!state.fieldOccupancy) state.fieldOccupancy = {};
   if (!state.unitLevels) state.unitLevels = {};
   if (!state.fieldStock) state.fieldStock = {};
+  if (!state.achievements) state.achievements = {};
   if (state.healQueue === undefined) state.healQueue = null;
   if (state.army && state.army.heavy_infantry == null) state.army.heavy_infantry = 0;
   // ensure quest entries exist for all daily defs
