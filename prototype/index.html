@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#1e2a3d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="عروش العصور" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description" content="عروش العصور — نموذج عمودي عربي لمدينة وتحالف وخريطة عالم" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <title>عروش العصور — النموذج العمودي</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three.module.js",
+      "three/addons/": "./vendor/addons/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <section id="screen-create" class="screen active">
+      <div class="create-wrap">
+        <h1 class="brand-mark">عروش العصور</h1>
+        <p class="brand-sub">مملكة عبر العصور — النموذج العمودي (Phase 1)</p>
+        <div class="create-panel">
+          <label for="player-name">اسم القائد</label>
+          <input id="player-name" type="text" maxlength="24" placeholder="أسد الواحة" autocomplete="off" enterkeyhint="done" />
+          <p class="lock-note">اختر فصيلاً واحداً — الاختيار نهائي ومُقفل بعد الإنشاء (لا يمكن تغييره).</p>
+          <div id="faction-rail" class="faction-rail" role="listbox" aria-label="الفصائل"></div>
+          <button type="button" class="btn btn-primary" id="btn-create">ادخل المدينة</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-game" class="screen">
+      <header class="topbar">
+        <h1 class="brand-mini" id="brand-mini">عروش العصور</h1>
+        <div class="res-bar" id="res-bar"></div>
+        <button type="button" class="btn btn-ghost btn-small" id="btn-reset" title="إعادة تعيين">جديد</button>
+      </header>
+      <p class="timescale" id="timescale"></p>
+      <main class="main-stage" id="main-stage"></main>
+      <nav class="hud-nav" aria-label="التنقل">
+        <button type="button" data-view="city" class="active" title="داخل القلعة">القلعة</button>
+        <button type="button" data-view="map" title="خريطة العالم">الخريطة</button>
+        <button type="button" data-view="hero" title="البطل">البطل</button>
+        <button type="button" data-view="alliance" title="التحالف">التحالف</button>
+        <button type="button" data-view="reports" title="التقارير">التقارير</button>
+        <button type="button" data-view="quests" title="المهام">المهام</button>
+      </nav>
+    </section>
+  </div>
+
+  <div class="onboarding" id="onboarding">
+    <p id="onboarding-text"></p>
+    <button type="button" class="btn btn-primary btn-small" id="btn-onboard-next">متابعة</button>
+  </div>
+
+  <div class="toast-host" id="toast-host" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div id="modal-body"></div>
+      <button type="button" class="btn btn-ghost" id="modal-close" style="margin-top:0.75rem;width:100%">إغلاق</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

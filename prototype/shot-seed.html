@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" /><title>seed</title></head>
+<body>
+<script type="module">
+const params = new URLSearchParams(location.search);
+const view = params.get('view') || 'city';
+const scenario = params.get('scenario') || 'default';
+const base = new URL('../data/', import.meta.url);
+const files = [
+  'buildings_l1-5.json','units_slice.json','heroes_launch.json','factions.json',
+  'combat_constants_slice.json','npc_camps.json','warehouse_protection.json',
+  'stamina.json','quests_daily_slice.json','alliance_slice.json','world_map_slice.json',
+  'monsters.json','resource_fields.json'
+];
+const out = {};
+for (const f of files) {
+  out[f.replace('.json','').replace(/-/g,'_')] = await (await fetch(new URL(f, base))).json();
+}
+const now = Date.now();
+const home = { x: 500, y: 520 };
+const field = out.world_map_slice.nodes.find((n) => n.id === 'field_food_1') || { x: 360, y: 600, nameAr: 'حقول القمح' };
+const camp = out.world_map_slice.nodes.find((n) => n.kind === 'npc_camp' && n.tier === 1) || { x: 200, y: 300, id: 'camp_npc_01', nameAr: 'معسكر' };
+const monster = out.world_map_slice.nodes.find((n) => n.id === 'monster_oasis_jinni');
+
+const marches = [];
+if (scenario === 'marches' || scenario === 'default') {
+  marches.push({
+    id: 'demo_raid',
+    type: 'raid_npc',
+    targetId: camp.id || 'camp_npc_01',
+    targetNameAr: camp.nameAr || 'معسكر',
+    army: { light_infantry: 80, archers: 40 },
+    status: 'traveling',
+    startedAt: now - 4000,
+    arrivesAt: now + 9000,
+    from: { ...home },
+    to: { x: camp.x, y: camp.y },
+    gatherLoot: null,
+    armyReturning: null,
+  });
+  marches.push({
+    id: 'demo_gather',
+    type: 'gather',
+    targetId: 'field_food_1',
+    targetNameAr: field.nameAr,
+    army: { light_infantry: 40 },
+    status: 'gathering',
+    startedAt: now - 12000,
+    arrivesAt: now - 2000,
+    gatherEndsAt: now + 7000,
+    gatherMs: 9000,
+    from: { ...home },
+    to: { x: field.x, y: field.y },
+    gatherLoot: null,
+    armyReturning: null,
+  });
+  marches.push({
+    id: 'demo_return',
+    type: 'raid_npc',
+    targetId: monster?.id || 'monster_oasis_jinni',
+    targetNameAr: monster?.nameAr || 'وحش',
+    army: { light_infantry: 30 },
+    status: 'returning',
+    startedAt: now - 20000,
+    arrivesAt: now - 8000,
+    returnStartedAt: now - 3000,
+    returnsAt: now + 6000,
+    from: { x: monster?.x || 180, y: monster?.y || 480 },
+    to: { ...home },
+    armyReturning: { light_infantry: 22, archers: 10 },
+    gatherLoot: null,
+  });
+}
+
+const state = {
+  version: 1,
+  playerName: 'قائد العرض',
+  factionId: 'jazira',
+  createdAt: now,
+  lastTick: now,
+  timeScale: 60,
+  stamina: 120,
+  staminaAccMs: 0,
+  resources: { food: 18000, wood: 16000, stone: 7000, gold: 2500 },
+  buildings: {
+    palace: 5, farm: 3, lumber: 3, quarry: 2, goldmine: 2, warehouse: 3,
+    barracks: 5, archery: 3, wall: 2, embassy: 2, hospital: 2, academy: 2, shrine: 2
+  },
+  buildQueue: scenario === 'help' ? {
+    buildingId: 'palace', targetLevel: 4, startedAt: now - 2000,
+    completesAt: now + 15000, helps: 1, baseDurationMs: 17000
+  } : null,
+  trainQueue: null,
+  army: { light_infantry: 220, archers: 90, heavy_infantry: 10, mangonel_engineers: 18, armored_legion: 0, mounted_archers: 0 },
+  unitLevels: { light_infantry: 2, archers: 2, heavy_infantry: 1, mangonel_engineers: 1 },
+  wounded: scenario === 'hospital' || scenario === 'default' ? { light_infantry: 24, archers: 12 } : {},
+  healQueue: scenario === 'hospital' ? {
+    units: { light_infantry: 24, archers: 12 }, total: 36,
+    startedAt: now - 1000, completesAt: now + 12000, helps: 0
+  } : null,
+  hero: {
+    id: 'asad_al_rimal', level: 8, skillLevel: 3,
+    equip: [{ id: 'bronze_blade', bonus: 15 }, { id: 'leather_cloak', bonus: 10 }],
+    nowruzChoice: 'march_speed'
+  },
+  marches,
+  fieldOccupancy: marches.some((m) => m.status === 'gathering') ? { field_food_1: 'demo_gather' } : {},
+  fieldStock: {},
+  gatherBuffUntil: 0,
+  garrisonDefBuffUntil: 0,
+  reports: [],
+  allianceId: scenario === 'help' || scenario === 'default' || scenario === 'hospital' || scenario === 'marches' ? 'demo_alliance' : null,
+  allianceRole: 'leader',
+  helpOnQueue: 0,
+  quests: Object.fromEntries((out.quests_daily_slice.daily || []).map((q, i) => [q.id, {
+    progress: i === 0 ? 1 : i === 1 ? 50 : i === 2 ? 1 : 0,
+    done: i < 3,
+    claimed: i === 0
+  }])),
+  beginnerShieldUntil: now + 48 * 3600 * 1000,
+  onboardingStep: 6,
+  analytics: [],
+  speedMinutes: 8,
+  scoutedNodes: { castle_player: now, monster_oasis_jinni: now, monster_caravan_beast: now, field_food_1: now, field_gold_1: now },
+  selectedWorldNodeId: view === 'map'
+    ? (scenario === 'gather' || scenario === 'field' ? 'field_food_1'
+      : scenario === 'monster' ? 'monster_caravan_beast'
+        : scenario === 'castle' ? 'castle_npc_rome'
+          : 'monster_oasis_jinni')
+    : 'castle_player',
+  selectedBuildingId: scenario === 'hospital' ? 'hospital' : scenario === 'barracks' || scenario === 'army' ? 'barracks' : 'palace',
+  worldViewBox: null
+};
+
+if (state.allianceId) {
+  localStorage.setItem('arush_al_usur_phase1_alliances', JSON.stringify({
+    list: [{ id: 'demo_alliance', name: 'سيوف العرض', tag: 'عرض', desc: '', members: [{ name: state.playerName, role: 'leader', power: 400 }] }]
+  }));
+}
+localStorage.setItem('arush_al_usur_phase1_v1', JSON.stringify(state));
+location.replace('./index.html?view=' + encodeURIComponent(view));
+</script>
+</body>
+</html>
