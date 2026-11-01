@@ -1014,7 +1014,7 @@ function renderQuests() {
     const status = st.claimed ? 'مُحصّلة' : st.done ? 'جاهزة للتحصيل' : 'قيد التنفيذ';
     html += `<article class="royal-quest-card ${st.done && !st.claimed ? 'is-ready' : ''} ${st.claimed ? 'is-claimed' : ''}"><div class="quest-medal">${q.id === 'raid_npc' ? '⚔' : q.id === 'hero_level' ? '♛' : q.id === 'train_50' ? '♞' : '✦'}</div><div class="quest-card-main"><div class="quest-top"><strong>${q.nameAr}</strong><span class="quest-status">${status}</span></div><div class="eta-bar"><i style="width:${pct}%"></i></div><p class="meta">${progress}/${need} · ${rewardText(q.reward)}</p><button class="btn ${st.done && !st.claimed ? 'btn-primary' : 'btn-ghost'} btn-small" data-claim="${q.id}" ${st.done && !st.claimed ? '' : 'disabled'}>${st.claimed ? 'تم التحصيل' : st.done ? 'تحصيل الجائزة' : 'متابعة المهمة'}</button></div></article>`;
   }
-  html += `</div></section><section class="record-section achievements-section"><div class="record-section-head"><div><span class="record-kicker">إرث طويل الأمد</span><h3>الإنجازات الملكية</h3></div><span class="record-reset">${achievementDone}/${achievements.length} أوسمة</span></div><div class="achievement-grid">`;
+  html += `</div><p class="daily-cycle-note">دورة المهام الحالية · ${state.questDay || 'اليوم'} · تُحفظ الإنجازات الملكية بشكل دائم</p></section><section class="record-section achievements-section"><div class="record-section-head"><div><span class="record-kicker">إرث طويل الأمد</span><h3>الإنجازات الملكية</h3></div><span class="record-reset">${achievementDone}/${achievements.length} أوسمة</span></div><div class="achievement-grid">`;
   for (const achievement of achievements) {
     const current = achievementProgress(achievement);
     const claimed = state.achievements?.[achievement.id]?.claimed;
@@ -1063,6 +1063,8 @@ function renderAll() {
   if (!state.unitLevels) state.unitLevels = {};
   if (!state.fieldStock) state.fieldStock = {};
   if (!state.achievements) state.achievements = {};
+  if (!state.quests) state.quests = {};
+  if (G.rotateDailyQuests(state, tables)) persist();
   if (state.healQueue === undefined) state.healQueue = null;
   if (state.army && state.army.heavy_infantry == null) state.army.heavy_infantry = 0;
   // ensure quest entries exist for all daily defs

@@ -119,6 +119,7 @@ export function createNewState(name, factionId, tables) {
     allianceRole: null,
     helpOnQueue: 0,
     quests: Object.fromEntries((tables.quests.daily || []).map((q) => [q.id, { progress: 0, done: false, claimed: false }])),
+    questDay: dailyKey(now),
     achievements: {},
     beginnerShieldUntil: now + 48 * 3600 * 1000,
     onboardingStep: 0,
@@ -129,6 +130,19 @@ export function createNewState(name, factionId, tables) {
     selectedBuildingId: null,
     worldViewBox: null,
   };
+}
+
+function dailyKey(now = Date.now()) {
+  const d = new Date(now);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+export function rotateDailyQuests(state, tables, now = Date.now()) {
+  const key = dailyKey(now);
+  if (state.questDay === key) return false;
+  state.quests = Object.fromEntries((tables.quests.daily || []).map((q) => [q.id, { progress: 0, done: false, claimed: false }]));
+  state.questDay = key;
+  return true;
 }
 
 export function worldNodeById(tables, id) {
@@ -456,6 +470,7 @@ function warehouseCap(state, tables) {
 
 export function tick(state, tables, now = Date.now()) {
   const events = [];
+  rotateDailyQuests(state, tables, now);
   const dt = Math.max(0, now - state.lastTick);
   if (dt <= 0) return events;
 
