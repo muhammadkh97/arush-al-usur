@@ -2343,3 +2343,14 @@ body::after {
 .castle-iso-svg .float-marker { animation: markerBob 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 @keyframes markerBob { 0%,100% { opacity: .82; } 50% { opacity: 1; } }
 @keyframes cartDrift { from { transform: translateX(-2px); } to { transform: translateX(5px); } }
+
+
+
+/* ========== 40-level monster evolution on the world map ========== */
+.world-2d-svg .mk-monster { transition: filter .2s ease; }
+.world-2d-svg .mk-monster:hover { filter: brightness(1.18) drop-shadow(0 0 8px rgba(255,211,107,.52)); }
+.world-2d-svg .monster-evolution { pointer-events: none; transform-origin: center; }
+.world-2d-svg .monster-evolution.tier-8 { filter: drop-shadow(0 0 5px rgba(255,211,107,.68)); }
+.world-2d-svg .monster-evolution.stage-5 { animation: monsterAscend 2.8s ease-in-out infinite; }
+.world-2d-svg .level-36 .monster-dragon, .world-2d-svg .level-37 .monster-dragon, .world-2d-svg .level-38 .monster-dragon, .world-2d-svg .level-39 .monster-dragon, .world-2d-svg .level-40 .monster-dragon { filter: drop-shadow(0 0 7px rgba(255,211,107,.6)); }
+@keyframes monsterAscend { 0%,100% { opacity: .72; } 50% { opacity: 1; } }
