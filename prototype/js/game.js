@@ -31,6 +31,7 @@ export async function loadTables() {
     'story_chapters.json',
     'world_events.json',
     'achievements_royal.json',
+    'alliance_research.json',
   ];
   const out = {};
   await Promise.all(files.map(async (f) => {
@@ -57,6 +58,7 @@ export async function loadTables() {
     story: out.story_chapters,
     events: out.world_events,
     achievements: out.achievements_royal,
+    allianceResearch: out.alliance_research,
   };
 }
 
@@ -297,6 +299,12 @@ export function loadAlliances() {
       ...a,
       chat: Array.isArray(a.chat) ? a.chat : [{ id: `msg_${a.id}`, author: 'راوي المجلس', text: 'مرحباً بكم في مجلس العرش. لتتحد الرايات قبل أن يبدأ الزحف.', at: Date.now() }],
       supportRequests: Array.isArray(a.supportRequests) ? a.supportRequests : [],
+      research: {
+        levels: a.research?.levels || {},
+        active: a.research?.active || null,
+        completed: Array.isArray(a.research?.completed) ? a.research.completed : [],
+        log: Array.isArray(a.research?.log) ? a.research.log : [],
+      },
     }));
     return db;
   } catch {
@@ -471,6 +479,7 @@ function warehouseCap(state, tables) {
 export function tick(state, tables, now = Date.now()) {
   const events = [];
   rotateDailyQuests(state, tables, now);
+  finishAllianceResearch(state, tables, now);
   const dt = Math.max(0, now - state.lastTick);
   if (dt <= 0) return events;
 
@@ -667,11 +676,13 @@ export function playerArmyPower(state, tables) {
 
 export function startMarch(state, tables, { type, targetId, army, useHeroSkill = true }) {
   const node = worldNodeById(tables, targetId);
+  const allianceTech = allianceResearchBonuses(state, tables);
   let cost = tables.stamina.costs[type === 'gather' ? 'gather' : 'raid_npc'] || 8;
   if (type === 'gather') {
     const rt = fieldRuntime(state, tables, node?.fieldId || targetId);
     if (rt) cost = rt.stamina;
   }
+  cost = Math.max(1, cost - (allianceTech.staminaDiscount || 0));
   if (state.stamina < cost) return { ok: false, reason: 'طاقة مسير غير كافية' };
 
   let total = 0;
@@ -707,6 +718,7 @@ export function startMarch(state, tables, { type, targetId, army, useHeroSkill =
   if (useHeroSkill && state.hero.nowruzChoice === 'march_speed' && state.factionId === 'persia') {
     speed *= 1.12;
   }
+  speed *= 1 + (allianceTech.marchSpeed || 0);
 
   const home = playerCastlePos(tables);
   const dest = node ? { x: node.x, y: node.y } : { x: home.x + 80, y: home.y - 60 };
@@ -849,6 +861,7 @@ function finishCombatMarch(state, tables, march) {
 
   const heroDef = tables.heroes.heroes.find((h) => h.id === state.hero.id);
   const equipBonus = (state.hero.equip || []).reduce((s, e) => s + (e.bonus || 0), 0);
+  const allianceTech = allianceResearchBonuses(state, tables);
   const attackerBuffs = {};
   if (state.factionId === 'rome') attackerBuffs.infantryAttack = 0.05;
   const skillBonus = (heroDef?.active?.valueAtLevel1 || 0)
@@ -859,6 +872,7 @@ function finishCombatMarch(state, tables, march) {
   if (march.useHeroSkill && state.factionId === 'persia' && state.hero.nowruzChoice === 'cavalry_attack_on_arrival') {
     attackerBuffs.infantryAttack = (attackerBuffs.infantryAttack || 0) + 0.08;
   }
+  attackerBuffs.infantryAttack = (attackerBuffs.infantryAttack || 0) + (allianceTech.infantryAttack || 0);
   if (state.garrisonDefBuffUntil && Date.now() < state.garrisonDefBuffUntil) {
     // unused on attack; kept for city defense later
   }
@@ -878,7 +892,7 @@ function finishCombatMarch(state, tables, march) {
     attackerUnitLevels: march.unitLevels || state.unitLevels || {},
     wallLevel: 0,
     lootTable: target.loot,
-    monsterFailWoundMult: target.failWoundMult || 1,
+    monsterFailWoundMult: (target.failWoundMult || 1) * Math.max(0.5, 1 - (allianceTech.woundReduction || 0)),
   });
 
   for (const [uid, w] of Object.entries(report.attacker.wounded || {})) {
@@ -1035,6 +1049,71 @@ export function upgradeHeroSkill(state) {
   return { ok: true };
 }
 
+function researchNode(tables, id) {
+  return tables.allianceResearch?.nodes?.find((node) => node.id === id) || null;
+}
+
+function researchLevelDef(node, level) {
+  return node?.levels?.find((entry) => entry.level === level) || null;
+}
+
+function researchRequirementMet(research, requirement) {
+  const [id, rawLevel] = String(requirement).split(':');
+  return (research.levels[id] || 0) >= Number(rawLevel || 1);
+}
+
+export function finishAllianceResearch(state, tables, now = Date.now()) {
+  if (!state.allianceId) return false;
+  const db = loadAlliances();
+  const alliance = db.list.find((item) => item.id === state.allianceId);
+  const active = alliance?.research?.active;
+  if (!active || active.endsAt > now) return false;
+  const node = researchNode(tables, active.nodeId);
+  if (!node) return false;
+  alliance.research.levels[node.id] = active.level;
+  alliance.research.completed.unshift({ nodeId: node.id, level: active.level, at: now });
+  alliance.research.log.unshift({ type: 'complete', nodeId: node.id, level: active.level, by: active.startedBy, at: now });
+  alliance.research.active = null;
+  saveAlliances(db);
+  return true;
+}
+
+export function startAllianceResearch(state, tables, nodeId) {
+  if (!state.allianceId) return { ok: false, reason: 'انضم إلى تحالف أولاً' };
+  if (state.allianceRole !== 'leader') return { ok: false, reason: 'يبدأ أبحاث التحالف حامل الراية فقط' };
+  const node = researchNode(tables, nodeId);
+  if (!node) return { ok: false, reason: 'بحث غير معروف' };
+  const db = loadAlliances();
+  const alliance = db.list.find((item) => item.id === state.allianceId);
+  if (!alliance) return { ok: false, reason: 'التحالف غير موجود' };
+  const research = alliance.research;
+  if (research.active) return { ok: false, reason: 'يوجد بحث نشط في مختبر التحالف' };
+  if ((state.buildings.embassy || 0) < node.requiresEmbassy) return { ok: false, reason: `طوّر السفارة إلى المستوى ${node.requiresEmbassy}` };
+  for (const requirement of node.requires || []) if (!researchRequirementMet(research, requirement)) return { ok: false, reason: `يتطلب ${requirement.replace(':', ' مستوى ')}` };
+  const nextLevel = (research.levels[node.id] || 0) + 1;
+  const def = researchLevelDef(node, nextLevel);
+  if (!def) return { ok: false, reason: 'اكتمل هذا البحث' };
+  for (const resource of ['food', 'wood', 'stone', 'gold']) if ((state.resources[resource] || 0) < (def.cost[resource] || 0)) return { ok: false, reason: 'موارد القائد غير كافية لتمويل البحث' };
+  for (const resource of ['food', 'wood', 'stone', 'gold']) state.resources[resource] -= def.cost[resource] || 0;
+  const durationMs = (def.minutes * 60 * 1000) / state.timeScale;
+  research.active = { nodeId, level: nextLevel, startedAt: Date.now(), endsAt: Date.now() + durationMs, startedBy: state.playerName };
+  research.log.unshift({ type: 'start', nodeId, level: nextLevel, by: state.playerName, at: Date.now() });
+  saveAlliances(db);
+  track(state, 'alliance_research_start', { nodeId, level: nextLevel });
+  return { ok: true, node, level: nextLevel, durationMs };
+}
+
+export function allianceResearchBonuses(state, tables) {
+  const result = { infantryAttack: 0, woundReduction: 0, marchSpeed: 0, staminaDiscount: 0, warPoints: 0 };
+  const alliance = getAlliance(state);
+  for (const node of tables.allianceResearch?.nodes || []) {
+    const level = alliance?.research?.levels?.[node.id] || 0;
+    const def = researchLevelDef(node, level);
+    for (const [key, value] of Object.entries(def?.effect || {})) result[key] = (result[key] || 0) + value;
+  }
+  return result;
+}
+
 export function createAlliance(state, name, tag, desc = '') {
   if (state.allianceId) return { ok: false, reason: 'أنت بالفعل في تحالف' };
   if ((state.buildings.embassy || 0) < 1) return { ok: false, reason: 'ابنِ السفارة' };
@@ -1046,6 +1125,7 @@ export function createAlliance(state, name, tag, desc = '') {
     tag: (tag || 'عرش').slice(0, 4),
     desc,
     members: [{ name: state.playerName, role: 'leader', power: approxPower(state) }],
+    research: { levels: {}, active: null, completed: [], log: [] },
   };
   db.list.push(alliance);
   saveAlliances(db);
