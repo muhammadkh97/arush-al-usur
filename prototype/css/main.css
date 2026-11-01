@@ -2329,3 +2329,17 @@ body::after {
 @media (max-width: 480px) { .royal-record-hero { padding: .75rem; }.record-seal { width: 38px; height: 38px; }.record-summary { display: none; }.record-section { padding: .65rem; } }
 
 .daily-cycle-note { margin: .55rem 0 0; padding-top: .45rem; color: #8ea3ae; border-top: 1px solid rgba(215,169,95,.12); font-size: .58rem; }
+
+
+
+/* ========== Rich city architecture layer ========== */
+.castle-iso-svg .city-life-layer { pointer-events: none; }
+.castle-iso-svg .city-roads { filter: drop-shadow(0 2px 1px rgba(70,38,15,.2)); }
+.castle-iso-svg .city-carts { animation: cartDrift 9s ease-in-out infinite alternate; transform-origin: center; }
+.castle-iso-svg .iso-bldg { transition: filter .2s ease, opacity .2s ease; }
+.castle-iso-svg .iso-bldg.is-built:hover { filter: brightness(1.12) drop-shadow(0 6px 4px rgba(30,16,6,.42)); }
+.castle-iso-svg .iso-bldg.is-ghost { filter: saturate(.72); }
+.castle-iso-svg .palace-ornaments { filter: drop-shadow(0 1px 1px rgba(80,40,12,.3)); }
+.castle-iso-svg .float-marker { animation: markerBob 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes markerBob { 0%,100% { opacity: .82; } 50% { opacity: 1; } }
+@keyframes cartDrift { from { transform: translateX(-2px); } to { transform: translateX(5px); } }

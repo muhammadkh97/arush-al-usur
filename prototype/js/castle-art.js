@@ -360,6 +360,31 @@ function floatingMarker(kind, x, y) {
   </g>`;
 }
 
+function cityLifeLayer() {
+  const trees = [
+    [-250, 165, .9], [-210, 235, .7], [238, 132, .85], [270, 238, .72],
+    [-230, 330, .72], [245, 335, .86], [-92, 112, .55], [105, 106, .6],
+  ].map(([x, y, s]) => palm(OX + x, OY + y, s)).join('');
+  const stalls = [
+    `<g transform="translate(${OX - 236},${OY + 292})"><ellipse cx="0" cy="18" rx="32" ry="10" fill="rgba(40,24,8,.22)"/><path d="M-24 2 L0 -10 L24 2 L0 14 Z" fill="#c45c4a" stroke="#3a2a18"/><path d="M-24 2 V15 M24 2 V15" stroke="#5c4030" stroke-width="3"/><path d="M-10 -3 V10 M10 -3 V10" stroke="#e8c47a" stroke-width="2"/></g>`,
+    `<g transform="translate(${OX + 230},${OY + 285})"><ellipse cx="0" cy="18" rx="30" ry="9" fill="rgba(40,24,8,.22)"/><path d="M-22 2 L0 -9 L22 2 L0 13 Z" fill="#3d7890" stroke="#3a2a18"/><path d="M-22 2 V14 M22 2 V14" stroke="#5c4030" stroke-width="3"/><circle cx="0" cy="2" r="5" fill="#f0c040"/></g>`,
+  ].join('');
+  const roads = `<g class="city-roads" opacity=".78"><path d="M${OX - 270} ${OY + 335} Q${OX - 90} ${OY + 285} ${OX} ${OY + 300} T${OX + 270} ${OY + 330}" fill="none" stroke="#b98955" stroke-width="18" stroke-linecap="round"/><path d="M${OX} ${OY + 300} Q${OX - 30} ${OY + 225} ${OX - 15} ${OY + 138}" fill="none" stroke="#c89b64" stroke-width="13" stroke-linecap="round"/><path d="M${OX + 4} ${OY + 302} Q${OX + 90} ${OY + 236} ${OX + 215} ${OY + 188}" fill="none" stroke="#c89b64" stroke-width="12" stroke-linecap="round"/><path d="M${OX - 270} ${OY + 335} Q${OX - 90} ${OY + 285} ${OX} ${OY + 300} T${OX + 270} ${OY + 330}" fill="none" stroke="#e4bd82" stroke-width="2" stroke-dasharray="7 8" opacity=".6"/></g>`;
+  const carts = `<g class="city-carts" opacity=".9"><g transform="translate(${OX - 192},${OY + 315})"><circle cx="-7" cy="7" r="5" fill="#5c4030"/><circle cx="10" cy="7" r="5" fill="#5c4030"/><path d="M-13 2 L-2 -8 H15 V4 H-13 Z" fill="#a86848" stroke="#3a2a18"/></g><g transform="translate(${OX + 185},${OY + 315})"><circle cx="-7" cy="7" r="5" fill="#5c4030"/><circle cx="10" cy="7" r="5" fill="#5c4030"/><path d="M-13 2 L-2 -8 H15 V4 H-13 Z" fill="#4a7890" stroke="#3a2a18"/></g></g>`;
+  return `<g class="city-life-layer">${roads}${trees}${stalls}${carts}</g>`;
+}
+
+function buildingOrnaments(id, built, level) {
+  if (!built) return `<g opacity=".45"><path d="M-18 12 H18" stroke="#f0d29a" stroke-width="1" stroke-dasharray="3 3"/></g>`;
+  const banner = `<path d="M19 -25 V6" stroke="#3a2a18" stroke-width="2"/><path d="M20 -25 L34 -20 L20 -15 Z" fill="${level >= 4 ? '#d7a95f' : '#c45c4a'}" stroke="#3a2a18" stroke-width=".6"/>`;
+  const arches = `<path d="M-18 15 Q-12 4 -6 15 M-3 15 Q3 4 9 15 M12 15 Q18 4 24 15" fill="none" stroke="#f7e5bc" stroke-width="2" opacity=".7"/>`;
+  if (id === 'palace') return `<g class="palace-ornaments"><path d="M-48 20 Q-38 1 -28 20 M-22 20 Q-12 1 -2 20 M4 20 Q14 1 24 20 M30 20 Q40 1 50 20" fill="none" stroke="#fff1c6" stroke-width="3" opacity=".8"/><path d="M-54 24 H54" stroke="#e8c47a" stroke-width="2"/><circle cx="0" cy="-8" r="4" fill="#8bd0c5" opacity=".8"/>${level >= 3 ? `<path d="M-62 36 Q0 50 62 36" fill="none" stroke="#4a9aaa" stroke-width="2" opacity=".65"/>` : ''}</g>`;
+  if (id === 'farm') return `<g class="farm-ornaments"><path d="M-26 7 L-18 0 M-16 10 L-8 3 M-6 13 L2 6 M4 15 L12 8" stroke="#f0d29a" stroke-width="1.5"/>${banner}</g>`;
+  if (id === 'lumber') return `<g class="lumber-ornaments"><path d="M-26 13 L-13 7 L0 13 L13 7 L26 13" fill="none" stroke="#d7a95f" stroke-width="2"/>${banner}</g>`;
+  if (id === 'quarry' || id === 'goldmine') return `<g class="mine-ornaments"><path d="M-18 8 L-8 -2 L2 8 L12 -2 L22 8" fill="none" stroke="#e8c47a" stroke-width="2"/>${banner}</g>`;
+  return `<g class="building-ornaments">${arches}${banner}</g>`;
+}
+
 function scaffoldOverlay() {
   // Wooden scaffolding hint for "under upgrade" feel near wall/build plots
   return `<g class="scaffold" opacity="0.85" transform="translate(${OX + 140},${OY + 300})">
@@ -394,6 +419,7 @@ export function buildCastleInteriorHtml(tables, state, selectedBuildingId, facti
         data-building="${b.id}" transform="translate(${p.x},${p.y + yOff}) scale(${scale})">
       ${ring}
       ${sprite(b.id, theme, built)}
+      ${buildingOrnaments(b.id, built, lvl)}
       ${marker}
       <g class="iso-badge" transform="translate(-28,-36)">
         <rect x="-10" y="-8" width="28" height="16" rx="3" fill="#1a2433" stroke="#e8c47a" stroke-width="1.2"/>
@@ -429,6 +455,7 @@ export function buildCastleInteriorHtml(tables, state, selectedBuildingId, facti
           ${defs()}
           <rect width="${VB_W}" height="${VB_H}" fill="url(#hourGlow)"/>
           ${groundLayer()}
+          ${cityLifeLayer()}
           ${wallRing()}
           ${scaffoldOverlay()}
           ${sprites}
