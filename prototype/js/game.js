@@ -100,6 +100,7 @@ export function createNewState(name, factionId, tables) {
       light_infantry: 0, archers: 0, heavy_infantry: 0,
       mangonel_engineers: 0, armored_legion: 0, mounted_archers: 0,
     },
+    borderDeployments: { north: 0, east: 0, south: 0 },
     unitLevels: {},
     wounded: {},
     healQueue: null,
@@ -675,6 +676,18 @@ export function claimAchievement(state, tables, id, progress = 0) {
 export function playerArmyPower(state, tables) {
   const ub = unitsById(tables);
   return Math.round(armyNominalPower(state.army, ub, state.unitLevels || {}));
+}
+
+export function setBorderDeployment(state, sector, requested) {
+  const valid = ['north', 'east', 'south'];
+  if (!valid.includes(sector)) return { ok: false, reason: 'قطاع حدودي غير معروف' };
+  state.borderDeployments = state.borderDeployments || { north: 0, east: 0, south: 0 };
+  const total = Object.values(state.army || {}).reduce((sum, count) => sum + (count || 0), 0);
+  const others = valid.filter((key) => key !== sector).reduce((sum, key) => sum + (state.borderDeployments[key] || 0), 0);
+  const amount = Math.max(0, Math.min(total - others, Math.floor(Number(requested) || 0)));
+  state.borderDeployments[sector] = amount;
+  track(state, 'border_deployment', { sector, amount });
+  return { ok: true, amount, reserve: Math.max(0, total - others - amount) };
 }
 
 export function startMarch(state, tables, { type, targetId, army, useHeroSkill = true }) {

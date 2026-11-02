@@ -651,6 +651,18 @@ function mountWorld2D(host) {
   });
 }
 
+function militaryCommandHtml(worldNodes, active) {
+  state.borderDeployments = state.borderDeployments || { north: 0, east: 0, south: 0 };
+  const total = Object.values(state.army || {}).reduce((sum, count) => sum + (count || 0), 0);
+  const assigned = Object.values(state.borderDeployments).reduce((sum, count) => sum + (count || 0), 0);
+  const sectors = [
+    { id: 'north', name: 'حدود الشمال', icon: '♜', note: 'حصون الجبال', nodes: worldNodes.filter((node) => node.y < 390 && ['fort', 'castle', 'outpost'].includes(node.kind)).length, accent: 'ice' },
+    { id: 'east', name: 'حدود الشرق', icon: '⚔', note: 'ممرات الغزو', nodes: worldNodes.filter((node) => node.x > 650 && ['fort', 'castle', 'monster'].includes(node.kind)).length, accent: 'red' },
+    { id: 'south', name: 'حدود الجنوب', icon: '◆', note: 'بوابة القوافل', nodes: worldNodes.filter((node) => node.y > 560 && ['fort', 'resource', 'npc_camp'].includes(node.kind)).length, accent: 'gold' },
+  ];
+  return `<section class="military-command"><div class="military-command-head"><div class="military-command-seal">⚔</div><div><span class="dock-eyebrow">مركز القيادة · توزيع الجبهات</span><h3>لوحة الدفاع العسكري</h3><p>أصدر أوامر الانتشار قبل أن تصل رايات العدو إلى الحدود.</p></div><div class="military-readiness"><b>${Math.round((assigned / Math.max(1, total)) * 100)}٪</b><span>جاهزية الحدود</span></div></div><div class="military-metrics"><span><b>${total.toLocaleString('ar')}</b> إجمالي القوات</span><span><b>${assigned.toLocaleString('ar')}</b> على الحدود</span><span><b>${Math.max(0, total - assigned).toLocaleString('ar')}</b> احتياط</span><span><b>${active.length}</b> مسيرات</span></div><div class="border-sector-grid">${sectors.map((sector) => { const deployed = state.borderDeployments[sector.id] || 0; const pct = Math.min(100, Math.round((deployed / Math.max(1, total)) * 100)); return `<article class="border-sector sector-${sector.accent}"><div class="border-sector-top"><span class="border-sector-icon">${sector.icon}</span><div><strong>${sector.name}</strong><small>${sector.note} · ${sector.nodes} مواقع</small></div><b>${deployed.toLocaleString('ar')}</b></div><div class="border-strength"><i style="width:${pct}%"></i></div><label>قوات مخصصة<input type="number" min="0" max="${total}" value="${deployed}" data-border-deploy="${sector.id}" /></label></article>`; }).join('')}</div><div class="military-command-footer"><span>التوزيع يحجز القوات للدفاع ولا يخصمها من الجيش حتى إصدار أمر مسير.</span><b>${total - assigned >= 0 ? 'الاحتياط جاهز' : 'تجاوز السعة'}</b></div></section>`;
+}
+
 function ensureWorld2D() {
   const host = $('#world-webgl-host');
   if (!host) return;
@@ -672,7 +684,7 @@ function renderMap(dockOnly = false) {
       <div><span class="dock-eyebrow">أطلس العصور · ${discovered}/${worldNodes.length} مكتشف</span><h2>${node ? node.nameAr : 'اختر موقعاً'}</h2></div>
       <button type="button" class="btn btn-ghost btn-small" id="btn-goto-castle">→ داخل القلعة</button>
     </div>
-    ${nodeDetailHtml(node)}`;
+    ${militaryCommandHtml(worldNodes, active)}${nodeDetailHtml(node)}`;
 
   const canAttack = (node?.actions || []).includes('attack');
   const canGather = (node?.actions || []).includes('gather');
@@ -751,6 +763,16 @@ function renderMap(dockOnly = false) {
       persist();
       renderAll();
     };
+  });
+
+  $$('[data-border-deploy]').forEach((input) => {
+    input.addEventListener('change', () => {
+      const r = G.setBorderDeployment(state, input.dataset.borderDeploy, input.value);
+      input.value = r.amount;
+      toast(r.ok ? 'تم تحديث انتشار الحامية الحدودية' : r.reason);
+      persist();
+      renderMap(true);
+    });
   });
 
   const actions = $('#node-actions');
@@ -1100,6 +1122,7 @@ function renderAll() {
   if (!state.fieldStock) state.fieldStock = {};
   if (!state.achievements) state.achievements = {};
   if (!state.season) state.season = { id: tables.seasonRewards?.season?.id || 'season_01', claimed: {}, lastRank: null };
+  if (!state.borderDeployments) state.borderDeployments = { north: 0, east: 0, south: 0 };
   if (!state.quests) state.quests = {};
   if (G.rotateDailyQuests(state, tables)) persist();
   if (state.healQueue === undefined) state.healQueue = null;
