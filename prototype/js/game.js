@@ -32,6 +32,7 @@ export async function loadTables() {
     'world_events.json',
     'achievements_royal.json',
     'alliance_research.json',
+    'season_rewards.json',
   ];
   const out = {};
   await Promise.all(files.map(async (f) => {
@@ -59,6 +60,7 @@ export async function loadTables() {
     events: out.world_events,
     achievements: out.achievements_royal,
     allianceResearch: out.alliance_research,
+    seasonRewards: out.season_rewards,
   };
 }
 
@@ -123,6 +125,7 @@ export function createNewState(name, factionId, tables) {
     quests: Object.fromEntries((tables.quests.daily || []).map((q) => [q.id, { progress: 0, done: false, claimed: false }])),
     questDay: dailyKey(now),
     achievements: {},
+    season: { id: tables.seasonRewards?.season?.id || 'season_01', claimed: {}, lastRank: null },
     beginnerShieldUntil: now + 48 * 3600 * 1000,
     onboardingStep: 0,
     analytics: [],
@@ -1112,6 +1115,36 @@ export function allianceResearchBonuses(state, tables) {
     for (const [key, value] of Object.entries(def?.effect || {})) result[key] = (result[key] || 0) + value;
   }
   return result;
+}
+
+export function seasonalScore(state, tables) {
+  const reports = state.reports || [];
+  const wins = reports.filter((report) => report.kind === 'combat' && report.outcome === 'win');
+  const scouts = reports.filter((report) => report.kind === 'scout').length;
+  const support = getAlliance(state)?.supportRequests?.reduce((sum, request) => sum + (request.supporters || 0), 0) || 0;
+  const research = Object.values(getAlliance(state)?.research?.levels || {}).reduce((sum, level) => sum + level * 70, 0);
+  const monsterLevels = wins.reduce((sum, report) => sum + (report.monsterLevel || 0), 0);
+  return wins.length * 450 + monsterLevels * 12 + scouts * 35 + support * 25 + research + (state.allianceId ? 280 : 0);
+}
+
+export function seasonalRank(state, tables) {
+  const score = seasonalScore(state, tables);
+  const seeds = tables.seasonRewards?.individualSeeds || [];
+  return 1 + seeds.filter((entry) => entry.points > score).length;
+}
+
+export function claimSeasonReward(state, tables, tierId) {
+  const tier = (tables.seasonRewards?.rewardTiers || []).find((item) => item.id === tierId);
+  if (!tier) return { ok: false, reason: 'مكافأة غير معروفة' };
+  state.season = state.season || { id: tables.seasonRewards?.season?.id || 'season_01', claimed: {} };
+  if (state.season.claimed[tierId]) return { ok: false, reason: 'تم تحصيل المكافأة' };
+  if (seasonalScore(state, tables) < tier.minPoints) return { ok: false, reason: 'لم تصل إلى نقاط هذه الشريحة' };
+  for (const resource of ['food', 'wood', 'stone', 'gold']) if (tier.reward?.[resource]) state.resources[resource] += tier.reward[resource];
+  if (tier.reward?.speedMinutes) state.speedMinutes += tier.reward.speedMinutes;
+  if (tier.reward?.stamina) state.stamina = Math.min(tables.stamina.cap, state.stamina + tier.reward.stamina);
+  state.season.claimed[tierId] = Date.now();
+  track(state, 'season_reward_claim', { tierId });
+  return { ok: true, tier };
 }
 
 export function createAlliance(state, name, tag, desc = '') {

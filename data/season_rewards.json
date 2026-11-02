@@ -1,0 +1,22 @@
+{
+  "season": { "id": "season_01", "nameAr": "الموسم الأول · رايات الممالك", "weekAr": "الأسبوع 14", "endsInHours": 18, "descriptionAr": "كل انتصار واستطلاع وراية مرفوعة تقرّبك من عرش الموسم." },
+  "rewardTiers": [
+    { "id": "bronze", "nameAr": "ختم البرونز", "minPoints": 300, "icon": "◆", "accent": "bronze", "reward": { "gold": 180, "food": 500 }, "rewardAr": "180 ذهب · 500 طعام" },
+    { "id": "silver", "nameAr": "ختم الفضة", "minPoints": 900, "icon": "✦", "accent": "silver", "reward": { "gold": 350, "wood": 700, "speedMinutes": 15 }, "rewardAr": "350 ذهب · 700 خشب · تسريع 15د" },
+    { "id": "gold", "nameAr": "ختم الذهب", "minPoints": 1800, "icon": "♛", "accent": "gold", "reward": { "gold": 700, "stone": 900, "stamina": 8 }, "rewardAr": "700 ذهب · 900 حجر · 8 طاقة" },
+    { "id": "royal", "nameAr": "ختم التاج", "minPoints": 3200, "icon": "♜", "accent": "royal", "reward": { "gold": 1400, "food": 1500, "wood": 1500, "speedMinutes": 45 }, "rewardAr": "1400 ذهب · موارد ملكية · تسريع 45د" }
+  ],
+  "individualSeeds": [
+    { "rank": 1, "nameAr": "سيف الدين", "titleAr": "فاتح الصدع", "points": 2860, "icon": "♛" },
+    { "rank": 2, "nameAr": "نور السهوب", "titleAr": "عين المملكة", "points": 2410, "icon": "✦" },
+    { "rank": 3, "nameAr": "حارس الفجر", "titleAr": "قائد الحصار", "points": 1980, "icon": "⚔" },
+    { "rank": 4, "nameAr": "صقر الجزيرة", "titleAr": "سيد القوافل", "points": 1670, "icon": "◆" }
+  ],
+  "allianceSeeds": [
+    { "rank": 1, "nameAr": "لواء السهوب", "tag": "س هـ", "points": 16420, "members": 28, "accent": "gold" },
+    { "rank": 2, "nameAr": "حماة التاج", "tag": "ت ج", "points": 15180, "members": 30, "accent": "teal" },
+    { "rank": 3, "nameAr": "رايات فارس", "tag": "ف ر", "points": 13640, "members": 25, "accent": "violet" },
+    { "rank": 4, "nameAr": "فرسان الشمال", "tag": "ش م", "points": 10870, "members": 22, "accent": "red" }
+  ],
+  "rankRewards": ["تاج الموسم وصورة رمزية ملكية", "زخرفة قصر حصرية", "ذهب وختم حرب", "صندوق قائد أسطوري"]
+}

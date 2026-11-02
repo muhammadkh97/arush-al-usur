@@ -1049,6 +1049,18 @@ function renderQuests() {
   $$('[data-achievement]').forEach((button) => { button.onclick = () => { const achievement = achievements.find((item) => item.id === button.dataset.achievement); const r = G.claimAchievement(state, tables, button.dataset.achievement, achievementProgress(achievement)); toast(r.ok ? 'رُفع وسام جديد إلى سجل العرش' : r.reason || 'غير متاح'); persist(); renderAll(); }; });
 }
 
+function renderSeasonPanel() {
+  const season = tables.seasonRewards;
+  const score = G.seasonalScore(state, tables);
+  const rank = G.seasonalRank(state, tables);
+  const tiers = season?.rewardTiers || [];
+  const currentAlliance = G.getAlliance(state);
+  const allianceScore = currentAlliance ? score * Math.max(1, currentAlliance.members.length) : 0;
+  const individualRows = [...(season?.individualSeeds || []), { rank, nameAr: state.playerName, titleAr: 'راية القائد', points: score, icon: '♜', player: true }].sort((a, b) => b.points - a.points).slice(0, 5).map((player, index) => `<div class="season-rank-row ${player.player ? 'is-player' : ''}"><b>${player.player ? rank : index + 1}</b><span class="season-rank-icon">${player.icon}</span><div><strong>${player.nameAr}</strong><span>${player.titleAr}</span></div><strong>${player.points.toLocaleString('ar')}</strong></div>`).join('');
+  const allianceRows = [...(season?.allianceSeeds || []), ...(currentAlliance ? [{ rank: 9, nameAr: currentAlliance.name, tag: currentAlliance.tag, points: allianceScore, members: currentAlliance.members.length, player: true }] : [])].sort((a, b) => b.points - a.points).slice(0, 5).map((alliance, index) => `<div class="season-rank-row ${alliance.player ? 'is-player' : ''}"><b>${alliance.player ? '—' : index + 1}</b><span class="season-alliance-tag">${alliance.tag}</span><div><strong>${alliance.nameAr}</strong><span>${alliance.members} راية مشاركة</span></div><strong>${alliance.points.toLocaleString('ar')}</strong></div>`).join('');
+  return `<div class="season-command"><section class="season-hero"><div class="season-crown">♛</div><div><span class="events-kicker">${season?.season?.weekAr || 'الموسم الحالي'} · ${season?.season?.endsInHours || 18} ساعة متبقية</span><h2>${season?.season?.nameAr || 'موسم رايات الممالك'}</h2><p>${season?.season?.descriptionAr || 'اجمع النقاط وارفع رايتك إلى قمة التصنيف.'}</p></div><div class="season-score"><b>${score.toLocaleString('ar')}</b><span>نقاطك الحالية</span><em>الرتبة التقديرية #${rank}</em></div></section><section class="season-progress-card"><div class="season-progress-head"><div><span class="events-kicker">مسار الختم الملكي</span><h3>مكافآت الموسم</h3></div><span>${score.toLocaleString('ar')} نقطة</span></div><div class="season-track">${tiers.map((tier, index) => { const reached = score >= tier.minPoints; const claimed = state.season?.claimed?.[tier.id]; const next = tiers[index + 1]; const pct = next ? Math.min(100, Math.round(((score - tier.minPoints) / Math.max(1, next.minPoints - tier.minPoints)) * 100)) : reached ? 100 : Math.round((score / tier.minPoints) * 100); return `<article class="season-tier tier-${tier.accent} ${reached ? 'reached' : ''} ${claimed ? 'claimed' : ''}"><div class="season-tier-icon">${tier.icon}</div><div><strong>${tier.nameAr}</strong><span>${tier.minPoints.toLocaleString('ar')} نقطة</span><small>${tier.rewardAr}</small></div><div class="season-tier-action">${claimed ? '<b>✓ محصّلة</b>' : reached ? `<button class="btn btn-primary btn-small" data-season-claim="${tier.id}">تحصيل</button>` : `<i>${pct}%</i>`}</div></article>`; }).join('')}</div></section><div class="season-ranking-grid"><section class="season-ranking-card"><div class="section-title"><div><span class="events-kicker">سجل القادة</span><h3>تصنيف اللاعبين</h3></div><span class="ranking-live">مباشر</span></div>${individualRows}</section><section class="season-ranking-card"><div class="section-title"><div><span class="events-kicker">سجل الرايات</span><h3>تصنيف التحالفات</h3></div><span class="ranking-live">مباشر</span></div>${allianceRows}</section></div><section class="season-footer-card"><span class="events-kicker">جوائز إغلاق الموسم</span><div>${(season?.rankRewards || []).map((reward) => `<span>✦ ${reward}</span>`).join('')}</div><small>تُحتسب النتيجة من الانتصارات، مستويات الوحوش، الاستطلاع، الدعم، وأبحاث التحالف.</small></section></div>`;
+}
+
 function renderEvents() {
   const stage = $('#main-stage');
   const events = tables.events?.events || [];
@@ -1059,21 +1071,24 @@ function renderEvents() {
   const playerRank = playerPoints > 900 ? 2 : playerPoints > 300 ? 3 : 4;
   let html = `<div class="events-shell">
     <section class="events-hero"><div class="events-crest">♛</div><div><span>الموسم الأول · رايات الممالك</span><h2>ساحة الفعاليات الكبرى</h2><p>كل أسبوع يكتب القادة فصلاً جديداً في سجل العروش. اغتنم الحدث قبل أن تغلق البوابة.</p></div><div class="events-week"><b>14</b><span>أسبوع الموسم</span></div></section>
-    <div class="events-tabs"><button class="${eventsTab === 'world' ? 'active' : ''}" data-events-tab="world">فعاليات العالم <b>${events.length}</b></button><button class="${eventsTab === 'war' ? 'active' : ''}" data-events-tab="war">حرب الممالك <b>W14</b></button></div>`;
+    <div class="events-tabs"><button class="${eventsTab === 'world' ? 'active' : ''}" data-events-tab="world">فعاليات العالم <b>${events.length}</b></button><button class="${eventsTab === 'war' ? 'active' : ''}" data-events-tab="war">حرب الممالك <b>W14</b></button><button class="${eventsTab === 'season' ? 'active' : ''}" data-events-tab="season">الموسم والتصنيف <b>♛</b></button></div>`;
   if (eventsTab === 'world') {
     html += `<div class="event-status-strip"><span class="event-live-dot"></span><strong>المجال مفتوح</strong><span>3 فعاليات كبرى · أول مكافأة بانتظار رايتك</span><b>${G.formatEta(18 * 60 * 60 * 1000)} متبقية</b></div><div class="grand-events-grid">`;
     for (const event of events) {
       html += `<article class="grand-event-card event-${event.accent}"><div class="event-card-top"><span class="event-icon">${event.icon}</span><div><span class="event-type">${event.typeAr}</span><h3>${event.nameAr}</h3></div><b class="event-status">${event.statusAr}</b></div><p>${event.descriptionAr}</p><div class="event-reward"><span>مكافآت الحدث</span><strong>${event.rewardAr}</strong></div><div class="event-card-footer"><span class="event-progress"><i style="width:${event.id === 'crown_rift' ? Math.min(92, 18 + wins * 11) : event.id === 'caravan_war' ? Math.min(54, 12 + scouts * 8) : 8}%"></i></span><button class="btn btn-primary btn-small" data-event-action="${event.targetKind}">${event.targetKind === 'monster' ? 'افتح الخريطة' : event.targetKind === 'resource' ? 'أرسل قافلة' : 'استكشف الأطلال'}</button></div></article>`;
     }
     html += `</div><section class="event-calendar"><div><span class="events-kicker">بوابة الأسبوع</span><h3>روزنامة العالم</h3></div><div class="calendar-rail">${war.days.map((day, index) => `<div class="calendar-day ${day.stateAr === 'نشط' ? 'active' : day.stateAr === 'مكتمل' ? 'done' : ''}"><b>${day.dayAr}</b><span>${day.labelAr}</span><em>${day.stateAr}</em></div>`).join('')}</div></section>`;
-  } else {
+  } else if (eventsTab === 'war') {
     html += `<div class="war-banner"><div><span class="events-kicker">الدورة الحالية · ${war.phaseAr}</span><h3>${war.nameAr}</h3><p>${war.descriptionAr}</p></div><div class="war-timer"><b>18:42:16</b><span>حتى إغلاق المرحلة</span></div></div><div class="war-layout"><section class="kingdom-ranking"><div class="section-title"><div><span class="events-kicker">لوح الرايات</span><h3>ترتيب الممالك</h3></div><span class="ranking-live">تحديث حي</span></div>${war.kingdoms.map((kingdom) => `<div class="kingdom-row kingdom-${kingdom.color} ${kingdom.rank === playerRank ? 'is-player' : ''}><b class="kingdom-rank">${kingdom.rank}</b><span class="kingdom-emblem">${kingdom.tag}</span><div><strong>${kingdom.nameAr}</strong><span>${kingdom.statusAr}</span></div><div class="kingdom-points"><b>${(kingdom.rank === playerRank ? kingdom.points + playerPoints : kingdom.points).toLocaleString('ar')}</b><span>نقطة</span></div></div>`).join('')}</section><section class="war-side-card"><div class="your-kingdom"><span class="events-kicker">رايتك هذا الأسبوع</span><h3>${state.allianceId ? 'عرش الجزيرة' : 'قلعة القائد'}</h3><div class="your-score"><b>${playerPoints.toLocaleString('ar')}</b><span>نقاط المساهمة</span></div><div class="contribution-list"><span>انتصارات الغارات <b>${wins}</b></span><span>عمليات الاستطلاع <b>${scouts}</b></span><span>رتبة تقديرية <b>#${playerRank}</b></span></div></div><div class="war-rewards"><span class="events-kicker">جوائز إغلاق الحرب</span><ul>${war.rewardsAr.map((reward) => `<li>✦ ${reward}</li>`).join('')}</ul></div><button class="btn btn-primary" id="btn-war-map">دخول جبهة الحرب</button></section></div><section class="war-phases"><span class="events-kicker">مراحل الحرب</span><div>${war.days.map((day) => `<span class="phase-chip ${day.stateAr === 'نشط' ? 'active' : ''}"><b>${day.dayAr}</b>${day.labelAr}</span>`).join('')}</div></section>`;
+  } else {
+    html += renderSeasonPanel();
   }
   html += `</div>`;
   stage.innerHTML = html;
   $$('[data-events-tab]').forEach((button) => { button.onclick = () => { eventsTab = button.dataset.eventsTab; renderEvents(); }; });
   $$('[data-event-action]').forEach((button) => { button.onclick = () => { view = button.dataset.eventAction === 'ruin' ? 'map' : button.dataset.eventAction === 'monster' || button.dataset.eventAction === 'resource' ? 'map' : 'map'; selectedNodeId = button.dataset.eventAction === 'monster' ? (tables.world.nodes.find((node) => node.kind === 'monster')?.id || 'castle_player') : (tables.world.nodes.find((node) => node.kind === button.dataset.eventAction)?.id || 'castle_player'); renderAll(); }; });
   $('#btn-war-map')?.addEventListener('click', () => { view = 'map'; renderAll(); });
+  $$('[data-season-claim]').forEach((button) => { button.onclick = () => { const r = G.claimSeasonReward(state, tables, button.dataset.seasonClaim); toast(r.ok ? `تم تحصيل ${r.tier.nameAr}` : r.reason); if (r.ok) { persist(); renderEvents(); } }; });
 }
 
 function renderAll() {
@@ -1084,6 +1099,7 @@ function renderAll() {
   if (!state.unitLevels) state.unitLevels = {};
   if (!state.fieldStock) state.fieldStock = {};
   if (!state.achievements) state.achievements = {};
+  if (!state.season) state.season = { id: tables.seasonRewards?.season?.id || 'season_01', claimed: {}, lastRank: null };
   if (!state.quests) state.quests = {};
   if (G.rotateDailyQuests(state, tables)) persist();
   if (state.healQueue === undefined) state.healQueue = null;
