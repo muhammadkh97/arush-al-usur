@@ -104,6 +104,8 @@ export function createNewState(name, factionId, tables) {
     },
     borderDeployments: { north: 0, east: 0, south: 0 },
     supplyRoutes: { north: 1, east: 1, south: 1 },
+    supplyGuards: { north: 0, east: 0, south: 0 },
+    supplyThreats: {},
     unitLevels: {},
     wounded: {},
     healQueue: null,
@@ -540,6 +542,7 @@ export function tick(state, tables, now = Date.now()) {
   for (const m of state.marches) {
     if (m.status === 'traveling' && now >= m.arrivesAt) {
       if (m.type === 'gather') {
+        triggerSupplyRaid(state, tables, m);
         beginGatherOccupy(state, tables, m);
         events.push({ type: 'gather_start', id: m.id });
       } else {
@@ -713,8 +716,47 @@ export function supplyLineStatus(state, tables, destination) {
   const efficiency = Math.min(1.12, route.efficiency + upgrades.filter((upgrade) => upgrade.level <= level).reduce((sum, upgrade) => sum + upgrade.efficiencyBonus, 0));
   const capacity = route.capacity + upgrades.filter((upgrade) => upgrade.level <= level).reduce((sum, upgrade) => sum + upgrade.capacityBonus, 0);
   const distancePenalty = Math.max(0.56, 1 - travelDistance * 0.025);
-  const speedMultiplier = Math.max(0.45, Math.min(1.08, efficiency * distancePenalty));
-  return { sector: route.id, sectorAr: route.sectorAr, routeNameAr: route.nameAr, riskAr: route.riskAr, distanceTiles: travelDistance, speedMultiplier, capacity, level, efficiency, etaMinutes: travelDistance / (4 * speedMultiplier) };
+  const threat = state.supplyThreats?.[route.id] || {};
+  const cutActive = (threat.cutUntil || 0) > Date.now();
+  const guardActive = (state.supplyGuards?.[route.id] || 0) > Date.now();
+  const disruptionMultiplier = cutActive ? 0.58 : 1;
+  const speedMultiplier = Math.max(0.3, Math.min(1.08, efficiency * distancePenalty * disruptionMultiplier));
+  return { sector: route.id, sectorAr: route.sectorAr, routeNameAr: route.nameAr, riskAr: route.riskAr, distanceTiles: travelDistance, speedMultiplier, capacity, level, efficiency, etaMinutes: travelDistance / (4 * speedMultiplier), raidChance: route.raidChance || 0, cutActive, guardActive, cutUntil: threat.cutUntil || 0, lastRaidAt: threat.lastRaidAt || 0 };
+}
+
+export function guardSupplyRoute(state, tables, sector) {
+  const route = tables.supplyLines?.routes?.find((item) => item.id === sector);
+  if (!route) return { ok: false, reason: 'خط تموين غير معروف' };
+  const cost = { gold: 80, food: 180 };
+  for (const resource of Object.keys(cost)) if ((state.resources[resource] || 0) < cost[resource]) return { ok: false, reason: 'تحتاج القافلة إلى ذهب وطعام لتجنيد الحرس' };
+  for (const resource of Object.keys(cost)) state.resources[resource] -= cost[resource];
+  state.supplyGuards = state.supplyGuards || {};
+  state.supplyGuards[sector] = Date.now() + (35 * 60 * 1000) / state.timeScale;
+  track(state, 'supply_route_guarded', { sector });
+  return { ok: true, durationMinutes: 35, route };
+}
+
+function triggerSupplyRaid(state, tables, march) {
+  if (march.type !== 'gather' || march.supplyRaid) return null;
+  const route = tables.supplyLines?.routes?.find((item) => item.id === march.supply?.sector);
+  if (!route) return null;
+  const status = supplyLineStatus(state, tables, march.to);
+  const guarded = status.guardActive;
+  const chance = (route.raidChance || 0) * (guarded ? 0.35 : 1) * (status.cutActive ? 1.15 : 1);
+  if (Math.random() >= chance) return null;
+  state.supplyThreats = state.supplyThreats || {};
+  const cutUntil = Date.now() + ((route.cutMinutes || 18) * 60 * 1000) / state.timeScale;
+  state.supplyThreats[route.id] = { cutUntil, lastRaidAt: Date.now(), severity: route.raidLossPercent || 0.15 };
+  march.supplyRaid = { sector: route.id, sectorAr: route.sectorAr, lossPercent: route.raidLossPercent || 0.15, cutUntil, guarded };
+  track(state, 'supply_line_cut', { sector: route.id, guarded });
+  state.reports.unshift({ id: `r_${Date.now()}`, kind: 'supply_raid', at: Date.now(), sector: route.sectorAr, text: `هاجمت العصابات قافلة ${route.nameAr} وقطعت الخط مؤقتاً${guarded ? ' رغم مرافقة الحرس' : ''}.` });
+  return march.supplyRaid;
+}
+
+export function supplyThreatLabel(status) {
+  if (status.cutActive) return 'الخط مقطوع';
+  if (status.guardActive) return 'محمِي بالحرس';
+  return 'مراقبة عادية';
 }
 
 export function upgradeSupplyRoute(state, tables, sector) {
@@ -881,6 +923,9 @@ function finishGatherOccupy(state, tables, march, earlyProgress = 1) {
     delete state.fieldOccupancy[march.targetId];
   }
   const loot = computeGatherLoot(state, tables, march, earlyProgress);
+  if (march.supplyRaid?.lossPercent) {
+    for (const resource of Object.keys(loot)) loot[resource] = Math.floor(loot[resource] * (1 - march.supplyRaid.lossPercent));
+  }
   march.gatherLoot = loot;
   march.armyReturning = { ...march.army };
   const travelMs = Math.max(500, march.arrivesAt - march.startedAt);
@@ -902,7 +947,9 @@ function finishGatherOccupy(state, tables, march, earlyProgress = 1) {
     at: Date.now(),
     loot,
     fieldLevel: rt?.def?.level,
-    text: earlyProgress < 1
+    text: march.supplyRaid
+      ? `تعرضت القافلة لغارة عصابات على ${march.supplyRaid.sectorAr} وخسرت ${Math.round(march.supplyRaid.lossPercent * 100)}٪ من الحمولة — خط التموين مقطوع مؤقتاً.`
+      : earlyProgress < 1
       ? `أُلغي الجمع مبكراً من ${place}${stockLine} — غنيمة جزئية.`
       : `اكتمل احتلال ${place}${stockLine} — القافلة في طريق العودة.`,
   });

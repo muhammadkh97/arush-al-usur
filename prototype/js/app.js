@@ -660,7 +660,7 @@ function militaryCommandHtml(worldNodes, active) {
     { id: 'east', name: 'حدود الشرق', icon: '⚔', note: 'ممرات الغزو', nodes: worldNodes.filter((node) => node.x > 650 && ['fort', 'castle', 'monster'].includes(node.kind)).length, accent: 'red' },
     { id: 'south', name: 'حدود الجنوب', icon: '◆', note: 'بوابة القوافل', nodes: worldNodes.filter((node) => node.y > 560 && ['fort', 'resource', 'npc_camp'].includes(node.kind)).length, accent: 'gold' },
   ];
-  const supplyCards = sectors.map((sector) => { const anchor = tables.supplyLines?.routes?.find((route) => route.id === sector.id)?.anchor || { x: 500, y: 500 }; const line = G.supplyLineStatus(state, tables, anchor); return `<article class="supply-line-card supply-${sector.accent}"><div><span class="supply-line-icon">➜</span><strong>${line.routeNameAr || sector.name}</strong><small>${line.distanceTiles.toFixed(1)} مسافة · ${line.riskAr || 'طريق آمن'}</small></div><b>${Math.round(line.speedMultiplier * 100)}٪</b><span>وصول التعزيزات ≈ ${line.etaMinutes.toFixed(1)} د</span><button class="btn btn-ghost btn-small" data-supply-upgrade="${sector.id}">تطوير م${line.level + 1}</button></article>`; }).join('');
+  const supplyCards = sectors.map((sector) => { const anchor = tables.supplyLines?.routes?.find((route) => route.id === sector.id)?.anchor || { x: 500, y: 500 }; const line = G.supplyLineStatus(state, tables, anchor); const threat = line.cutActive ? 'خط مقطوع · سرعة منخفضة' : line.guardActive ? 'محمِي بالحرس' : 'مراقبة عادية'; const cutClass = line.cutActive ? 'is-cut' : line.guardActive ? 'is-guarded' : ''; return `<article class="supply-line-card supply-${sector.accent} ${cutClass}"><div><span class="supply-line-icon">${line.cutActive ? '⚠' : line.guardActive ? '♜' : '➜'}</span><strong>${line.routeNameAr || sector.name}</strong><small>${line.distanceTiles.toFixed(1)} مسافة · ${line.riskAr || 'طريق آمن'}</small></div><b>${Math.round(line.speedMultiplier * 100)}٪</b><span class="supply-threat-label">${threat}</span><span>وصول التعزيزات ≈ ${line.etaMinutes.toFixed(1)} د</span><div class="supply-actions"><button class="btn btn-ghost btn-small" data-supply-guard="${sector.id}">${line.guardActive ? 'الحرس منتشر' : 'حراسة القافلة'}</button><button class="btn btn-ghost btn-small" data-supply-upgrade="${sector.id}">تطوير م${line.level + 1}</button></div></article>`; }).join('');
   return `<section class="military-command"><div class="military-command-head"><div class="military-command-seal">⚔</div><div><span class="dock-eyebrow">مركز القيادة · توزيع الجبهات</span><h3>لوحة الدفاع العسكري</h3><p>أصدر أوامر الانتشار قبل أن تصل رايات العدو إلى الحدود.</p></div><div class="military-readiness"><b>${Math.round((assigned / Math.max(1, total)) * 100)}٪</b><span>جاهزية الحدود</span></div></div><div class="military-metrics"><span><b>${total.toLocaleString('ar')}</b> إجمالي القوات</span><span><b>${assigned.toLocaleString('ar')}</b> على الحدود</span><span><b>${Math.max(0, total - assigned).toLocaleString('ar')}</b> احتياط</span><span><b>${active.length}</b> مسيرات</span></div><div class="border-sector-grid">${sectors.map((sector) => { const deployed = state.borderDeployments[sector.id] || 0; const pct = Math.min(100, Math.round((deployed / Math.max(1, total)) * 100)); return `<article class="border-sector sector-${sector.accent}"><div class="border-sector-top"><span class="border-sector-icon">${sector.icon}</span><div><strong>${sector.name}</strong><small>${sector.note} · ${sector.nodes} مواقع</small></div><b>${deployed.toLocaleString('ar')}</b></div><div class="border-strength"><i style="width:${pct}%"></i></div><label>قوات مخصصة<input type="number" min="0" max="${total}" value="${deployed}" data-border-deploy="${sector.id}" /></label></article>`; }).join('')}</div><div class="supply-network"><div class="supply-network-head"><div><span class="dock-eyebrow">شبكة التموين الملكية</span><h4>سرعة وصول التعزيزات</h4></div><span>المسافة تؤثر في زمن الوصول</span></div><div class="supply-line-grid">${supplyCards}</div></div><div class="military-command-footer"><span>التوزيع يحجز القوات للدفاع، وخط التموين يحدد زمن وصول التعزيزات إلى كل حدود.</span><b>${total - assigned >= 0 ? 'الاحتياط جاهز' : 'تجاوز السعة'}</b></div></section>`;
 }
 
@@ -780,6 +780,13 @@ function renderMap(dockOnly = false) {
     button.onclick = () => {
       const r = G.upgradeSupplyRoute(state, tables, button.dataset.supplyUpgrade);
       toast(r.ok ? `تم تطوير خط التموين إلى المستوى ${r.level}` : r.reason);
+      if (r.ok) { persist(); renderMap(true); }
+    };
+  });
+  $$('[data-supply-guard]').forEach((button) => {
+    button.onclick = () => {
+      const r = G.guardSupplyRoute(state, tables, button.dataset.supplyGuard);
+      toast(r.ok ? `انتشرت حراسة القوافل لمدة ${r.durationMinutes} دقيقة` : r.reason);
       if (r.ok) { persist(); renderMap(true); }
     };
   });
@@ -1133,6 +1140,8 @@ function renderAll() {
   if (!state.season) state.season = { id: tables.seasonRewards?.season?.id || 'season_01', claimed: {}, lastRank: null };
   if (!state.borderDeployments) state.borderDeployments = { north: 0, east: 0, south: 0 };
   if (!state.supplyRoutes) state.supplyRoutes = { north: 1, east: 1, south: 1 };
+  if (!state.supplyGuards) state.supplyGuards = { north: 0, east: 0, south: 0 };
+  if (!state.supplyThreats) state.supplyThreats = {};
   if (!state.quests) state.quests = {};
   if (G.rotateDailyQuests(state, tables)) persist();
   if (state.healQueue === undefined) state.healQueue = null;
