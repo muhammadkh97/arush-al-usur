@@ -1,0 +1,12 @@
+{
+  "meta": { "nameAr": "شبكة طرق الإمداد الملكية", "baseEfficiency": 0.92, "notes": "تحدد المسافة وكفاءة الطريق سرعة وصول المسيرات والتعزيزات." },
+  "routes": [
+    { "id": "north", "nameAr": "طريق جبال الشمال", "sectorAr": "حدود الشمال", "anchor": { "x": 500, "y": 240 }, "distanceTiles": 7.2, "capacity": 900, "level": 1, "efficiency": 0.84, "riskAr": "ثلوج وممرات ضيقة", "color": "ice" },
+    { "id": "east", "nameAr": "طريق الراية الشرقية", "sectorAr": "حدود الشرق", "anchor": { "x": 760, "y": 420 }, "distanceTiles": 8.1, "capacity": 700, "level": 1, "efficiency": 0.76, "riskAr": "غارات متقطعة", "color": "red" },
+    { "id": "south", "nameAr": "طريق القوافل الجنوبية", "sectorAr": "حدود الجنوب", "anchor": { "x": 520, "y": 700 }, "distanceTiles": 5.4, "capacity": 1100, "level": 1, "efficiency": 0.91, "riskAr": "رمال متحركة", "color": "gold" }
+  ],
+  "upgrades": [
+    { "level": 2, "nameAr": "محطات تبديل الخيل", "cost": { "wood": 650, "stone": 350, "gold": 120 }, "efficiencyBonus": 0.08, "capacityBonus": 300 },
+    { "level": 3, "nameAr": "مخازن الحدود", "cost": { "wood": 1100, "stone": 700, "gold": 240 }, "efficiencyBonus": 0.14, "capacityBonus": 650 }
+  ]
+}

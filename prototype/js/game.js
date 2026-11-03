@@ -33,6 +33,7 @@ export async function loadTables() {
     'achievements_royal.json',
     'alliance_research.json',
     'season_rewards.json',
+    'supply_lines.json',
   ];
   const out = {};
   await Promise.all(files.map(async (f) => {
@@ -61,6 +62,7 @@ export async function loadTables() {
     achievements: out.achievements_royal,
     allianceResearch: out.alliance_research,
     seasonRewards: out.season_rewards,
+    supplyLines: out.supply_lines,
   };
 }
 
@@ -101,6 +103,7 @@ export function createNewState(name, factionId, tables) {
       mangonel_engineers: 0, armored_legion: 0, mounted_archers: 0,
     },
     borderDeployments: { north: 0, east: 0, south: 0 },
+    supplyRoutes: { north: 1, east: 1, south: 1 },
     unitLevels: {},
     wounded: {},
     healQueue: null,
@@ -690,6 +693,44 @@ export function setBorderDeployment(state, sector, requested) {
   return { ok: true, amount, reserve: Math.max(0, total - others - amount) };
 }
 
+function supplyRouteForPoint(tables, point) {
+  const routes = tables.supplyLines?.routes || [];
+  return routes.reduce((best, route) => {
+    const distance = Math.hypot(point.x - route.anchor.x, point.y - route.anchor.y);
+    return !best || distance < best.distance ? { route, distance } : best;
+  }, null);
+}
+
+export function supplyLineStatus(state, tables, destination) {
+  const home = playerCastlePos(tables);
+  const point = destination || home;
+  const travelDistance = Math.max(1, Math.hypot(point.x - home.x, point.y - home.y) / 40);
+  const match = supplyRouteForPoint(tables, point);
+  if (!match) return { sector: 'unknown', sectorAr: 'مجهول', distanceTiles: travelDistance, speedMultiplier: 0.7, capacity: 0, level: 0, efficiency: 0.7, etaMinutes: travelDistance / 4 };
+  const route = match.route;
+  const level = state.supplyRoutes?.[route.id] || route.level || 1;
+  const upgrades = tables.supplyLines?.upgrades || [];
+  const efficiency = Math.min(1.12, route.efficiency + upgrades.filter((upgrade) => upgrade.level <= level).reduce((sum, upgrade) => sum + upgrade.efficiencyBonus, 0));
+  const capacity = route.capacity + upgrades.filter((upgrade) => upgrade.level <= level).reduce((sum, upgrade) => sum + upgrade.capacityBonus, 0);
+  const distancePenalty = Math.max(0.56, 1 - travelDistance * 0.025);
+  const speedMultiplier = Math.max(0.45, Math.min(1.08, efficiency * distancePenalty));
+  return { sector: route.id, sectorAr: route.sectorAr, routeNameAr: route.nameAr, riskAr: route.riskAr, distanceTiles: travelDistance, speedMultiplier, capacity, level, efficiency, etaMinutes: travelDistance / (4 * speedMultiplier) };
+}
+
+export function upgradeSupplyRoute(state, tables, sector) {
+  const route = tables.supplyLines?.routes?.find((item) => item.id === sector);
+  if (!route) return { ok: false, reason: 'خط تموين غير معروف' };
+  const current = state.supplyRoutes?.[sector] || route.level || 1;
+  const upgrade = tables.supplyLines?.upgrades?.find((item) => item.level === current + 1);
+  if (!upgrade) return { ok: false, reason: 'وصل خط التموين إلى أقصى مستوى' };
+  for (const resource of Object.keys(upgrade.cost)) if ((state.resources[resource] || 0) < upgrade.cost[resource]) return { ok: false, reason: 'موارد غير كافية لتطوير خط التموين' };
+  for (const resource of Object.keys(upgrade.cost)) state.resources[resource] -= upgrade.cost[resource];
+  state.supplyRoutes = state.supplyRoutes || {};
+  state.supplyRoutes[sector] = current + 1;
+  track(state, 'supply_route_upgrade', { sector, level: current + 1 });
+  return { ok: true, level: current + 1, route };
+}
+
 export function startMarch(state, tables, { type, targetId, army, useHeroSkill = true }) {
   const node = worldNodeById(tables, targetId);
   const allianceTech = allianceResearchBonuses(state, tables);
@@ -740,6 +781,8 @@ export function startMarch(state, tables, { type, targetId, army, useHeroSkill =
   const dest = node ? { x: node.x, y: node.y } : { x: home.x + 80, y: home.y - 60 };
   const dist = Math.hypot(dest.x - home.x, dest.y - home.y) / 40;
   const tiles = Math.max(type === 'gather' ? 5 : 6, dist);
+  const supply = supplyLineStatus(state, tables, dest);
+  speed *= supply.speedMultiplier;
   const travelGameMin = tiles / speed;
   const travelMs = (travelGameMin * 60 * 1000) / state.timeScale;
   const rtGather = type === 'gather' ? fieldRuntime(state, tables, node?.fieldId || targetId) : null;
@@ -766,6 +809,7 @@ export function startMarch(state, tables, { type, targetId, army, useHeroSkill =
     to: { ...dest },
     armyReturning: null,
     gatherLoot: null,
+    supply: { sector: supply.sector, sectorAr: supply.sectorAr, distanceTiles: supply.distanceTiles, speedMultiplier: supply.speedMultiplier, etaMinutes: supply.etaMinutes },
   };
   state.marches.push(march);
   track(state, 'march_sent', { type, targetId });
