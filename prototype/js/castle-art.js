@@ -385,6 +385,56 @@ function buildingOrnaments(id, built, level) {
   return `<g class="building-ornaments">${arches}${banner}</g>`;
 }
 
+function richBuildingDetails(id, theme, built, level) {
+  const opacity = built ? 1 : 0.38;
+  const stone = theme === 'rome' ? '#d9e5ee' : '#f4dfb6';
+  const shadowInk = '#4b321e';
+  const brass = level >= 4 ? '#f4cc68' : '#c8923e';
+  const banner = `<path d="M22 -34 V6" stroke="#332619" stroke-width="2"/><path d="M23 -33 L39 -28 L23 -21 Z" fill="${level >= 4 ? '#e3b64e' : '#a64236'}" stroke="#332619" stroke-width=".7"/>`;
+  if (id === 'palace') return `<g class="rich-detail rich-palace" opacity="${opacity}">
+    <path d="M-63 28 Q0 52 63 28" fill="none" stroke="#e9c477" stroke-width="4" opacity=".9"/>
+    <path d="M-46 26 V43 M-31 31 V49 M31 31 V49 M46 26 V43" stroke="#6c4b2d" stroke-width="3"/>
+    <path d="M-39 20 Q-34 6 -29 20 M-18 24 Q-13 9 -8 24 M9 24 Q14 9 19 24 M30 20 Q35 6 40 20" fill="none" stroke="#fff2cf" stroke-width="3"/>
+    <circle cx="0" cy="3" r="8" fill="#4d9dab" stroke="#2b5964" stroke-width="2"/><path d="M-4 3 L0 -3 L4 3 L0 7 Z" fill="#d6f0df"/>
+    <path d="M-71 41 Q0 62 71 41" fill="none" stroke="#54a5a8" stroke-width="3" opacity=".7"/>
+    ${banner}</g>`;
+  if (id === 'farm') return `<g class="rich-detail rich-farm" opacity="${opacity}">
+    <path d="M-36 3 H-2 M-35 9 H-1 M-34 15 H0" stroke="#d9b46b" stroke-width="2"/>
+    <path d="M16 3 L32 -5 L43 1 V15 L27 22 Z" fill="#a9673e" stroke="${shadowInk}" stroke-width="1.5"/><path d="M16 3 L27 10 L43 1" fill="none" stroke="#f1c878" stroke-width="2"/>
+    <circle cx="30" cy="16" r="4" fill="#5b3c25"/><path d="M28 10 L31 3" stroke="#4b321e" stroke-width="2"/>${banner}</g>`;
+  if (id === 'barracks') return `<g class="rich-detail rich-barracks" opacity="${opacity}">
+    <path d="M-35 8 L-27 1 L-19 8 L-11 1 L-3 8 L5 1 L13 8 L21 1 L29 8" fill="none" stroke="#e8c47a" stroke-width="3"/>
+    <path d="M-25 18 Q-20 7 -15 18 M-8 21 Q-3 9 2 21 M9 21 Q14 9 19 21" fill="none" stroke="${stone}" stroke-width="3"/>
+    <path d="M-29 -2 L-19 -8 M-25 -10 L-15 -16 M25 -2 L15 -8 M29 -10 L19 -16" stroke="#8f6135" stroke-width="3"/>${banner}</g>`;
+  if (id === 'archery') return `<g class="rich-detail rich-archery" opacity="${opacity}">
+    <circle cx="0" cy="-12" r="8" fill="#c45c4a" stroke="#f0d29a" stroke-width="2"/><circle cx="0" cy="-12" r="3" fill="#f6e3a6"/>
+    <path d="M-18 9 Q0 -7 18 9 M-13 12 Q0 0 13 12" fill="none" stroke="#e8c47a" stroke-width="2"/><path d="M-22 -5 L-8 -18 M-18 0 L-4 -13" stroke="#70482b" stroke-width="2"/>${banner}</g>`;
+  if (id === 'warehouse') return `<g class="rich-detail rich-warehouse" opacity="${opacity}">
+    <rect x="-29" y="8" width="12" height="10" fill="#b9793f" stroke="${shadowInk}"/><rect x="18" y="5" width="13" height="12" fill="#d6a05b" stroke="${shadowInk}"/><path d="M-24 9 V18 M-18 9 V18 M23 6 V17 M29 6 V17" stroke="#754a2a" stroke-width="1"/>
+    <path d="M-7 21 H7 M-5 17 V24 M5 17 V24" stroke="#e7c174" stroke-width="2"/>${banner}</g>`;
+  if (id === 'embassy' || id === 'market') return `<g class="rich-detail rich-market" opacity="${opacity}">
+    <path d="M-39 5 Q-29 -5 -19 5 Q-9 -5 1 5 Q11 -5 21 5 Q31 -5 41 5" fill="#3f8190" stroke="#332619" stroke-width="1.5"/>
+    <path d="M-34 6 V18 M-14 6 V18 M7 6 V18 M28 6 V18" stroke="#f1d49a" stroke-width="2"/>
+    <circle cx="-20" cy="20" r="3" fill="#e8c47a"/><circle cx="20" cy="20" r="3" fill="#c45c4a"/>${banner}</g>`;
+  if (id === 'hospital') return `<g class="rich-detail rich-hospital" opacity="${opacity}">
+    <path d="M-5 2 V25 M-16 13 H6" stroke="#b74138" stroke-width="4"/><path d="M-25 -2 Q0 -18 25 -2" fill="none" stroke="#fff6dc" stroke-width="3"/>
+    <circle cx="22" cy="-13" r="5" fill="#f2c45d" stroke="#6b4324"/><path d="M22 -8 V2" stroke="#6b4324" stroke-width="2"/>${banner}</g>`;
+  if (id === 'academy') return `<g class="rich-detail rich-academy" opacity="${opacity}">
+    <path d="M-22 -4 L0 -18 L22 -4 L0 8 Z" fill="#4c7290" stroke="#2f3c4d" stroke-width="2"/><path d="M0 8 V18 M-14 13 H14" stroke="#e6c77b" stroke-width="2"/>
+    <circle cx="0" cy="-5" r="4" fill="#fff2b6"/><path d="M-17 17 H-6 M6 17 H17" stroke="#d7a95f" stroke-width="2"/>${banner}</g>`;
+  if (id === 'shrine') return `<g class="rich-detail rich-shrine" opacity="${opacity}">
+    <path d="M-14 17 H14 M-10 12 H10" stroke="#f6df9b" stroke-width="3"/><circle cx="0" cy="-7" r="7" fill="#5fa8a7" stroke="#f0d29a" stroke-width="2"/><path d="M0 -28 V-18 M-5 -23 H5" stroke="#f5dc91" stroke-width="2"/>${banner}</g>`;
+  if (id === 'wall') return `<g class="rich-detail rich-wall" opacity="${opacity}"><path d="M-45 -1 H45 M-37 6 H37" stroke="#d9c394" stroke-width="2" stroke-dasharray="8 4"/><path d="M-6 9 V24 M6 9 V24" stroke="#4a321e" stroke-width="3"/>${banner}</g>`;
+  if (id === 'lumber') return `<g class="rich-detail rich-lumber" opacity="${opacity}"><path d="M-28 17 L-5 6 L18 17" fill="none" stroke="#e2b768" stroke-width="3"/><path d="M-17 17 L-5 4 M-2 17 L10 4" stroke="#7a4e2a" stroke-width="3"/><circle cx="25" cy="7" r="6" fill="#d8a060" stroke="#654125"/>${banner}</g>`;
+  if (id === 'quarry') return `<g class="rich-detail rich-quarry" opacity="${opacity}"><path d="M-21 11 L-11 -5 L0 9 L9 -12 L23 11" fill="none" stroke="#e1e5e4" stroke-width="3"/><circle cx="-8" cy="13" r="4" fill="#c8d0d3"/><circle cx="12" cy="16" r="3" fill="#87939b"/>${banner}</g>`;
+  if (id === 'goldmine') return `<g class="rich-detail rich-goldmine" opacity="${opacity}"><path d="M-15 15 L-8 4 H8 L15 15" fill="none" stroke="#e8c47a" stroke-width="3"/><circle cx="-10" cy="8" r="3" fill="#ffd965"/><circle cx="11" cy="5" r="3" fill="#ffe88e"/><path d="M-1 -14 V-5" stroke="#f3d47c" stroke-width="2"/>${banner}</g>`;
+  return `<g class="rich-detail rich-default" opacity="${opacity}"><path d="M-20 12 Q0 -3 20 12" fill="none" stroke="${stone}" stroke-width="2"/>${banner}</g>`;
+}
+
+function richSprite(id, theme, built, level = 1) {
+  return `<g class="building-art-pack">${sprite(id, theme, built)}${richBuildingDetails(id, theme, built, level)}</g>`;
+}
+
 function scaffoldOverlay() {
   // Wooden scaffolding hint for "under upgrade" feel near wall/build plots
   return `<g class="scaffold" opacity="0.85" transform="translate(${OX + 140},${OY + 300})">
@@ -418,7 +468,7 @@ export function buildCastleInteriorHtml(tables, state, selectedBuildingId, facti
     return `<g class="iso-bldg ${selected ? 'is-selected' : ''} ${built ? 'is-built' : 'is-ghost'}"
         data-building="${b.id}" transform="translate(${p.x},${p.y + yOff}) scale(${scale})">
       ${ring}
-      ${sprite(b.id, theme, built)}
+      ${richSprite(b.id, theme, built, lvl)}
       ${buildingOrnaments(b.id, built, lvl)}
       ${marker}
       <g class="iso-badge" transform="translate(-28,-36)">
