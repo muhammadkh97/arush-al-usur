@@ -478,6 +478,20 @@ function ensureCastle2D() {
   });
 }
 
+function cityResourcePill(icon, label, value, tone) {
+  return `<span class="city-resource-pill tone-${tone}"><i>${icon}</i><small>${label}</small><b>${Number(value || 0).toLocaleString('ar')}</b></span>`;
+}
+
+function cityRoyalHudHtml() {
+  const r = state.resources || {};
+  const totalPower = G.playerArmyPower(state, tables);
+  return `<div class="city-royal-hud"><div class="city-commander"><div class="commander-portrait">${String(state.playerName || 'ق').slice(0, 1)}</div><div><span>الأمير</span><strong>${state.playerName || 'قائد المملكة'}</strong><small>${factionName(state.factionId)} · قصر م${state.buildings?.palace || 0}</small></div></div><div class="city-resource-rail">${cityResourcePill('✦', 'ذهب', r.gold, 'gold')}${cityResourcePill('🌾', 'طعام', r.food, 'food')}${cityResourcePill('▰', 'خشب', r.wood, 'wood')}${cityResourcePill('◆', 'حجر', r.stone, 'stone')}${cityResourcePill('⚔', 'قوة', totalPower, 'power')}</div><div class="city-vip-mark"><span>♛</span><b>VIP</b></div></div>`;
+}
+
+function cityBottomRailHtml() {
+  return `<div class="city-bottom-rail"><button data-city-view="city" class="is-active"><span>⌂</span><b>القلعة</b></button><button data-city-view="hero"><span>♛</span><b>البطل</b></button><button data-city-view="map"><span>⌖</span><b>الخريطة</b></button><button data-city-view="reports"><span>✉</span><b>البريد</b></button><button data-city-view="alliance"><span>⚔</span><b>التحالف</b></button><button data-city-view="events"><span>✦</span><b>الموسم</b></button></div>`;
+}
+
 function renderCity() {
   const stage = $('#main-stage');
   if (!selectedBuildingId) selectedBuildingId = 'palace';
@@ -487,8 +501,9 @@ function renderCity() {
   const keepHost = stage.querySelector('#castle-2d-host');
   if (!keepHost) {
     stage.innerHTML = `
-      <div class="map-compose castle-compose">
+      <div class="map-compose castle-compose city-royal-shell">
         <div class="map-main-col">
+          ${cityRoyalHudHtml()}
           <div class="castle-stage castle-2d-mode theme-${state.factionId}">
             <div class="castle-command-hud">
               <div class="castle-seal">✦</div>
@@ -500,6 +515,8 @@ function renderCity() {
           <div id="castle-resource-ledger-host">${castleResourceLedgerHtml()}</div>
           <div id="story-ledger-host">${storyLedgerHtml()}</div>
           <div id="city-queue-host">${queueBannerHtml()}</div>
+          <div class="city-activity-strip"><span>المسؤولية</span><b>الغزو</b><span>المهام</span><b>الدردشة</b><em>مملكة ${factionName(state.factionId)} تحت أمرك</em></div>
+          ${cityBottomRailHtml()}
         </div>
         <div id="city-dock-host">${buildingDockHtml(bid)}</div>
       </div>`;
@@ -512,10 +529,15 @@ function renderCity() {
     if (storyHost) storyHost.innerHTML = storyLedgerHtml();
     const dockHost = $('#city-dock-host');
     if (dockHost) dockHost.innerHTML = buildingDockHtml(bid);
+    const cityHud = stage.querySelector('.city-royal-hud');
+    if (cityHud) cityHud.outerHTML = cityRoyalHudHtml();
   }
 
   ensureCastle2D();
   bindCityDock(bid);
+  $$('[data-city-view]').forEach((button) => {
+    button.onclick = () => { view = button.dataset.cityView; renderAll(); };
+  });
 }
 
 /* ——— External world map ——— */
@@ -1131,6 +1153,7 @@ function renderEvents() {
 
 function renderAll() {
   if (!state) return;
+  $('#screen-game')?.classList.toggle('city-focus', view === 'city');
   // migrate older saves
   if (!state.scoutedNodes) state.scoutedNodes = {};
   if (!state.fieldOccupancy) state.fieldOccupancy = {};
