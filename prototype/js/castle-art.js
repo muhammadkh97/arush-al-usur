@@ -370,8 +370,7 @@ function cityLifeLayer() {
     `<g transform="translate(${OX + 230},${OY + 285})"><ellipse cx="0" cy="18" rx="30" ry="9" fill="rgba(40,24,8,.22)"/><path d="M-22 2 L0 -9 L22 2 L0 13 Z" fill="#3d7890" stroke="#3a2a18"/><path d="M-22 2 V14 M22 2 V14" stroke="#5c4030" stroke-width="3"/><circle cx="0" cy="2" r="5" fill="#f0c040"/></g>`,
   ].join('');
   const roads = `<g class="city-roads" opacity=".78"><path d="M${OX - 270} ${OY + 335} Q${OX - 90} ${OY + 285} ${OX} ${OY + 300} T${OX + 270} ${OY + 330}" fill="none" stroke="#b98955" stroke-width="18" stroke-linecap="round"/><path d="M${OX} ${OY + 300} Q${OX - 30} ${OY + 225} ${OX - 15} ${OY + 138}" fill="none" stroke="#c89b64" stroke-width="13" stroke-linecap="round"/><path d="M${OX + 4} ${OY + 302} Q${OX + 90} ${OY + 236} ${OX + 215} ${OY + 188}" fill="none" stroke="#c89b64" stroke-width="12" stroke-linecap="round"/><path d="M${OX - 270} ${OY + 335} Q${OX - 90} ${OY + 285} ${OX} ${OY + 300} T${OX + 270} ${OY + 330}" fill="none" stroke="#e4bd82" stroke-width="2" stroke-dasharray="7 8" opacity=".6"/></g>`;
-  const carts = `<g class="city-carts" opacity=".9"><g transform="translate(${OX - 192},${OY + 315})"><circle cx="-7" cy="7" r="5" fill="#5c4030"/><circle cx="10" cy="7" r="5" fill="#5c4030"/><path d="M-13 2 L-2 -8 H15 V4 H-13 Z" fill="#a86848" stroke="#3a2a18"/></g><g transform="translate(${OX + 185},${OY + 315})"><circle cx="-7" cy="7" r="5" fill="#5c4030"/><circle cx="10" cy="7" r="5" fill="#5c4030"/><path d="M-13 2 L-2 -8 H15 V4 H-13 Z" fill="#4a7890" stroke="#3a2a18"/></g></g>`;
-  return `<g class="city-life-layer">${roads}${trees}${stalls}${carts}</g>`;
+  return `<g class="city-life-layer">${roads}${trees}${stalls}</g>`;
 }
 
 function buildingOrnaments(id, built, level) {
@@ -431,8 +430,37 @@ function richBuildingDetails(id, theme, built, level) {
   return `<g class="rich-detail rich-default" opacity="${opacity}"><path d="M-20 12 Q0 -3 20 12" fill="none" stroke="${stone}" stroke-width="2"/>${banner}</g>`;
 }
 
+function architecturalFacade(id, theme, built, level) {
+  const opacity = built ? 1 : 0.34;
+  const wall = theme === 'rome' ? '#cbd9df' : theme === 'persia' ? '#dca47c' : '#e7c895';
+  const joint = theme === 'rome' ? '#647989' : '#8e6842';
+  const dark = '#2b2118';
+  const trim = level >= 4 ? '#e5bb61' : '#b47a3d';
+  const window = `<path d="M-25 13 Q-25 5 -19 5 Q-13 5 -13 13 Z M-6 15 Q-6 7 0 7 Q6 7 6 15 Z M13 13 Q13 5 19 5 Q25 5 25 13 Z" fill="#355b68" stroke="${trim}" stroke-width="1.8"/>`;
+  const columns = `<path d="M-30 8 V29 M-22 8 V29 M22 8 V29 M30 8 V29" stroke="${wall}" stroke-width="3.5"/><path d="M-33 8 H-19 M19 8 H33" stroke="${trim}" stroke-width="2"/>`;
+  if (id === 'palace' || id === 'wall') return '';
+  if (id === 'farm' || id === 'lumber' || id === 'quarry' || id === 'goldmine') {
+    return `<g class="architectural-facade resource-facade" opacity="${opacity}">
+      <path d="M-28 5 L0 -8 L28 5 V27 H-28 Z" fill="${wall}" stroke="${joint}" stroke-width="1.4"/>
+      <path d="M-28 12 H28 M-28 19 H28" stroke="${joint}" stroke-width="1" opacity=".55"/>
+      <path d="M-8 27 V12 Q0 4 8 12 V27" fill="${dark}" stroke="${trim}" stroke-width="1.8"/>
+      ${id === 'farm' ? '<path d="M-22 9 L-13 2 L-4 9 M12 9 L21 2 L30 9" fill="none" stroke="#6e4927" stroke-width="2"/>' : ''}
+      ${id === 'lumber' ? '<path d="M-22 14 L-12 5 M-12 17 L-2 8 M15 16 L24 7" stroke="#80532b" stroke-width="3"/>' : ''}
+      ${id === 'quarry' ? '<path d="M-22 6 L-15 -2 L-8 6 M9 8 L16 0 L23 8" fill="none" stroke="#f0f2ee" stroke-width="2"/>' : ''}
+      ${id === 'goldmine' ? '<circle cx="0" cy="-1" r="5" fill="#ffd65e"/><path d="M-15 27 H15" stroke="#e9c477" stroke-width="2"/>' : ''}
+    </g>`;
+  }
+  return `<g class="architectural-facade civic-facade" opacity="${opacity}">
+    <path d="M-34 8 L0 -10 L34 8 V29 H-34 Z" fill="${wall}" stroke="${joint}" stroke-width="1.5"/>
+    <path d="M-34 15 H34 M-34 22 H34" stroke="${joint}" stroke-width="1" opacity=".52"/>
+    ${columns}${window}
+    <path d="M-8 29 V18 Q0 8 8 18 V29" fill="${dark}" stroke="${trim}" stroke-width="2"/>
+    <path d="M-37 8 H37" stroke="${trim}" stroke-width="3"/>
+  </g>`;
+}
+
 function richSprite(id, theme, built, level = 1) {
-  return `<g class="building-art-pack">${sprite(id, theme, built)}${richBuildingDetails(id, theme, built, level)}</g>`;
+  return `<g class="building-art-pack">${sprite(id, theme, built)}${architecturalFacade(id, theme, built, level)}${richBuildingDetails(id, theme, built, level)}</g>`;
 }
 
 function scaffoldOverlay() {
